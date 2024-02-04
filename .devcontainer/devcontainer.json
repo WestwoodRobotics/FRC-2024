@@ -1,0 +1,8 @@
+{
+    "name": "WPILib - Ubuntu",
+    "dockerFile": "Dockerfile",
+    "settings": { 
+      "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "extensions": []
+  }
