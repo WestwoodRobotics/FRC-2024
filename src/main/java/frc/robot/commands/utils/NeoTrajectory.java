@@ -25,16 +25,17 @@ public class NeoTrajectory {
     private List<Pose2d> currentWaypoints = new ArrayList<>();
     private boolean isReversed;
 
-    public NeoTrajectory() {
+    public NeoTrajectory(){
         addNewConfig();
-    }
-
-    public NeoTrajectory(TrajectoryConfig config) {
-        configs.add(config);
+        addWaypoint(0, 0, 0);
     }
 
     public NeoTrajectory(double x, double y, double rot) {
-        this();
+        addNewConfig();
+        addWaypoint(x, y, rot);
+    }
+    public NeoTrajectory(double x, double y, double rot, TrajectoryConfig config) {
+        configs.add(config);
         addWaypoint(x, y, rot);
     }
 
