@@ -79,6 +79,11 @@ public class NeoTrajectory {
     public List<Trajectory> generateTrajectories() {
         waypointGroups.add(currentWaypoints);
         List<Trajectory> trajectories = new ArrayList<>();
+        if (waypointGroups.size() != configs.size()) {
+            // Handle the size mismatch appropriately
+            System.err.println("Size of waypointGroups and configs do not match");
+            return trajectories;
+        }
         for (int i = 0; i < waypointGroups.size(); i++) {
             trajectories.add(TrajectoryGenerator.generateTrajectory(waypointGroups.get(i), configs.get(i)));
         }
@@ -86,6 +91,11 @@ public class NeoTrajectory {
     }
 
     public Pose2d getStartingWaypointInitialPose() {
+        if (waypointGroups.isEmpty() || waypointGroups.get(0).isEmpty()) {
+            // Handle the empty list(s) appropriately
+            System.err.println("WaypointGroups is empty or the first list in waypointGroups is empty");
+            return new Pose2d(0, 0, new Rotation2d(0)); // Return a default pose
+        }
         return waypointGroups.get(0).get(0);
     }
 
