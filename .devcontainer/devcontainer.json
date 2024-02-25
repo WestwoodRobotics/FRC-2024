@@ -1,5 +1,5 @@
 {
-	"name": "Code - OSS",
+	"name": "WPILib",
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
