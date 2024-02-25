@@ -39,7 +39,17 @@ public class MotorControlGroup {
     }
 
     // Sets the position of all motors in the group to the given value, with the given feedforward value
-    public void setPosition(int position, double ff) {
+    public void setPosition(double position, double kP, double kI, double kD, double ff) {
+        for (CANSparkBase motor : motors) {
+            motor.getPIDController().setP(kP);
+            motor.getPIDController().setI(kI);
+            motor.getPIDController().setD(kD);
+            motor.getPIDController().setReference(position, ControlType.kPosition, 0, ff, ArbFFUnits.kPercentOut);
+        }
+    }
+
+    // Sets the position of all motors in the group to the given value, with the given feedforward value
+    public void setPosition(double position, double ff) {
         for (CANSparkBase motor : motors) {
             motor.getPIDController().setReference(position, ControlType.kPosition, 0, ff, ArbFFUnits.kPercentOut);
         }

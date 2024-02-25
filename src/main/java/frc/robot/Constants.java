@@ -203,10 +203,13 @@ public final class Constants {
     public static double kP = 0; //TODO: Change this value
     public static double kI = 0; //TODO: Change this value
     public static double kD = 0; //TODO: Change this value
-    public static double ff = 0; //TODO: Change this value
+    public static double kFF = 0; //TODO: Change this value
 
-    public static int elevatorClimbInit = 0; //TODO: Change this value
-    public static int elevatorClimbHome = 0; //TODO: Change this value
+    public static double kElevatorPodiumPosition = 0; //TODO: Change this value
+    public static double kElevatorAmpPosition = 0; //TODO: Change this value
+    public static double kElevatorStowPosition = 0; //TODO: Change this value
+
+
 
     
   }
