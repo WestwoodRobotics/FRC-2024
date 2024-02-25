@@ -9,6 +9,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -26,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.swerve.driveTrajectoryAuton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 //import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
@@ -36,13 +38,14 @@ import frc.robot.Constants.PortConstants;
 //import frc.robot.commands.elevator.ElevatorCommand;
 //import frc.robot.commands.elevator.ElevatorPosSet;
 import frc.robot.commands.swerve.driveCommand;
-
+import frc.robot.subsystems.elevator.Elevator;
 //import frc.robot.commands.wrist.WristCommand;
 //import frc.robot.commands.wrist.WristPosSet;
 //import frc.robot.subsystems.elevator.ElevatorModule;
 //import frc.robot.subsystems.intake.IntakeModule;
 import frc.robot.subsystems.swerve.SwerveDrive;
 //import frc.robot.subsystems.wrist.WristModule;
+import pabeles.concurrency.ConcurrencyOps.NewInstance;
 
 
 
@@ -55,6 +58,7 @@ import frc.robot.subsystems.swerve.SwerveDrive;
 public class RobotContainer {
   // The robot's subsystems
   private final SwerveDrive m_robotDrive = new SwerveDrive();
+  private final Elevator m_elevator = new Elevator();
   //private final Test test = new Test();
 
   // LED for indicating robot state, not implemented in hardware.
@@ -73,15 +77,16 @@ public class RobotContainer {
   // private final JoystickButton bButton = new JoystickButton(m_driverController, XboxController.Button.kB.value);
   // private final JoystickButton xButton = new JoystickButton(m_driverController, XboxController.Button.kX.value);
 
-  // private final POVButton dPadUp = new POVButton(m_driverController, 0);
-  // private final POVButton dPadRight = new POVButton(m_driverController, 90);
-  // private final POVButton dPadDown = new POVButton(m_driverController, 180);
-  // private final POVButton dPadLeft = new POVButton(m_driverController, 270);
+  private final POVButton dPadUp = new POVButton(m_driverController, 0);
+  private final POVButton dPadRight = new POVButton(m_driverController, 90);
+  private final POVButton dPadDown = new POVButton(m_driverController, 180);
+  private final POVButton dPadLeft = new POVButton(m_driverController, 270);
 
-  // private final JoystickButton rightBumper = new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value);
-  // private final JoystickButton leftBumper = new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton rightBumper = new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value);
+  private final JoystickButton leftBumper = new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value);
 
-  private driveTrajectoryAuton autonCommand;
+
+
 
 
   // private final JoystickButton y2Button = new JoystickButton(m_operatorController, XboxController.Button.kY.value);
@@ -102,7 +107,7 @@ public class RobotContainer {
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
     //test.setDefaultCommand(new testCommand(test, m_driverController));
 
-    autonCommand = new driveTrajectoryAuton(m_robotDrive);
+    
     // m_intakeModule.setDefaultCommand(new IntakeCommand(m_intakeModule, m_driverController, m_operatorController));
     // m_elevatorModule.setDefaultCommand(new ElevatorCommand(m_elevatorModule, m_driverController, m_operatorController));
     // m_wristModule.setDefaultCommand(new WristCommand(m_wristModule, m_driverController, m_operatorController));
@@ -132,15 +137,21 @@ public class RobotContainer {
 
     // reference for future command mapping
 
-    // dPadUp.whileTrue(new InstantCommand(() -> m_elevatorModule.setElevatorPower(-0.25)));
-    // dPadDown.whileTrue(new InstantCommand(() -> m_elevatorModule.setElevatorPower(0.25)));
-    // dPadLeft.whileTrue(new InstantCommand(() -> m_wristModule.setArmPower(-0.25)));
-    // dPadRight.whileTrue(new InstantCommand(() -> m_wristModule.setArmPower(0.25)));
+    dPadUp.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(-1.0)))
+    .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
+    dPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(1)))
+    .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
+    dPadLeft.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(-0.25)))
+    .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
+    dPadRight.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(0.25)))
+    .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
 
-    // leftBumper.onTrue(new ElevatorPosSet(m_elevatorModule, "cube_pickup")
-    //           .andThen(new WristPosSet(m_wristModule, "cube_pickup")));
-    // rightBumper.onTrue(new ElevatorPosSet(m_elevatorModule, "cone_pickup")
-    //           .andThen(new WristPosSet(m_wristModule, "cone_pickup")));
+
+
+    leftBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-0.5)))
+    .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
+    rightBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(0.5)))
+    .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
 
     // aButton.onTrue(new ElevatorPosSet(m_elevatorModule, "cube_pickup")
     //           .andThen(new WristPosSet(m_wristModule, "cube_high")));
@@ -165,6 +176,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autonCommand.getAutonomousCommand();
+    return new PathPlannerAuto("NewAutoy");
   }
 }

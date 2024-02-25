@@ -53,7 +53,7 @@ public final class Constants {
     public static final double kFrontLeftChassisAngularOffset = Math.PI + (Math.PI/2);
     public static final double kFrontRightChassisAngularOffset = 0;
     public static final double kRearLeftChassisAngularOffset = Math.PI;
-    public static final double kRearRightChassisAngularOffset = (Math.PI/2);
+    public static final double kRearRightChassisAngularOffset = (3*Math.PI/2);
 
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 11;
@@ -83,11 +83,6 @@ public final class Constants {
         public static final int kFrontRightTurningCanId = 14;
         public static final int kRearRightTurningCanId = 16;
         
-
-        public static final int kElevatorMotor1Port = 20; 
-        public static final int kElevatorMotor2Port = 21;
-        public static final int kIntakeMotorPort = 22;
-
         public static final int kLEDPort = 0;
         public static final int kLEDLength = 5;
         public static final int kLimitSwitchPort = 0;
@@ -200,7 +195,10 @@ public final class Constants {
     public static final double kFreeSpeedRpm = 6784;
   }
   public static final class ElevatorConstants {
-    public static final int kElevatorMotor = 20;
+    public static final int kElevatorMotor1Port = 30;
+    public static final int kElevatorMotor2Port = 31;
+    public static final int kRollerMotorPort = 32;
+    public static final int kPivotMotorPort = 33;
 
     public static double kP = 0; //TODO: Change this value
     public static double kI = 0; //TODO: Change this value
@@ -212,22 +210,37 @@ public final class Constants {
 
     
   }
-  public static final class IntakeConstants {
-    public static final int kIntakeMotor = 22;
+  public static final class IntakeShooterConstants {
+    public static final int kUpperMotorPort = 99;
+    public static final int kLowerMotorPort = 100;
+    public static final int kStowMotorPort =101;
+    public static final int kPivotMotorPort = 102;
+
+
+    public static double kUpperRollerP = 0; //TODO: Change this value
+    public static double kUpperRollerI = 0; //TODO: Change this value
+    public static double kUpperRollerD = 0; //TODO: Change this value
+    public static double kUpperRollerFF = 0; //TODO: Change this value
+
+    public static double kLowerRollerP = 0; //TODO: Change this value
+    public static double kLowerRollerI = 0; //TODO: Change this value
+    public static double kLowerRollerD = 0; //TODO: Change this value
+    public static double kLowerRollerFF = 0; //TODO: Change this value
+
+    public static double kPivotP = 0; //TODO: Change this value
+    public static double kPivotI = 0; //TODO: Change this value 
+    public static double kPivotD = 0; //TODO: Change this value
+    public static double kPivotFF = 0; //TODO: Change this value
+
+
+
+    public static double kStowPivotPosition = 0; //TODO: Change this value
+    public static double kIntakePivotPosition = 0; //TODO: Change this value
+    public static double kShootNearSpeakerPivotPosition = 0;
+    public static double kShootFarSpeakerPivotPosition = 0;
+
+
+
 
   }
-  public static final class ArmConstants{
-    public static final int kArmMotor = 21;
-
-    public static double kP = 0; //TODO: Change this value
-    public static double kI = 0; //TODO: Change this value
-    public static double kD = 0; //TODO: Change this value
-
-    public static int arm_cube_pickup = 70; //also arm cone high and mid cube outtake
-    public static int arm_cone_pickup = 100; //also arm cone mid outtake
-    public static int arm_cube_outtake = 0; //refers to high and low outtake
-  }
-
-
-
 }
