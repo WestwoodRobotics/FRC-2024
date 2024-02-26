@@ -28,8 +28,10 @@ import edu.wpi.first.util.WPIUtilJNI;
 // import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
+import frc.robot.Constants.PortConstants;
 import frc.robot.subsystems.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -48,23 +50,23 @@ public class SwerveDrive extends SubsystemBase {
   private Gyro gyro;
   // Create MAXSwerveModules
   private final SwerveModule m_frontLeft = new SwerveModule(
-      DriveConstants.kFrontLeftDrivingCanId,
-      DriveConstants.kFrontLeftTurningCanId,
+      PortConstants.kFrontLeftDrivingCanId,
+      PortConstants.kFrontLeftTurningCanId,
       DriveConstants.kFrontLeftChassisAngularOffset);
 
   private final SwerveModule m_frontRight = new SwerveModule(
-      DriveConstants.kFrontRightDrivingCanId,
-      DriveConstants.kFrontRightTurningCanId,
+      PortConstants.kFrontRightDrivingCanId,
+      PortConstants.kFrontRightTurningCanId,
       DriveConstants.kFrontRightChassisAngularOffset);
 
   private final SwerveModule m_rearLeft = new SwerveModule(
-      DriveConstants.kRearLeftDrivingCanId,
-      DriveConstants.kRearLeftTurningCanId,
+      PortConstants.kRearLeftDrivingCanId,
+      PortConstants.kRearLeftTurningCanId,
       DriveConstants.kRearLeftChassisAngularOffset);
 
   private final SwerveModule m_rearRight = new SwerveModule(
-      DriveConstants.kRearRightDrivingCanId,
-      DriveConstants.kRearRightTurningCanId,
+      PortConstants.kRearRightDrivingCanId,
+      PortConstants.kRearRightTurningCanId,
       DriveConstants.kRearRightChassisAngularOffset);
 
   // The gyro sensor
@@ -124,8 +126,8 @@ public class SwerveDrive extends SubsystemBase {
       new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
               new PIDConstants(ModuleConstants.kDrivingP+3, ModuleConstants.kDrivingI+1, ModuleConstants.kDrivingD), // Translation PID constants
               new PIDConstants(ModuleConstants.kTurningP+6, ModuleConstants.kTurningI, ModuleConstants.kTurningD), // Rotation PID constants
-              4.5, // Max module speed, in m/s
-              0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+              AutoConstants.kMaxModuleSpeedMetersPerSecond, // Max module speed, in m/s
+              AutoConstants.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
               new ReplanningConfig() // Default path replanning config. See the API for the options here
       ),
       () -> {

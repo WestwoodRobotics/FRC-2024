@@ -4,7 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.swerve.SwerveDrive;
 // import frc.robot.subsystems.swerve.DriveSpeed;
 
@@ -14,7 +14,6 @@ import frc.robot.subsystems.swerve.SwerveDrive;
 public class driveCommand extends Command {
 
   private final SwerveDrive m_swerveDrive;
-
 
   private XboxController controller;
   private boolean slowMode;
@@ -43,18 +42,16 @@ public class driveCommand extends Command {
     {
       slowMode = !slowMode;
     }
-    
 
-
-    leftX = -MathUtil.applyDeadband(controller.getLeftX(), OIConstants.kDriveDeadband);
-    leftY = -MathUtil.applyDeadband(controller.getLeftY(), OIConstants.kDriveDeadband);
-    rightX = -MathUtil.applyDeadband(controller.getRightX(), OIConstants.kDriveDeadband);
+    leftX = -MathUtil.applyDeadband(controller.getLeftX(), ControllerConstants.kDriveDeadband);
+    leftY = -MathUtil.applyDeadband(controller.getLeftY(), ControllerConstants.kDriveDeadband);
+    rightX = -MathUtil.applyDeadband(controller.getRightX(), ControllerConstants.kDriveDeadband);
 
 
     // Apply non-linear input (squaring the input)
-    leftX = Math.copySign(Math.pow(leftX, 2), leftX);
-    leftY = Math.copySign(Math.pow(leftY, 2), leftY);
-    rightX = Math.copySign(Math.pow(rightX, 2), rightX);
+    // leftX = Math.copySign(Math.pow(leftX, 2), leftX);
+    // leftY = Math.copySign(Math.pow(leftY, 2), leftY);
+    // rightX = Math.copySign(Math.pow(rightX, 2), rightX);
 
 
     if (slowMode)
@@ -63,7 +60,7 @@ public class driveCommand extends Command {
       leftY *= Constants.DriveConstants.slowModeMultiplier;
       rightX *= Constants.DriveConstants.slowModeMultiplier;
     }
-    m_swerveDrive.drive(leftY, leftX, rightX, true, true);
+    m_swerveDrive.drive(leftY, leftX, rightX, true, false);
 
   }
 

@@ -32,9 +32,12 @@ public class IntakeShooter extends SubsystemBase {
         stowMotor = new CANSparkMax(IntakeShooterConstants.kStowMotorPort, MotorType.kBrushless);
         pivotMotor = new CANSparkMax(IntakeShooterConstants.kPivotMotorPort, MotorType.kBrushless);
         pivotMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        upperRollerPIDController = new PIDController(IntakeShooterConstants.kUpperRollerP, IntakeShooterConstants.kUpperRollerI, IntakeShooterConstants.kUpperRollerD);
-        lowerRollerPIDController = new PIDController(IntakeShooterConstants.kLowerRollerP, IntakeShooterConstants.kLowerRollerI, IntakeShooterConstants.kLowerRollerD);
-        pivotPIDController = new PIDController(IntakeShooterConstants.kPivotP, IntakeShooterConstants.kPivotI, IntakeShooterConstants.kPivotD);
+        upperRollerPIDController = new PIDController(IntakeShooterConstants.kUpperRollerP, 
+        IntakeShooterConstants.kUpperRollerI, IntakeShooterConstants.kUpperRollerD);
+        lowerRollerPIDController = new PIDController(IntakeShooterConstants.kLowerRollerP, 
+        IntakeShooterConstants.kLowerRollerI, IntakeShooterConstants.kLowerRollerD);
+        pivotPIDController = new PIDController(IntakeShooterConstants.kPivotP, 
+        IntakeShooterConstants.kPivotI, IntakeShooterConstants.kPivotD);
         intakeShooterPosition = IntakeShooterPositions.STOW;
     }
 
@@ -57,8 +60,6 @@ public class IntakeShooter extends SubsystemBase {
     public double getLowerRPM(){
         return lowerRollerMotor.getEncoder().getVelocity();
     }
-
-
     
     public void setStowPower(double power){
         stowMotor.set(power);
@@ -88,24 +89,40 @@ public class IntakeShooter extends SubsystemBase {
                 case HANDOFF:
                     setPoint = IntakeShooterConstants.kHandoffPivotPosition;
                     break;
+                case MANUAL:
+                    setPoint = pivotMotor.getEncoder().getPosition();
+                    break;
                 default:
                     //Should never happen, because the only way to call this method is with a valid position
                     throw new IllegalArgumentException("Invalid position: " + position);
             }
+
             pivotPIDController.setSetpoint(setPoint);
             pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
             intakeShooterPosition = position;
         }
     }
 
-    public IntakeShooterPositions getIntakeShooterPosition() {
+    public void stopPivotMotor(){
+        pivotMotor.set(0);
+    }
+
+    public void stopRollerMotor(){
+        upperRollerMotor.set(0);
+        lowerRollerMotor.set(0);
+    }
+
+    public void stopStowMotor(){
+        stowMotor.set(0);
+    }
+
+    public IntakeShooterPositions getState() {
         return intakeShooterPosition;
     }
 
     @Override
     public void periodic(){
         SmartDashboard.putString ("Intake Shooter State" , intakeShooterPosition.toString()); 
-        
         SmartDashboard.putNumber("Pivot Position", pivotMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("Upper Roller RPM", upperRollerMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("Lower Roller RPM", lowerRollerMotor.getEncoder().getVelocity());

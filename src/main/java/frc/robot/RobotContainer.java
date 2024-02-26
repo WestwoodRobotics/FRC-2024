@@ -32,7 +32,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 //import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PortConstants;
 //import frc.robot.commands.Intake.IntakeCommand;
 //import frc.robot.commands.elevator.ElevatorCommand;
@@ -69,8 +69,8 @@ public class RobotContainer {
   
 
   // The driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-  XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
+  XboxController m_driverController = new XboxController(PortConstants.kDriverControllerPort);
+  XboxController m_operatorController = new XboxController(PortConstants.kOperatorControllerPort);
   
   // private final JoystickButton yButton = new JoystickButton(m_driverController, XboxController.Button.kY.value);
   private final JoystickButton aButton = new JoystickButton(m_driverController, XboxController.Button.kA.value);

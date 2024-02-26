@@ -55,6 +55,14 @@ public final class Constants {
     public static final double kRearLeftChassisAngularOffset = Math.PI;
     public static final double kRearRightChassisAngularOffset = (3*Math.PI/2);
 
+
+
+    public static final boolean kGyroReversed = false;
+
+    public static final double slowModeMultiplier = 0.25;
+  }
+
+  public static final class PortConstants{
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 11;
     public static final int kRearLeftDrivingCanId = 17;
@@ -66,27 +74,15 @@ public final class Constants {
     public static final int kFrontRightTurningCanId = 12;
     public static final int kRearRightTurningCanId = 14;
 
-    public static final boolean kGyroReversed = false;
 
-    public static final double slowModeMultiplier = 0.25;
-  }
 
-  public static final class PortConstants{
-        // SPARK MAX CAN IDs
-        public static final int kFrontLeftDrivingCanId = 11;
-        public static final int kRearLeftDrivingCanId = 13;
-        public static final int kFrontRightDrivingCanId = 15;
-        public static final int kRearRightDrivingCanId = 17;
-    
-        public static final int kFrontLeftTurningCanId = 10;
-        public static final int kRearLeftTurningCanId = 12;
-        public static final int kFrontRightTurningCanId = 14;
-        public static final int kRearRightTurningCanId = 16;
-        
-        public static final int kLEDPort = 0;
-        public static final int kLEDLength = 5;
-        public static final int kLimitSwitchPort = 0;
 
+    public static final int testCANId = 0; //TODO: Change this to the CAN ID of the motor you want to test
+
+
+
+    public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
   }
 
   public static final class TransportConstants{
@@ -146,23 +142,19 @@ public final class Constants {
     public static final int kDrivingMotorCurrentLimit = 50; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps
 
-    public static final int testCANId = 0; //TODO: Change this to the CAN ID of the motor you want to test
   }
 
-  public static final class OIConstants {
-    public static final int kDriverControllerPort = 0;
-    public static final int kOperatorControllerPort = 1;
-    public static final int phoenixGyroPort = 0; //TODO: Check if this is correct
+  public static final class ControllerConstants {
     public static final double kDriveDeadband = 0.2;
-
-
-
   }
 
   public static final class AutoConstants {
-
     //These constants need to tuned when setting up Auton Paths
-    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxModuleSpeedMetersPerSecond = 4.5;
+     //Distance from the center of the robot to the farthest SwerveModule
+    public static final double kDriveBaseRadius = 0.4; //meters
+
+
     public static final double kMaxAccelerationMetersPerSecondSquared = 2;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
@@ -183,8 +175,6 @@ public final class Constants {
     public static final double kDXController = 0;
     public static final double kDYController = 0;
     public static final double kDThetaController = 0;
-
-
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
