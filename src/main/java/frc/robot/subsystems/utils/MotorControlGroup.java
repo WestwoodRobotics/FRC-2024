@@ -2,11 +2,14 @@
 package frc.robot.subsystems.utils;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkBase.*;
 
 
 import com.revrobotics.SparkPIDController.ArbFFUnits;
+
+import edu.wpi.first.math.controller.PIDController;
 
 public class MotorControlGroup {
 
@@ -28,6 +31,10 @@ public class MotorControlGroup {
         for (CANSparkBase motor : motors) {
             motor.set(power);
         }
+    }
+
+    public void setPower(double power, int motorIndex) {
+        motors[motorIndex].set(power);
     }
 
 
@@ -52,6 +59,17 @@ public class MotorControlGroup {
     public void setPosition(double position, double ff) {
         for (CANSparkBase motor : motors) {
             motor.getPIDController().setReference(position, ControlType.kPosition, 0, ff, ArbFFUnits.kPercentOut);
+        }
+    }
+
+    public void setPosition(double position, PIDController pidController, int motorNum){
+        CANSparkBase motor = motors[motorNum] ;
+        this.setPower(pidController.calculate(motor.getEncoder().getPosition(), position), motorNum);
+    }
+
+    public void setPosition(double position, PIDController pidController){
+        for (CANSparkBase motor : motors) {
+            motor.set(pidController.calculate(motor.getEncoder().getPosition(), position));
         }
     }
 
@@ -113,6 +131,10 @@ public class MotorControlGroup {
             }
         }
         return false;
+    }
+
+    public RelativeEncoder getEncoder() {
+        return motors[0].getEncoder();
     }
 
 }

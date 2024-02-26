@@ -4,10 +4,13 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 
-public class IntakeShooter {
+public class IntakeShooter extends SubsystemBase {
 
     private CANSparkMax upperRollerMotor;
     private CANSparkMax lowerRollerMotor;
@@ -66,36 +69,46 @@ public class IntakeShooter {
         intakeShooterPosition = IntakeShooterPositions.MANUAL;
     }
 
-    public void setStowPosition(){
-        if ((intakeShooterPosition != IntakeShooterPositions.STOW) || intakeShooterPosition == IntakeShooterPositions.MANUAL) {
-            pivotPIDController.setSetpoint(IntakeShooterConstants.kStowPivotPosition);
+    public void setToPosition(IntakeShooterPositions position) {
+        if (intakeShooterPosition != position || intakeShooterPosition == IntakeShooterPositions.MANUAL) {
+            double setPoint;
+            switch (position) {
+                case STOW:
+                    setPoint = IntakeShooterConstants.kStowPivotPosition;
+                    break;
+                case INTAKE:
+                    setPoint = IntakeShooterConstants.kIntakePivotPosition;
+                    break;
+                case SHOOT_NEAR_SPEAKER:
+                    setPoint = IntakeShooterConstants.kShootNearSpeakerPivotPosition;
+                    break;
+                case SHOOT_FAR_SPEAKER:
+                    setPoint = IntakeShooterConstants.kShootFarSpeakerPivotPosition;
+                    break;
+                case HANDOFF:
+                    setPoint = IntakeShooterConstants.kHandoffPivotPosition;
+                    break;
+                default:
+                    //Should never happen, because the only way to call this method is with a valid position
+                    throw new IllegalArgumentException("Invalid position: " + position);
+            }
+            pivotPIDController.setSetpoint(setPoint);
             pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
-            intakeShooterPosition = IntakeShooterPositions.STOW;
+            intakeShooterPosition = position;
         }
     }
 
-    public void setIntakePosition(){
-        if ((intakeShooterPosition != IntakeShooterPositions.INTAKE) || intakeShooterPosition == IntakeShooterPositions.MANUAL) {
-            pivotPIDController.setSetpoint(IntakeShooterConstants.kIntakePivotPosition);
-            pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
-            intakeShooterPosition = IntakeShooterPositions.INTAKE;
-        }
+    public IntakeShooterPositions getIntakeShooterPosition() {
+        return intakeShooterPosition;
     }
 
-    public void setShootNearSpeakerPosition(){
-        if ((intakeShooterPosition != IntakeShooterPositions.SHOOT_NEAR_SPEAKER) || intakeShooterPosition == IntakeShooterPositions.MANUAL) {
-            pivotPIDController.setSetpoint(IntakeShooterConstants.kShootNearSpeakerPivotPosition);
-            pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
-            intakeShooterPosition = IntakeShooterPositions.SHOOT_NEAR_SPEAKER;
-        }
-    }
-
-    public void setShootFarSpeakerPosition(){
-        if ((intakeShooterPosition != IntakeShooterPositions.SHOOT_FAR_SPEAKER) || intakeShooterPosition == IntakeShooterPositions.MANUAL) {
-            pivotPIDController.setSetpoint(IntakeShooterConstants.kShootFarSpeakerPivotPosition);
-            pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
-            intakeShooterPosition = IntakeShooterPositions.SHOOT_FAR_SPEAKER;
-        }
+    @Override
+    public void periodic(){
+        SmartDashboard.putString ("Intake Shooter State" , intakeShooterPosition.toString()); 
+        
+        SmartDashboard.putNumber("Pivot Position", pivotMotor.getEncoder().getPosition());
+        SmartDashboard.putNumber("Upper Roller RPM", upperRollerMotor.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Lower Roller RPM", lowerRollerMotor.getEncoder().getVelocity());
     }
 
 }

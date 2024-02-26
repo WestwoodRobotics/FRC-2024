@@ -5,6 +5,7 @@ import frc.robot.Constants.ElevatorConstants;
 public enum ElevatorPositions {
     PODIUM,
     AMP,
-    STOW,  
+    STOW,
+    HANDOFF,  
     MANUAL
 }

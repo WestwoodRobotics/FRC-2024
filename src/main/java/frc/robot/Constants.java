@@ -198,16 +198,27 @@ public final class Constants {
     public static final int kElevatorMotor1Port = 30;
     public static final int kElevatorMotor2Port = 31;
     public static final int kRollerMotorPort = 32;
-    public static final int kPivotMotorPort = 33;
+    public static final int kElevatorPivotMotorPort = 33;
 
-    public static double kP = 0; //TODO: Change this value
-    public static double kI = 0; //TODO: Change this value
-    public static double kD = 0; //TODO: Change this value
-    public static double kFF = 0; //TODO: Change this value
+    public static double kElevatorP = 0; //TODO: Change this value
+    public static double kElevatorI = 0; //TODO: Change this value
+    public static double kElevatorD = 0; //TODO: Change this value
+    public static double kElevatorFF = 0; //TODO: Change this value
+
+    public static double kElevatorPivotP = 0; //TODO: Change this value
+    public static double kElevatorPivotI = 0; //TODO: Change this value
+    public static double kElevatorPivotD = 0; //TODO: Change this value
+    public static double kElevatorPivotFF = 0; //TODO: Change this value
 
     public static double kElevatorPodiumPosition = 0; //TODO: Change this value
     public static double kElevatorAmpPosition = 0; //TODO: Change this value
     public static double kElevatorStowPosition = 0; //TODO: Change this value
+    public static double kElevatorHandoffPosition = 0; //TODO: Change this value
+
+    public static double kElevatorPodiumPivotPosition = 0; //TODO: Change this value
+    public static double kElevatorAmpPivotPosition = 0; //TODO: Change this value
+    public static double kElevatorStowPivotPosition = 0; //TODO: Change this value
+    public static double kElevatorHandoffPivotPosition = 0; //TODO: Change this value
 
 
 
@@ -241,6 +252,7 @@ public final class Constants {
     public static double kIntakePivotPosition = 0; //TODO: Change this value
     public static double kShootNearSpeakerPivotPosition = 0;
     public static double kShootFarSpeakerPivotPosition = 0;
+    public static double kHandoffPivotPosition = 0;
 
 
 
