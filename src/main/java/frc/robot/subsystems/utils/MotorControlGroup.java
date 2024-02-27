@@ -37,6 +37,8 @@ public class MotorControlGroup {
         motors[motorIndex].set(power);
     }
 
+    
+
 
     //Set the defaultBrakeMode of all motors in the control group
     public void setDefaultBrakeMode(boolean brakeMode){

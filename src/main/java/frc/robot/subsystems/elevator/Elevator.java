@@ -46,7 +46,9 @@ public class Elevator extends SubsystemBase{
 
         this.elevatorMotor1 = new CANSparkMax(ElevatorConstants.kElevatorMotor1Port, CANSparkMax.MotorType.kBrushless);
         this.elevatorMotor2 = new CANSparkMax(ElevatorConstants.kElevatorMotor2Port, CANSparkMax.MotorType.kBrushless);
+        
         this.elevatorMotors = new MotorControlGroup(elevatorMotor1, elevatorMotor2);
+        
 
         this.pivotMotor = new CANSparkMax(ElevatorConstants.kElevatorPivotMotorPort, CANSparkMax.MotorType.kBrushless);
         this.rollerMotor = new CANSparkMax(ElevatorConstants.kRollerMotorPort, CANSparkMax.MotorType.kBrushless);
@@ -86,7 +88,7 @@ public class Elevator extends SubsystemBase{
     }
 
     public void setElevatorBrakeMode(boolean brakeMode){
-        elevatorMotors.setDefaultBrakeMode(brakeMode);
+        //elevatorMotor.setDefaultBrakeMode(brakeMode);
     }
 
     public void setPivotBrakeMode(boolean brakeMode){
@@ -132,7 +134,7 @@ public class Elevator extends SubsystemBase{
 
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Elevator Position", elevatorMotors.getEncoder().getPosition());
+        SmartDashboard.putNumber("Elevator Position", elevatorMotor1.getEncoder().getPosition());
         SmartDashboard.putNumber("Elevating Pivot Position", pivotMotor.getEncoder().getPosition());
     }
 

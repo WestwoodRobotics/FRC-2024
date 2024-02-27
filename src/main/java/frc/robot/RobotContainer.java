@@ -9,6 +9,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -34,18 +35,20 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PortConstants;
+import frc.robot.commands.intakeShooter.ShootAtRPM;
 //import frc.robot.commands.Intake.IntakeCommand;
 //import frc.robot.commands.elevator.ElevatorCommand;
 //import frc.robot.commands.elevator.ElevatorPosSet;
 import frc.robot.commands.swerve.driveCommand;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.intakeShooter.IntakeShooter;
 //import frc.robot.commands.wrist.WristCommand;
 //import frc.robot.commands.wrist.WristPosSet;
 //import frc.robot.subsystems.elevator.ElevatorModule;
 //import frc.robot.subsystems.intake.IntakeModule;
 import frc.robot.subsystems.swerve.SwerveDrive;
 //import frc.robot.subsystems.wrist.WristModule;
-import pabeles.concurrency.ConcurrencyOps.NewInstance;
+
 
 
 
@@ -59,6 +62,7 @@ public class RobotContainer {
   // The robot's subsystems
   private final SwerveDrive m_robotDrive = new SwerveDrive();
   private final Elevator m_elevator = new Elevator();
+  private final IntakeShooter m_IntakeShooter = new IntakeShooter();
   //private final Test test = new Test();
 
   // LED for indicating robot state, not implemented in hardware.
@@ -105,16 +109,13 @@ public class RobotContainer {
     
     // Configure default commands 
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
-    //test.setDefaultCommand(new testCommand(test, m_driverController));
-
     
-    // m_intakeModule.setDefaultCommand(new IntakeCommand(m_intakeModule, m_driverController, m_operatorController));
-    // m_elevatorModule.setDefaultCommand(new ElevatorCommand(m_elevatorModule, m_driverController, m_operatorController));
-    // m_wristModule.setDefaultCommand(new WristCommand(m_wristModule, m_driverController, m_operatorController));
+    //test.setDefaultCommand(new testCommand(test, m_driverController));
+    NamedCommands.registerCommand("Shoot", new ShootAtRPM(m_IntakeShooter, 3000, 500));
 
   }
 
-  /**
+  /*
    * Use this method to define your button->command mappings. Buttons can be
    * created by
    * instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its
@@ -127,7 +128,7 @@ public class RobotContainer {
 
     /*new JoystickButton(m_driverController, Button.kR1.value) // if R1 is pressed wheels should go into x formation
         .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
+            () -> m_robotDrive.setX()0,
             m_robotDrive));*/
    
     // review button mapping
@@ -148,9 +149,9 @@ public class RobotContainer {
 
 
 
-    leftBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-0.5)))
+    leftBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-0.85)))
     .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
-    rightBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(0.5)))
+    rightBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(0.85)))
     .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
 
     // aButton.onTrue(new ElevatorPosSet(m_elevatorModule, "cube_pickup")

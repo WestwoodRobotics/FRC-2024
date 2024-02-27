@@ -201,7 +201,8 @@ public final class Constants {
     public static double kElevatorPivotFF = 0; //TODO: Change this value
 
     public static double kElevatorPodiumPosition = 0; //TODO: Change this value
-    public static double kElevatorAmpPosition = 0; //TODO: Change this value
+    public static double kElevatorSourcePosition = 31;
+    public static double kElevatorAmpPosition = 22; //TODO: Change this value
     public static double kElevatorStowPosition = 0; //TODO: Change this value
     public static double kElevatorHandoffPosition = 0; //TODO: Change this value
 
@@ -215,10 +216,10 @@ public final class Constants {
     
   }
   public static final class IntakeShooterConstants {
-    public static final int kUpperMotorPort = 99;
-    public static final int kLowerMotorPort = 100;
-    public static final int kStowMotorPort =101;
-    public static final int kPivotMotorPort = 102;
+    public static final int kUpperMotorPort = 21;
+    public static final int kLowerMotorPort = 22;
+    public static final int kStowMotorPort =20;
+    public static final int kPivotMotorPort = 23;
 
 
     public static double kUpperRollerP = 0; //TODO: Change this value
