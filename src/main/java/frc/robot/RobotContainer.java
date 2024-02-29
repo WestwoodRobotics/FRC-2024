@@ -82,28 +82,32 @@ public class RobotContainer {
   XboxController m_operatorController = new XboxController(PortConstants.kOperatorControllerPort);
   
   // private final JoystickButton yButton = new JoystickButton(m_driverController, XboxController.Button.kY.value);
-  private final JoystickButton aButton = new JoystickButton(m_driverController, XboxController.Button.kA.value);
-  private final JoystickButton operatorBButton = new JoystickButton(m_operatorController, XboxController.Button.kB.value);
-  private final JoystickButton operatorXButton = new JoystickButton(m_operatorController, XboxController.Button.kX.value);
+  private final JoystickButton DriverAButton = new JoystickButton(m_driverController, XboxController.Button.kA.value);
+  private final JoystickButton DriverBButton = new JoystickButton(m_driverController, XboxController.Button.kB.value);
+  private final JoystickButton DriverXButton = new JoystickButton(m_driverController, XboxController.Button.kX.value);
+  private final JoystickButton DriverYButton = new JoystickButton(m_driverController, XboxController.Button.kY.value);
 
-  private final JoystickButton operatorAButton = new JoystickButton(m_operatorController, XboxController.Button.kA.value);
-
-  private final POVButton dPadUp = new POVButton(m_driverController, 0);
-  private final POVButton dPadRight = new POVButton(m_driverController, 90);
-  private final POVButton dPadDown = new POVButton(m_driverController, 180);
-  private final POVButton dPadLeft = new POVButton(m_driverController, 270);
-
-  private final POVButton dPadUp1 = new POVButton(m_driverController, 0);
-  private final POVButton dPadRight1 = new POVButton(m_driverController, 90);
-  private final POVButton dPadDown1 = new POVButton(m_driverController, 180);
-  private final POVButton dPadLeft1 = new POVButton(m_driverController, 270);
+  private final POVButton DriverDPadUp = new POVButton(m_driverController, 0);
+  private final POVButton DriverDPadRight = new POVButton(m_driverController, 90);
+  private final POVButton DriverDPadDown = new POVButton(m_driverController, 180);
+  private final POVButton DriverDPadLeft = new POVButton(m_driverController, 270);
+  
+  private final JoystickButton DriverRightBumper = new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value);
+  private final JoystickButton DriverLeftBumper = new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value);
 
 
-  private final JoystickButton rightBumper = new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value);
-  private final JoystickButton leftBumper = new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton OperatorAButton = new JoystickButton(m_operatorController, XboxController.Button.kA.value);
+  private final JoystickButton OperatorBButton = new JoystickButton(m_operatorController, XboxController.Button.kB.value);
+  private final JoystickButton OperatorXButton = new JoystickButton(m_operatorController, XboxController.Button.kX.value);
+  private final JoystickButton OperatorYButton = new JoystickButton(m_operatorController, XboxController.Button.kY.value);
 
+  private final POVButton OperatorDPadUp = new POVButton(m_operatorController, 0);
+  private final POVButton OperatorDPadRight = new POVButton(m_operatorController, 90);  
+  private final POVButton OperatorDPadDown = new POVButton(m_operatorController, 180);
+  private final POVButton OperatorDPadLeft = new POVButton(m_operatorController, 270);
 
-
+    private final JoystickButton OperatorRightBumper = new JoystickButton(m_operatorController, XboxController.Button.kRightBumper.value);
+  private final JoystickButton OperatorLeftBumper = new JoystickButton(m_operatorController, XboxController.Button.kLeftBumper.value);
 
 
 
@@ -147,50 +151,45 @@ public class RobotContainer {
             m_robotDrive));*/
    
     // review button mapping
-    aButton.whileTrue(new InstantCommand(
+    DriverAButton.whileTrue(new InstantCommand(
             () -> m_robotDrive.resetGyro(),
             m_robotDrive));
 
     // reference for future command mapping
 
-    dPadUp.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(1.0)))
+    DriverDPadUp.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(1.0)))
     .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
-    dPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(-1)))
+    DriverDPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(-1)))
     .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
-    dPadLeft.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(-0.25)))
+    DriverDPadLeft.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(-0.25)))
     .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
-    dPadRight.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(0.25)))
+    DriverDPadRight.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(0.25)))
     .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
+    
     
 
-    // dPadUp1.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(1.0)))
-    // .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
-    // dPadDown1.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(-1.0)))
-    // .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
-    // dPadLeft1.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(-0.25)))
-    // .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
-    // dPadRight1.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(0.25)))
-    // .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
-    
     Trigger operatorRightY = new Trigger(() -> m_operatorController.getRightY() > 0.10);
-    operatorRightY.whileTrue(new InstantCommand(() -> m_elevator.setPivotPower(m_operatorController.getRightY()/4))).onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
+    operatorRightY.whileTrue(new InstantCommand(() -> m_elevator.setElevatorPower(m_operatorController.getRightY()))).onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
 
     Trigger operatorLeftTrigger = new Trigger(() -> m_operatorController.getLeftTriggerAxis() > 0.75);
     Trigger operatorRightTrigger = new Trigger(() -> m_operatorController.getRightTriggerAxis() > 0.75);
+
+
     operatorLeftTrigger.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(1), m_IntakeShooter)).onFalse(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
     operatorRightTrigger.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter)).onFalse(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
     
     //Operator Intake
-    operatorBButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setStowPower(1), m_IntakeShooter)).onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
+    OperatorBButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setStowPower(1), m_IntakeShooter)).onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
     //Operator Outtake
-    operatorXButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setStowPower(-1), m_IntakeShooter)).onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
+    OperatorXButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setStowPower(-1), m_IntakeShooter)).onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
 
-    Command c = new elevatorPositionNoPID(m_elevator, ElevatorPositions.AMP);
-    operatorAButton.onTrue(c);
+    OperatorAButton.onTrue(new elevatorPositionNoPID(m_elevator, ElevatorPositions.AMP));
 
-    leftBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-0.85)))
+
+
+    DriverLeftBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-0.85)))
     .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
-    rightBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(0.85)))
+    DriverRightBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(0.85)))
     .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
 
     // aButton.onTrue(new ElevatorPosSet(m_elevatorModule, "cube_pickup")
