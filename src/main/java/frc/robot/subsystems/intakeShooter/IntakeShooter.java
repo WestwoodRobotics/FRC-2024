@@ -43,7 +43,7 @@ public class IntakeShooter extends SubsystemBase {
 
     public void setRollerPower(double power){
         upperRollerMotor.set(power);
-        lowerRollerMotor.set(power);
+        lowerRollerMotor.set(-power);
     }
 
     public void setRollerRPM (double upperRollerRPM, double lowerRollerRPM){

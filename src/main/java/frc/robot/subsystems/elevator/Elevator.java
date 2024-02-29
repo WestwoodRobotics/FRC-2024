@@ -46,9 +46,7 @@ public class Elevator extends SubsystemBase{
 
         this.elevatorMotor1 = new CANSparkMax(ElevatorConstants.kElevatorMotor1Port, CANSparkMax.MotorType.kBrushless);
         this.elevatorMotor2 = new CANSparkMax(ElevatorConstants.kElevatorMotor2Port, CANSparkMax.MotorType.kBrushless);
-        
-        this.elevatorMotors = new MotorControlGroup(elevatorMotor1, elevatorMotor2);
-        
+        this.elevatorMotor1.setInverted(true);
 
         this.pivotMotor = new CANSparkMax(ElevatorConstants.kElevatorPivotMotorPort, CANSparkMax.MotorType.kBrushless);
         this.rollerMotor = new CANSparkMax(ElevatorConstants.kRollerMotorPort, CANSparkMax.MotorType.kBrushless);
@@ -59,17 +57,19 @@ public class Elevator extends SubsystemBase{
         this.setElevatorBrakeMode(true);
         this.setPivotBrakeMode(true);
         this.setRollerBrakeMode(true);
-
     }
 
     public void setElevatorPower(double power){
-        elevatorMotors.setPower(power);
+        elevatorMotor1.set(power);
+        elevatorMotor2.set(power);
         elevatorPosition = ElevatorPositions.MANUAL;
     }
 
     public void setElevatorPosition(ElevatorPositions position){
         double positionValue = positionValues.get(position);
-        elevatorMotors.setPosition(positionValue, elevatorPIDController);
+        elevatorPIDController.setSetpoint(positionValue);
+        elevatorMotor1.set(elevatorPIDController.calculate(elevatorMotor1.getEncoder().getPosition()));
+        elevatorMotor2.set(elevatorPIDController.calculate(elevatorMotor1.getEncoder().getPosition()));
         elevatorPosition = position;
     }
 
@@ -81,6 +81,31 @@ public class Elevator extends SubsystemBase{
         double positionValue = pivotPositionValues.get(position);
         elevatorPivotPIDController.setSetpoint(positionValue);
         pivotMotor.set(elevatorPivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
+    }
+
+    public boolean setPivotPositionNOPID (ElevatorPositions positions){
+        double positionValue = pivotPositionValues.get(positions);
+        double currentPosition = pivotMotor.getEncoder().getPosition();
+        if (positionValue < currentPosition){
+         pivotMotor.set(0.5);
+         System.out.println("Pivot Going");
+         return false;
+        } 
+        else if (positionValue > currentPosition){
+            pivotMotor.set(-0.5);
+            elevatorPosition = positions;
+            System.out.println("Pivot Going");
+            return false;
+        }
+        else if (positionValue == currentPosition){
+            pivotMotor.set(0);
+            elevatorPosition = positions;
+            System.out.println("Pivot Reached");
+            return true;
+        }
+
+
+        return false;
     }
 
     public void setRollerPower(double power){

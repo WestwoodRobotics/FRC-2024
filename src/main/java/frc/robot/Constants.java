@@ -202,7 +202,7 @@ public final class Constants {
 
     public static double kElevatorPodiumPosition = 0; //TODO: Change this value
     public static double kElevatorSourcePosition = 31;
-    public static double kElevatorAmpPosition = 22; //TODO: Change this value
+    public static double kElevatorAmpPosition = 24.118906; //TODO: Change this value
     public static double kElevatorStowPosition = 0; //TODO: Change this value
     public static double kElevatorHandoffPosition = 0; //TODO: Change this value
 
