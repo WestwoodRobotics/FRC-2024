@@ -161,6 +161,14 @@ public class Elevator extends SubsystemBase{
     public void periodic(){
         SmartDashboard.putNumber("Elevator Position", elevatorMotor1.getEncoder().getPosition());
         SmartDashboard.putNumber("Elevating Pivot Position", pivotMotor.getEncoder().getPosition());
+
+        boolean motor1Follower = elevatorMotor1.isFollower();
+        boolean motor2Follower = elevatorMotor2.isFollower();
+
+        SmartDashboard.putBoolean("Elevator Motor 1 Is Follower", motor1Follower);
+        SmartDashboard.putBoolean("Elevator Motor 2 Is Follower", motor2Follower);
+        
+        
     }
 
     

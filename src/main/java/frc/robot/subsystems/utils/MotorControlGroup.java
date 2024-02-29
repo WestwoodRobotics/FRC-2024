@@ -37,9 +37,6 @@ public class MotorControlGroup {
         motors[motorIndex].set(power);
     }
 
-    
-
-
     //Set the defaultBrakeMode of all motors in the control group
     public void setDefaultBrakeMode(boolean brakeMode){
         for (CANSparkBase motor : motors) {
@@ -64,8 +61,10 @@ public class MotorControlGroup {
         }
     }
 
-    public void setPosition(double position, PIDController pidController, int motorNum){
-        CANSparkBase motor = motors[motorNum] ;
+
+    //Use this one
+    public void setPosition(double position, PIDController pidController, int motorNum){ 
+        CANSparkBase motor = motors[motorNum];
         this.setPower(pidController.calculate(motor.getEncoder().getPosition(), position), motorNum);
     }
 
