@@ -103,6 +103,17 @@ public class IntakeShooter extends SubsystemBase {
         }
     }
 
+    public void stopAllMotors(){
+        stopPivotMotor();
+        stopRollerMotor();
+        stopStowMotor();
+    }
+
+    public void stopAllIntakeShooterRollers(){
+        upperRollerMotor.set(0);
+        lowerRollerMotor.set(0);
+        stowMotor.set(0);
+    }
     public void stopPivotMotor(){
         pivotMotor.set(0);
     }

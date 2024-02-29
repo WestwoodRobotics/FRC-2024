@@ -6,6 +6,7 @@ public enum ElevatorPositions {
     PODIUM,
     AMP,
     STOW,
-    HANDOFF,  
-    MANUAL
+    HANDOFF, 
+    SOURCE,
+    MANUAL,
 }

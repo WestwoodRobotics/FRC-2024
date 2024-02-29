@@ -25,23 +25,26 @@ public class Elevator extends SubsystemBase{
     private CANSparkMax rollerMotor;
 
     private ElevatorPositions elevatorPosition;
+    private ElevatorPositions elevatorPivotPosition;
 
-    private Map<ElevatorPositions, Double> positionValues;
+    private Map<ElevatorPositions, Double> ElevatorPositionValues;
     private Map<ElevatorPositions, Double> pivotPositionValues;
 
     public Elevator(){
 
-        positionValues = new HashMap<>();
-        positionValues.put(ElevatorPositions.PODIUM, ElevatorConstants.kElevatorPodiumPosition);
-        positionValues.put(ElevatorPositions.AMP, ElevatorConstants.kElevatorAmpPosition);
-        positionValues.put(ElevatorPositions.STOW, ElevatorConstants.kElevatorStowPosition);
-        positionValues.put(ElevatorPositions.HANDOFF, ElevatorConstants.kElevatorHandoffPosition);
+        ElevatorPositionValues = new HashMap<>();
+        ElevatorPositionValues.put(ElevatorPositions.PODIUM, ElevatorConstants.kElevatorPodiumPosition);
+        ElevatorPositionValues.put(ElevatorPositions.AMP, ElevatorConstants.kElevatorAmpPosition);
+        ElevatorPositionValues.put(ElevatorPositions.STOW, ElevatorConstants.kElevatorStowPosition);
+        ElevatorPositionValues.put(ElevatorPositions.HANDOFF, ElevatorConstants.kElevatorHandoffPosition);
+        ElevatorPositionValues.put(ElevatorPositions.SOURCE, ElevatorConstants.kElevatorSourcePosition);
 
         pivotPositionValues = new HashMap<>();
         pivotPositionValues.put(ElevatorPositions.PODIUM, ElevatorConstants.kElevatorPodiumPivotPosition);
         pivotPositionValues.put(ElevatorPositions.AMP, ElevatorConstants.kElevatorAmpPivotPosition);
         pivotPositionValues.put(ElevatorPositions.STOW, ElevatorConstants.kElevatorStowPivotPosition);
         pivotPositionValues.put(ElevatorPositions.HANDOFF, ElevatorConstants.kElevatorHandoffPivotPosition);
+        pivotPositionValues.put(ElevatorPositions.SOURCE, ElevatorConstants.kElevatorSourcePivotPosition);
         
 
         this.elevatorMotor1 = new CANSparkMax(ElevatorConstants.kElevatorMotor1Port, CANSparkMax.MotorType.kBrushless);
@@ -57,6 +60,7 @@ public class Elevator extends SubsystemBase{
         this.setElevatorBrakeMode(true);
         this.setPivotBrakeMode(true);
         this.setRollerBrakeMode(true);
+
     }
 
     public void setElevatorPower(double power){
@@ -66,21 +70,23 @@ public class Elevator extends SubsystemBase{
     }
 
     public void setElevatorPosition(ElevatorPositions position){
-        double positionValue = positionValues.get(position);
+        double positionValue = ElevatorPositionValues.get(position);
         elevatorPIDController.setSetpoint(positionValue);
         elevatorMotor1.set(elevatorPIDController.calculate(elevatorMotor1.getEncoder().getPosition()));
-        elevatorMotor2.set(elevatorPIDController.calculate(elevatorMotor1.getEncoder().getPosition()));
+        elevatorMotor2.set(elevatorPIDController.calculate(elevatorMotor2.getEncoder().getPosition()));
         elevatorPosition = position;
     }
 
     public void setPivotPower(double power){
         pivotMotor.set(power);
+        elevatorPivotPosition = ElevatorPositions.MANUAL;
     }
 
     public void setPivotPosition(ElevatorPositions position){
         double positionValue = pivotPositionValues.get(position);
         elevatorPivotPIDController.setSetpoint(positionValue);
         pivotMotor.set(elevatorPivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
+        elevatorPivotPosition = position;
     }
 
     public boolean setPivotPositionNOPID (ElevatorPositions positions){
@@ -93,20 +99,45 @@ public class Elevator extends SubsystemBase{
         } 
         else if (positionValue > currentPosition){
             pivotMotor.set(-0.5);
-            elevatorPosition = positions;
+            elevatorPivotPosition = positions;
             System.out.println("Pivot Going");
             return false;
         }
         else if (positionValue == currentPosition){
             pivotMotor.set(0);
-            elevatorPosition = positions;
+            elevatorPivotPosition = positions;
             System.out.println("Pivot Reached");
             return true;
         }
-
-
         return false;
     }
+
+    public boolean setElevatorPositionNOPID (ElevatorPositions positions){
+        double positionValue = ElevatorPositionValues.get(positions);
+        double currentPosition = elevatorMotor1.getEncoder().getPosition();
+        if (positionValue < currentPosition){
+            elevatorMotor1.set(0.5);
+            elevatorMotor2.set(0.5);
+            System.out.println("Elevator Going");
+            return false;
+        } 
+        else if (positionValue > currentPosition){
+            elevatorMotor1.set(-0.5);
+            elevatorMotor2.set(-0.5);
+            elevatorPosition = positions;
+            System.out.println("Elevator Going");
+            return false;
+        }
+        else if (positionValue == currentPosition){
+            elevatorMotor1.set(0);
+            elevatorMotor2.set(0);
+            elevatorPosition = positions;
+            System.out.println("Elevator Reached");
+            return true;
+        }
+        return false;
+    }
+
 
     public void setRollerPower(double power){
         rollerMotor.set(power);
@@ -148,6 +179,11 @@ public class Elevator extends SubsystemBase{
                 this.setPivotPosition(position);
                 elevatorPosition = position;
                 break;
+            case SOURCE:
+                this.setElevatorPosition(position);
+                this.setPivotPosition(position);
+                elevatorPosition = position;
+                break;
             default:
                 break;                
         }
@@ -157,6 +193,9 @@ public class Elevator extends SubsystemBase{
         return elevatorPosition;
     }
 
+    public ElevatorPositions getPivotPosition(){
+        return elevatorPivotPosition;
+    }
     @Override
     public void periodic(){
         SmartDashboard.putNumber("Elevator Position", elevatorMotor1.getEncoder().getPosition());

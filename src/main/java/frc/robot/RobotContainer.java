@@ -39,6 +39,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PortConstants;
 import frc.robot.commands.elevator.elevatorPositionNoPID;
+import frc.robot.commands.intakeShooter.IntakeCommand;
 import frc.robot.commands.intakeShooter.ShootAtRPM;
 //import frc.robot.commands.Intake.IntakeCommand;
 //import frc.robot.commands.elevator.ElevatorCommand;
@@ -106,7 +107,12 @@ public class RobotContainer {
   private final POVButton OperatorDPadDown = new POVButton(m_operatorController, 180);
   private final POVButton OperatorDPadLeft = new POVButton(m_operatorController, 270);
 
-    private final JoystickButton OperatorRightBumper = new JoystickButton(m_operatorController, XboxController.Button.kRightBumper.value);
+  private Trigger operatorRightYTrigger = new Trigger(() -> m_operatorController.getRightY() > 0.10);
+
+  private Trigger operatorLeftTrigger = new Trigger(() -> m_operatorController.getLeftTriggerAxis() > 0.75);
+  private Trigger operatorRightTrigger = new Trigger(() -> m_operatorController.getRightTriggerAxis() > 0.75);
+
+  private final JoystickButton OperatorRightBumper = new JoystickButton(m_operatorController, XboxController.Button.kRightBumper.value);
   private final JoystickButton OperatorLeftBumper = new JoystickButton(m_operatorController, XboxController.Button.kLeftBumper.value);
 
 
@@ -168,22 +174,29 @@ public class RobotContainer {
     
     
 
-    Trigger operatorRightY = new Trigger(() -> m_operatorController.getRightY() > 0.10);
-    operatorRightY.whileTrue(new InstantCommand(() -> m_elevator.setElevatorPower(m_operatorController.getRightY()))).onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
 
-    Trigger operatorLeftTrigger = new Trigger(() -> m_operatorController.getLeftTriggerAxis() > 0.75);
-    Trigger operatorRightTrigger = new Trigger(() -> m_operatorController.getRightTriggerAxis() > 0.75);
+    operatorRightYTrigger.whileTrue(new InstantCommand(() -> m_elevator.setElevatorPower(m_operatorController.getRightY())))
+                         .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
 
+    //Operator Intake
+    operatorLeftTrigger.onTrue(new IntakeCommand(m_IntakeShooter, 1, 0))
+                       .onFalse(new InstantCommand(() -> m_IntakeShooter.stopAllIntakeShooterRollers(), m_IntakeShooter));
 
-    operatorLeftTrigger.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(1), m_IntakeShooter)).onFalse(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
-    operatorRightTrigger.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter)).onFalse(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
+    //Operator Outtake
+    operatorRightTrigger.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter))
+                        .onFalse(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
     
     //Operator Intake
-    OperatorBButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setStowPower(1), m_IntakeShooter)).onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
+    OperatorBButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setStowPower(1), m_IntakeShooter))
+                   .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
     //Operator Outtake
-    OperatorXButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setStowPower(-1), m_IntakeShooter)).onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
+    OperatorXButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setStowPower(-1), m_IntakeShooter))
+                   .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
 
-    OperatorAButton.onTrue(new elevatorPositionNoPID(m_elevator, ElevatorPositions.AMP));
+    //TODO: Probably need to change greater/less than signs in the implementation of the method the command calls
+    OperatorAButton.onTrue(new elevatorPositionNoPID(m_elevator, ElevatorPositions.AMP)); 
+    //TODO: Probably need to change greater/less than signs in the implementation of the method the command calls
+    OperatorYButton.onTrue(new elevatorPositionNoPID(m_elevator, ElevatorPositions.SOURCE));
 
 
 

@@ -1,4 +1,4 @@
-package frc.robot.commands.elevator;
+package frc.robot.commands.intakeShooter;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -7,15 +7,20 @@ import frc.robot.subsystems.intakeShooter.IntakeShooter;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 
-public class elevatorPositionNoPID extends Command{
-    private Elevator m_elevator;
-    private ElevatorPositions targetPosition;
+public class IntakeCommand extends Command{
+    private IntakeShooter m_intakeShooter;
+    private double rollerPower;
+    private double stowPower;
 
 
-    public elevatorPositionNoPID(Elevator elevator, ElevatorPositions position){
-        m_elevator = elevator;
-        this.targetPosition = position;
-        addRequirements(m_elevator);
+    private boolean isFinished;
+
+    public IntakeCommand(IntakeShooter intakeShooter, double rollerPower, double stowPower){
+        m_intakeShooter = intakeShooter;
+        this.rollerPower = rollerPower;
+        this.stowPower = stowPower;
+
+        addRequirements(intakeShooter);
     }
 
     /**
@@ -33,16 +38,9 @@ public class elevatorPositionNoPID extends Command{
      */
     @Override
     public void execute(){
-       m_elevator.setElevatorPositionNOPID(targetPosition);
-       m_elevator.setPivotPositionNOPID(targetPosition);
+        m_intakeShooter.setRollerPower(rollerPower);
+        m_intakeShooter.setStowPower(stowPower);
     }
 
-    /**
-     * Returns whether the command has finished.
-     * @return true if the command has finished, false otherwise.
-     */
-    @Override
-    public boolean isFinished(){
-        return (m_elevator.getElevatorPosition() == targetPosition) && (m_elevator.getPivotPosition() == targetPosition);
-    }
+    
 }

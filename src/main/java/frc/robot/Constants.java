@@ -207,6 +207,7 @@ public final class Constants {
     public static double kElevatorHandoffPosition = 0; //TODO: Change this value
 
     public static double kElevatorPodiumPivotPosition = 0; //TODO: Change this value
+    public static double kElevatorSourcePivotPosition = 0; //TODO: Change this value
     public static double kElevatorAmpPivotPosition = 0; //TODO: Change this value
     public static double kElevatorStowPivotPosition = 0; //TODO: Change this value
     public static double kElevatorHandoffPivotPosition = 0; //TODO: Change this value
