@@ -189,6 +189,10 @@ public class RobotContainer {
     .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
     OperatorDPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(-1)))
     .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
+    OperatorDPadLeft.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(1.0)))
+    .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
+    OperatorDPadRight.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-1)))
+    .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
 
     
     //Operator Intake
