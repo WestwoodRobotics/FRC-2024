@@ -125,6 +125,7 @@ public class IntakeShooter extends SubsystemBase {
         lowerRollerMotor.set(0);
         stowMotor.set(0);
     }
+    
     public void stopPivotMotor(){
         pivotMotor.set(0);
     }

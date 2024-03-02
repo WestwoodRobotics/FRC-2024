@@ -238,11 +238,11 @@ public final class Constants {
     public static double kPivotD = 0; //TODO: Change this value
     public static double kPivotFF = 0; //TODO: Change this value
 
-
-
-    public static double kStowPivotPosition = 0; //TODO: Change this value
-    public static double kIntakePivotPosition = 72; //TODO: Change this value
-    public static double kShootNearSpeakerPivotPosition = 35.76;
+    // Motor encoder positions
+    public static double kStowPivotPosition = 0;
+    public static double kIntakePivotPosition = 60;
+    public static double kShootNearSpeakerPivotPosition = 40;
+    // Absolute encoder positions
     public static double kShootFarSpeakerPivotPosition = 3.428;
     public static double kHandoffPivotPosition = -3.69;
 

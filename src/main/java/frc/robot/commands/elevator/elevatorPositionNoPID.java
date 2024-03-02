@@ -31,8 +31,6 @@ public class elevatorPositionNoPID extends Command{
         t.start();
         l.reset();
         l.start();
-        
-        
     }
 
     /**
@@ -41,12 +39,9 @@ public class elevatorPositionNoPID extends Command{
      */
     @Override
     public void execute(){
- 
         //    m_elevator.setPivotPosition(targetPosition);
         m_elevator.setPivotPositionNOPID(targetPosition);
         isFinished = m_elevator.setElevatorPosition(targetPosition);
-
-        
     }
 
     /**
