@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -69,12 +70,32 @@ public class Elevator extends SubsystemBase{
         elevatorPosition = ElevatorPositions.MANUAL;
     }
 
-    public void setElevatorPosition(ElevatorPositions position){
+    public boolean setElevatorPosition(ElevatorPositions position){
         double positionValue = ElevatorPositionValues.get(position);
-        elevatorPIDController.setSetpoint(positionValue);
-        elevatorMotor1.set(elevatorPIDController.calculate(elevatorMotor1.getEncoder().getPosition()));
-        elevatorMotor2.set(elevatorPIDController.calculate(elevatorMotor2.getEncoder().getPosition()));
-        elevatorPosition = position;
+        double currentPosition = elevatorMotor1.getEncoder().getPosition();
+        
+        if (positionValue < currentPosition){
+            elevatorPIDController.setSetpoint(positionValue);
+            elevatorMotor1.set(elevatorPIDController.calculate(elevatorMotor1.getEncoder().getPosition()));
+            elevatorMotor2.set(elevatorPIDController.calculate(elevatorMotor2.getAbsoluteEncoder(Type.kDutyCycle).getPosition()));
+            System.out.println("Pivot Going 1");
+            return false;
+        } 
+        if(positionValue > currentPosition){
+            elevatorPIDController.setSetpoint(positionValue);
+            elevatorMotor1.set(elevatorPIDController.calculate(elevatorMotor1.getEncoder().getPosition()));
+            elevatorMotor2.set(elevatorPIDController.calculate(elevatorMotor2.getEncoder().getPosition()));
+            System.out.println("Pivot Going 1");
+            return false;
+        }
+        if (positionValue == currentPosition){
+            elevatorMotor1.set(0);
+            elevatorMotor2.set(0);
+            //elevatorPivotPosition = positions;
+            System.out.println("Pivot Reached");
+            return true;
+        }
+        return false;
     }
 
     public void setPivotPower(double power){
@@ -92,20 +113,24 @@ public class Elevator extends SubsystemBase{
     public boolean setPivotPositionNOPID (ElevatorPositions positions){
         double positionValue = pivotPositionValues.get(positions);
         double currentPosition = pivotMotor.getEncoder().getPosition();
+        
         if (positionValue < currentPosition){
-         pivotMotor.set(0.5);
-         System.out.println("Pivot Going");
-         return false;
-        } 
-        else if (positionValue > currentPosition){
-            pivotMotor.set(-0.5);
-            elevatorPivotPosition = positions;
-            System.out.println("Pivot Going");
+            elevatorPivotPIDController.setSetpoint(positionValue);
+            pivotMotor.set(elevatorPivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
+            System.out.println("Pivot Going 1");
             return false;
+        } 
+
+        if(positionValue > currentPosition){
+            elevatorPivotPIDController.setSetpoint(positionValue);
+            pivotMotor.set(elevatorPivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
+            System.out.println("Pivot Going 2");
+
         }
-        else if (positionValue == currentPosition){
+
+        if ((positionValue == currentPosition + 3) || (positionValue == currentPosition - 3) ){
             pivotMotor.set(0);
-            elevatorPivotPosition = positions;
+            //elevatorPivotPosition = positions;
             System.out.println("Pivot Reached");
             return true;
         }
@@ -116,14 +141,14 @@ public class Elevator extends SubsystemBase{
         double positionValue = ElevatorPositionValues.get(positions);
         double currentPosition = elevatorMotor1.getEncoder().getPosition();
         if (positionValue < currentPosition){
-            elevatorMotor1.set(0.5);
-            elevatorMotor2.set(0.5);
+            elevatorMotor1.set(-0.5);
+            elevatorMotor2.set(-0.5);
             System.out.println("Elevator Going");
             return false;
         } 
         else if (positionValue > currentPosition){
-            elevatorMotor1.set(-0.5);
-            elevatorMotor2.set(-0.5);
+            elevatorMotor1.set(+0.5);
+            elevatorMotor2.set(+0.5);
             elevatorPosition = positions;
             System.out.println("Elevator Going");
             return false;
@@ -160,28 +185,24 @@ public class Elevator extends SubsystemBase{
     public void setPosition(ElevatorPositions position){
         switch (position){
             case PODIUM:
-                this.setElevatorPosition(position);
-                this.setPivotPosition(position);
+
+                this.setPivotPositionNOPID(position);
                 elevatorPosition = position;
                 break;
             case AMP:
-                this.setElevatorPosition(position);
-                this.setPivotPosition(position);
+                this.setPivotPositionNOPID(position);
                 elevatorPosition = position;
                 break;
             case STOW:
-                this.setElevatorPosition(position);
-                this.setPivotPosition(position);
+                this.setPivotPositionNOPID(position);
                 elevatorPosition = position;
                 break;
             case HANDOFF:
-                this.setElevatorPosition(position);
-                this.setPivotPosition(position);
+                this.setPivotPositionNOPID(position);
                 elevatorPosition = position;
                 break;
             case SOURCE:
-                this.setElevatorPosition(position);
-                this.setPivotPosition(position);
+                this.setPivotPositionNOPID(position);
                 elevatorPosition = position;
                 break;
             default:
@@ -198,8 +219,8 @@ public class Elevator extends SubsystemBase{
     }
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Elevator Position", elevatorMotor1.getEncoder().getPosition());
-        SmartDashboard.putNumber("Elevating Pivot Position", pivotMotor.getEncoder().getPosition());
+        SmartDashboard.putNumber("Elevator Position", elevatorMotor1.getAbsoluteEncoder(Type.kDutyCycle).getPosition());
+        SmartDashboard.putNumber("Elevating Pivot Position", pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition());
 
         boolean motor1Follower = elevatorMotor1.isFollower();
         boolean motor2Follower = elevatorMotor2.isFollower();

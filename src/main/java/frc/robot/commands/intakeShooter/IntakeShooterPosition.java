@@ -1,4 +1,4 @@
-package frc.robot.commands.elevator;
+package frc.robot.commands.intakeShooter;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -7,18 +7,18 @@ import frc.robot.subsystems.intakeShooter.IntakeShooter;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 
-public class elevatorPositionNoPID extends Command{
+public class IntakeShooterPosition extends Command{
     Timer t = new Timer();
-    Timer l = new Timer();
-    private Elevator m_elevator;
-    private ElevatorPositions targetPosition;
+    private IntakeShooter i;
+    private IntakeShooterPositions ii;
+
     private boolean isFinished;
 
 
-    public elevatorPositionNoPID(Elevator elevator, ElevatorPositions position){
-        m_elevator = elevator;
-        this.targetPosition = position;
-        addRequirements(m_elevator);
+    public IntakeShooterPosition(IntakeShooter intakeShooter, IntakeShooterPositions position){
+        i = intakeShooter;
+        this.ii = position;
+        addRequirements(i);
     }
 
     /**
@@ -29,9 +29,6 @@ public class elevatorPositionNoPID extends Command{
     public void initialize(){
         t.reset();
         t.start();
-        l.reset();
-        l.start();
-        
         
     }
 
@@ -41,12 +38,9 @@ public class elevatorPositionNoPID extends Command{
      */
     @Override
     public void execute(){
- 
+       //m_elevator.setElevatorPositionNOPID(targetPosition);
         //    m_elevator.setPivotPosition(targetPosition);
-        m_elevator.setPivotPositionNOPID(targetPosition);
-        isFinished = m_elevator.setElevatorPosition(targetPosition);
-
-        
+        isFinished = i.setToPosition(ii);
     }
 
     /**
@@ -55,6 +49,6 @@ public class elevatorPositionNoPID extends Command{
      */
     @Override
     public boolean isFinished(){
-       return (t.get() > 0.7) && ((l.get() > 2) || isFinished);
+       return (t.get() > 3);
     }
 }

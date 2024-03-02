@@ -1,13 +1,17 @@
 package frc.robot.subsystems.intakeShooter;
 
 import com.revrobotics.CANSparkMax;
+
+import java.util.HashMap;
+
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeShooterConstants;
+import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 
 public class IntakeShooter extends SubsystemBase {
@@ -25,6 +29,7 @@ public class IntakeShooter extends SubsystemBase {
     private PIDController pivotPIDController;
 
     private IntakeShooterPositions intakeShooterPosition;
+    HashMap<IntakeShooterPositions, Double> pivotPositionValues = new HashMap<>();
 
     public IntakeShooter(){
         upperRollerMotor = new CANSparkMax(IntakeShooterConstants.kUpperMotorPort, MotorType.kBrushless);
@@ -39,6 +44,11 @@ public class IntakeShooter extends SubsystemBase {
         pivotPIDController = new PIDController(IntakeShooterConstants.kPivotP, 
         IntakeShooterConstants.kPivotI, IntakeShooterConstants.kPivotD);
         intakeShooterPosition = IntakeShooterPositions.STOW;
+
+        
+        pivotPositionValues.put(IntakeShooterPositions.INTAKE, IntakeShooterConstants.kIntakePivotPosition);
+        pivotPositionValues.put(IntakeShooterPositions.STOW, IntakeShooterConstants.kIntakePivotPosition);
+
     }
 
     public void setRollerPower(double power){
@@ -70,9 +80,9 @@ public class IntakeShooter extends SubsystemBase {
         intakeShooterPosition = IntakeShooterPositions.MANUAL;
     }
 
-    public void setToPosition(IntakeShooterPositions position) {
-        if (intakeShooterPosition != position || intakeShooterPosition == IntakeShooterPositions.MANUAL) {
-            double setPoint;
+    public boolean setToPosition(IntakeShooterPositions position) {
+        double setPoint = 0;
+            
             switch (position) {
                 case STOW:
                     setPoint = IntakeShooterConstants.kStowPivotPosition;
@@ -91,6 +101,7 @@ public class IntakeShooter extends SubsystemBase {
                     break;
                 case MANUAL:
                     setPoint = pivotMotor.getEncoder().getPosition();
+                    
                     break;
                 default:
                     //Should never happen, because the only way to call this method is with a valid position
@@ -100,7 +111,7 @@ public class IntakeShooter extends SubsystemBase {
             pivotPIDController.setSetpoint(setPoint);
             pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
             intakeShooterPosition = position;
-        }
+            return (pivotMotor.getEncoder().getPosition() == setPoint);
     }
 
     public void stopAllMotors(){
@@ -129,6 +140,30 @@ public class IntakeShooter extends SubsystemBase {
 
     public IntakeShooterPositions getState() {
         return intakeShooterPosition;
+    }
+
+    public boolean setPivotPositionNOPID (IntakeShooterPositions positions){
+        double positionValue = pivotPositionValues.get(positions);
+        double currentPosition = pivotMotor.getEncoder().getPosition();
+        
+        if (positionValue < currentPosition){
+            pivotPIDController.setSetpoint(positionValue);
+            pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition())/4);
+            System.out.println("Pivot Going 1");
+            return false;
+        } 
+        if(positionValue > currentPosition){
+            pivotPIDController.setSetpoint(positionValue);
+            pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition())/4);
+            System.out.println("Pivot Going 2");
+        }
+        if (positionValue == currentPosition){
+            pivotMotor.set(0);
+            //elevatorPivotPosition = positions;
+            System.out.println("Pivot Reached");
+            return true;
+        }
+        return false;
     }
 
     @Override

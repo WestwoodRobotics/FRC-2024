@@ -40,11 +40,14 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PortConstants;
 import frc.robot.commands.elevator.elevatorPositionNoPID;
 import frc.robot.commands.intakeShooter.IntakeCommand;
+import frc.robot.commands.intakeShooter.IntakeShooterPosition;
 import frc.robot.commands.intakeShooter.ShootAtRPM;
 //import frc.robot.commands.Intake.IntakeCommand;
 //import frc.robot.commands.elevator.ElevatorCommand;
 //import frc.robot.commands.elevator.ElevatorPosSet;
 import frc.robot.commands.swerve.driveCommand;
+import frc.robot.commands.vision.LEDCommand;
+import frc.robot.subsystems.vision.BeamBreak;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intakeShooter.IntakeShooter;
 //import frc.robot.commands.wrist.WristCommand;
@@ -54,6 +57,8 @@ import frc.robot.subsystems.intakeShooter.IntakeShooter;
 import frc.robot.subsystems.swerve.SwerveDrive;
 //import frc.robot.subsystems.wrist.WristModule;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
+import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
+import frc.robot.subsystems.vision.LED;
 
 
 
@@ -69,6 +74,8 @@ public class RobotContainer {
   private final SwerveDrive m_robotDrive = new SwerveDrive();
   private final Elevator m_elevator = new Elevator();
   private final IntakeShooter m_IntakeShooter = new IntakeShooter();
+  private LED led = new LED(9);
+  private BeamBreak beamBreak = new BeamBreak(9);
   //private final Test test = new Test();
 
   // LED for indicating robot state, not implemented in hardware.
@@ -107,7 +114,7 @@ public class RobotContainer {
   private final POVButton OperatorDPadDown = new POVButton(m_operatorController, 180);
   private final POVButton OperatorDPadLeft = new POVButton(m_operatorController, 270);
 
-  private Trigger operatorRightYTrigger = new Trigger(() -> m_operatorController.getRightY() > 0.10);
+  private Trigger operatorRightYTrigger = new Trigger(() -> Math.abs(m_operatorController.getRightY()) > 0.10);
 
   private Trigger operatorLeftTrigger = new Trigger(() -> m_operatorController.getLeftTriggerAxis() > 0.75);
   private Trigger operatorRightTrigger = new Trigger(() -> m_operatorController.getRightTriggerAxis() > 0.75);
@@ -134,7 +141,7 @@ public class RobotContainer {
     // Configure default commands 
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
     m_IntakeShooter.setDefaultCommand(new InstantCommand(() -> m_IntakeShooter.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? m_operatorController.getLeftY() : 0.00), m_IntakeShooter));
-    
+    led.setDefaultCommand(new LEDCommand(led, beamBreak));
     //test.setDefaultCommand(new testCommand(test, m_driverController));
     NamedCommands.registerCommand("Shoot", new ShootAtRPM(m_IntakeShooter, 3000, 500));
 
@@ -157,7 +164,7 @@ public class RobotContainer {
             m_robotDrive));*/
    
     // review button mapping
-    DriverAButton.whileTrue(new InstantCommand(
+    DriverYButton.whileTrue(new InstantCommand(
             () -> m_robotDrive.resetGyro(),
             m_robotDrive));
 
@@ -171,15 +178,21 @@ public class RobotContainer {
     .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
     DriverDPadRight.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(0.25)))
     .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
+
+    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER))
+                 .onFalse(new InstantCommand(() -> m_IntakeShooter.setPivotPower(0), m_IntakeShooter));
+
+    operatorRightYTrigger.onTrue(new InstantCommand(() -> m_elevator.setPivotPower((Math.abs(m_operatorController.getRightY()) > 0.1) ? m_operatorController.getRightY() : 0.0 ), m_elevator))
+                         .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0), m_elevator));
+
+    OperatorDPadUp.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(1.0)))
+    .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
+    OperatorDPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(-1)))
+    .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
+
     
-    
-
-
-    operatorRightYTrigger.whileTrue(new InstantCommand(() -> m_elevator.setElevatorPower(m_operatorController.getRightY())))
-                         .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
-
     //Operator Intake
-    operatorLeftTrigger.onTrue(new IntakeCommand(m_IntakeShooter, 1, 0))
+    operatorLeftTrigger.onTrue(new IntakeCommand(m_IntakeShooter, 1, -1))
                        .onFalse(new InstantCommand(() -> m_IntakeShooter.stopAllIntakeShooterRollers(), m_IntakeShooter));
 
     //Operator Outtake
@@ -194,15 +207,15 @@ public class RobotContainer {
                    .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
 
     //TODO: Probably need to change greater/less than signs in the implementation of the method the command calls
-    OperatorAButton.onTrue(new elevatorPositionNoPID(m_elevator, ElevatorPositions.AMP)); 
+    DriverBButton.onTrue(new elevatorPositionNoPID(m_elevator, ElevatorPositions.AMP)); 
     //TODO: Probably need to change greater/less than signs in the implementation of the method the command calls
-    OperatorYButton.onTrue(new elevatorPositionNoPID(m_elevator, ElevatorPositions.SOURCE));
+    DriverXButton.onTrue(new elevatorPositionNoPID(m_elevator, ElevatorPositions.SOURCE));
 
 
-
-    DriverLeftBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-0.85)))
+ 
+    DriverLeftBumper.whileTrue(new InstantCommand(() -> m_elevator.setRollerPower(-0.85)))
     .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
-    DriverRightBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(0.85)))
+    DriverRightBumper.whileTrue(new InstantCommand(() -> m_elevator.setRollerPower(0.85)))
     .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
 
     // aButton.onTrue(new ElevatorPosSet(m_elevatorModule, "cube_pickup")
