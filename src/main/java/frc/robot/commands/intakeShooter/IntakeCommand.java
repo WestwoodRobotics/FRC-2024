@@ -8,6 +8,7 @@ import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 
 public class IntakeCommand extends Command{
+    Timer t = new Timer();
     private IntakeShooter m_intakeShooter;
     private double rollerPower;
     private double stowPower;
@@ -19,7 +20,6 @@ public class IntakeCommand extends Command{
         m_intakeShooter = intakeShooter;
         this.rollerPower = rollerPower;
         this.stowPower = stowPower;
-
         addRequirements(intakeShooter);
     }
 
@@ -29,7 +29,8 @@ public class IntakeCommand extends Command{
      */
     @Override
     public void initialize(){
-
+        t.reset(); 
+        t.start();
     }
 
     /**
@@ -40,7 +41,20 @@ public class IntakeCommand extends Command{
     public void execute(){
         m_intakeShooter.setRollerPower(rollerPower);
         m_intakeShooter.setStowPower(stowPower);
+
+        if(t.get() > 1){
+            m_intakeShooter.setToPosition(IntakeShooterPositions.INTAKE);
+            isFinished = true;
+        }
+
     }
+
+    @Override
+    public boolean isFinished(){
+        return isFinished;
+    }
+
+
 
     
 }

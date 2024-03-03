@@ -7,7 +7,7 @@ import frc.robot.subsystems.intakeShooter.IntakeShooter;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 
-public class elevatorPositionNoPID extends Command{
+public class elevatorPosition extends Command{
     Timer t = new Timer();
     Timer l = new Timer();
     private Elevator m_elevator;
@@ -15,7 +15,7 @@ public class elevatorPositionNoPID extends Command{
     private boolean isFinished;
 
 
-    public elevatorPositionNoPID(Elevator elevator, ElevatorPositions position){
+    public elevatorPosition(Elevator elevator, ElevatorPositions position){
         m_elevator = elevator;
         this.targetPosition = position;
         addRequirements(m_elevator);
@@ -43,7 +43,7 @@ public class elevatorPositionNoPID extends Command{
     public void execute(){
  
         //    m_elevator.setPivotPosition(targetPosition);
-        m_elevator.setPivotPositionNOPID(targetPosition);
+        m_elevator.setPivotPosition(targetPosition);
         isFinished = m_elevator.setElevatorPosition(targetPosition);
 
         

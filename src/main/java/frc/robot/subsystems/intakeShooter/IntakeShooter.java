@@ -5,6 +5,8 @@ import com.revrobotics.CANSparkMax;
 import java.util.HashMap;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,6 +15,7 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
+import com.revrobotics.jni.CANSparkMaxJNI;
 
 public class IntakeShooter extends SubsystemBase {
 
@@ -37,17 +40,22 @@ public class IntakeShooter extends SubsystemBase {
         stowMotor = new CANSparkMax(IntakeShooterConstants.kStowMotorPort, MotorType.kBrushless);
         pivotMotor = new CANSparkMax(IntakeShooterConstants.kPivotMotorPort, MotorType.kBrushless);
         pivotMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        
         upperRollerPIDController = new PIDController(IntakeShooterConstants.kUpperRollerP, 
         IntakeShooterConstants.kUpperRollerI, IntakeShooterConstants.kUpperRollerD);
         lowerRollerPIDController = new PIDController(IntakeShooterConstants.kLowerRollerP, 
         IntakeShooterConstants.kLowerRollerI, IntakeShooterConstants.kLowerRollerD);
         pivotPIDController = new PIDController(IntakeShooterConstants.kPivotP, 
         IntakeShooterConstants.kPivotI, IntakeShooterConstants.kPivotD);
-        intakeShooterPosition = IntakeShooterPositions.STOW;
+        intakeShooterPosition = IntakeShooterPositions.HOME;
 
         
         pivotPositionValues.put(IntakeShooterPositions.INTAKE, IntakeShooterConstants.kIntakePivotPosition);
-        pivotPositionValues.put(IntakeShooterPositions.STOW, IntakeShooterConstants.kIntakePivotPosition);
+        pivotPositionValues.put(IntakeShooterPositions.HOME, IntakeShooterConstants.kHomePivotPosition);
+        pivotPositionValues.put(IntakeShooterPositions.SHOOT_NEAR_SPEAKER, IntakeShooterConstants.kShootNearSpeakerPivotPosition);
+        pivotPositionValues.put(IntakeShooterPositions.SHOOT_FAR_SPEAKER, IntakeShooterConstants.kShootFarSpeakerPivotPosition);
+        pivotPositionValues.put(IntakeShooterPositions.HANDOFF, IntakeShooterConstants.kHandoffPivotPosition);
+
 
     }
 
@@ -81,37 +89,11 @@ public class IntakeShooter extends SubsystemBase {
     }
 
     public boolean setToPosition(IntakeShooterPositions position) {
-        double setPoint = 0;
-            
-            switch (position) {
-                case STOW:
-                    setPoint = IntakeShooterConstants.kStowPivotPosition;
-                    break;
-                case INTAKE:
-                    setPoint = IntakeShooterConstants.kIntakePivotPosition;
-                    break;
-                case SHOOT_NEAR_SPEAKER:
-                    setPoint = IntakeShooterConstants.kShootNearSpeakerPivotPosition;
-                    break;
-                case SHOOT_FAR_SPEAKER:
-                    setPoint = IntakeShooterConstants.kShootFarSpeakerPivotPosition;
-                    break;
-                case HANDOFF:
-                    setPoint = IntakeShooterConstants.kHandoffPivotPosition;
-                    break;
-                case MANUAL:
-                    setPoint = pivotMotor.getEncoder().getPosition();
-                    
-                    break;
-                default:
-                    //Should never happen, because the only way to call this method is with a valid position
-                    throw new IllegalArgumentException("Invalid position: " + position);
-            }
-
-            pivotPIDController.setSetpoint(setPoint);
-            pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
-            intakeShooterPosition = position;
-            return (pivotMotor.getEncoder().getPosition() == setPoint);
+        double setPoint = pivotPositionValues.get(position);     
+        pivotPIDController.setSetpoint(setPoint);
+        pivotMotor.set(pivotPIDController.calculate(pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition()));
+        intakeShooterPosition = position;
+        return (pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition() == setPoint);
     }
 
     public void stopAllMotors(){
@@ -142,19 +124,19 @@ public class IntakeShooter extends SubsystemBase {
         return intakeShooterPosition;
     }
 
-    public boolean setPivotPositionNOPID (IntakeShooterPositions positions){
+    public boolean setPivotPosition (IntakeShooterPositions positions){
         double positionValue = pivotPositionValues.get(positions);
-        double currentPosition = pivotMotor.getEncoder().getPosition();
+        double currentPosition = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition();
         
         if (positionValue < currentPosition){
             pivotPIDController.setSetpoint(positionValue);
-            pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition())/4);
+            pivotMotor.set(pivotPIDController.calculate(currentPosition)/4);
             System.out.println("Pivot Going 1");
             return false;
         } 
         if(positionValue > currentPosition){
             pivotPIDController.setSetpoint(positionValue);
-            pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition())/4);
+            pivotMotor.set(pivotPIDController.calculate(currentPosition)/4);
             System.out.println("Pivot Going 2");
         }
         if (positionValue == currentPosition){
@@ -169,7 +151,7 @@ public class IntakeShooter extends SubsystemBase {
     @Override
     public void periodic(){
         SmartDashboard.putString ("Intake Shooter State" , intakeShooterPosition.toString()); 
-        SmartDashboard.putNumber("Pivot Position", pivotMotor.getEncoder().getPosition());
+        SmartDashboard.putNumber("Pivot Position", pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition());
         SmartDashboard.putNumber("Upper Roller RPM", upperRollerMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("Lower Roller RPM", lowerRollerMotor.getEncoder().getVelocity());
     }

@@ -36,14 +36,14 @@ public class Elevator extends SubsystemBase{
         ElevatorPositionValues = new HashMap<>();
         ElevatorPositionValues.put(ElevatorPositions.PODIUM, ElevatorConstants.kElevatorPodiumPosition);
         ElevatorPositionValues.put(ElevatorPositions.AMP, ElevatorConstants.kElevatorAmpPosition);
-        ElevatorPositionValues.put(ElevatorPositions.STOW, ElevatorConstants.kElevatorStowPosition);
+        ElevatorPositionValues.put(ElevatorPositions.HOME, ElevatorConstants.kElevatorHomePosition);
         ElevatorPositionValues.put(ElevatorPositions.HANDOFF, ElevatorConstants.kElevatorHandoffPosition);
         ElevatorPositionValues.put(ElevatorPositions.SOURCE, ElevatorConstants.kElevatorSourcePosition);
 
         pivotPositionValues = new HashMap<>();
         pivotPositionValues.put(ElevatorPositions.PODIUM, ElevatorConstants.kElevatorPodiumPivotPosition);
         pivotPositionValues.put(ElevatorPositions.AMP, ElevatorConstants.kElevatorAmpPivotPosition);
-        pivotPositionValues.put(ElevatorPositions.STOW, ElevatorConstants.kElevatorStowPivotPosition);
+        pivotPositionValues.put(ElevatorPositions.HOME, ElevatorConstants.kElevatorHomePivotPosition);
         pivotPositionValues.put(ElevatorPositions.HANDOFF, ElevatorConstants.kElevatorHandoffPivotPosition);
         pivotPositionValues.put(ElevatorPositions.SOURCE, ElevatorConstants.kElevatorSourcePivotPosition);
         
@@ -103,32 +103,25 @@ public class Elevator extends SubsystemBase{
         elevatorPivotPosition = ElevatorPositions.MANUAL;
     }
 
-    public void setPivotPosition(ElevatorPositions position){
-        double positionValue = pivotPositionValues.get(position);
-        elevatorPivotPIDController.setSetpoint(positionValue);
-        pivotMotor.set(elevatorPivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
-        elevatorPivotPosition = position;
-    }
-
-    public boolean setPivotPositionNOPID (ElevatorPositions positions){
+    public boolean setPivotPosition (ElevatorPositions positions){
         double positionValue = pivotPositionValues.get(positions);
         double currentPosition = pivotMotor.getEncoder().getPosition();
         
         if (positionValue < currentPosition){
             elevatorPivotPIDController.setSetpoint(positionValue);
-            pivotMotor.set(elevatorPivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
+            pivotMotor.set(elevatorPivotPIDController.calculate(currentPosition));
             System.out.println("Pivot Going 1");
             return false;
         } 
 
         if(positionValue > currentPosition){
             elevatorPivotPIDController.setSetpoint(positionValue);
-            pivotMotor.set(elevatorPivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
+            pivotMotor.set(elevatorPivotPIDController.calculate(currentPosition));
             System.out.println("Pivot Going 2");
 
         }
 
-        if ((positionValue == currentPosition + 3) || (positionValue == currentPosition - 3) ){
+        if ((positionValue == currentPosition)){
             pivotMotor.set(0);
             //elevatorPivotPosition = positions;
             System.out.println("Pivot Reached");
@@ -183,31 +176,8 @@ public class Elevator extends SubsystemBase{
 
 
     public void setPosition(ElevatorPositions position){
-        switch (position){
-            case PODIUM:
-
-                this.setPivotPositionNOPID(position);
-                elevatorPosition = position;
-                break;
-            case AMP:
-                this.setPivotPositionNOPID(position);
-                elevatorPosition = position;
-                break;
-            case STOW:
-                this.setPivotPositionNOPID(position);
-                elevatorPosition = position;
-                break;
-            case HANDOFF:
-                this.setPivotPositionNOPID(position);
-                elevatorPosition = position;
-                break;
-            case SOURCE:
-                this.setPivotPositionNOPID(position);
-                elevatorPosition = position;
-                break;
-            default:
-                break;                
-        }
+        this.setPivotPosition(position);
+        elevatorPosition = position;
     }
 
     public ElevatorPositions getElevatorPosition(){

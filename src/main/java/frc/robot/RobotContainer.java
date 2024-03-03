@@ -38,7 +38,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PortConstants;
-import frc.robot.commands.elevator.elevatorPositionNoPID;
+import frc.robot.commands.elevator.elevatorPosition;
 import frc.robot.commands.intakeShooter.IntakeCommand;
 import frc.robot.commands.intakeShooter.IntakeShooterPosition;
 import frc.robot.commands.intakeShooter.ShootAtRPM;
@@ -102,6 +102,9 @@ public class RobotContainer {
   
   private final JoystickButton DriverRightBumper = new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value);
   private final JoystickButton DriverLeftBumper = new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value);
+
+  private final Trigger DriverLeftTrigger = new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.75);
+  private final Trigger DriverRightTrigger = new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.75);
 
 
   private final JoystickButton OperatorAButton = new JoystickButton(m_operatorController, XboxController.Button.kA.value);
@@ -174,13 +177,45 @@ public class RobotContainer {
     .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
     DriverDPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(-1)))
     .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
-    DriverDPadLeft.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(-0.25)))
+
+    
+    // DriverDPadLeft.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(-0.25)))
+    // .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
+    // DriverDPadRight.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(0.25)))
+    // .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
+
+    DriverDPadLeft.onTrue(new InstantCommand(() -> m_IntakeShooter.setPivotPower(0.5)))
     .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
-    DriverDPadRight.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(0.25)))
+    DriverDPadRight.onTrue(new InstantCommand(() -> m_IntakeShooter.setPivotPower(-0.5)))
     .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
 
     DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER))
                  .onFalse(new InstantCommand(() -> m_IntakeShooter.setPivotPower(0), m_IntakeShooter));
+
+    //TODO: Probably need to change greater/less than signs in the implementation of the method the command calls
+    DriverBButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AMP)); 
+    //TODO: Probably need to change greater/less than signs in the implementation of the method the command calls
+    DriverYButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.SOURCE));
+    DriverXButton.onTrue((new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.HANDOFF))
+                         .alongWith(new elevatorPosition(m_elevator, ElevatorPositions.HANDOFF)));
+    
+    DriverLeftBumper.whileTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.INTAKE)
+                               .alongWith(new elevatorPosition(m_elevator, ElevatorPositions.AMP)))
+                    .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
+
+    DriverRightBumper.whileTrue(new elevatorPosition(m_elevator, ElevatorPositions.HOME)
+                               .alongWith(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.HOME)))
+    .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
+
+    DriverLeftTrigger.whileTrue(new InstantCommand(() -> m_IntakeShooter.setStowPower(1), m_IntakeShooter)
+                               .alongWith(new InstantCommand(() -> m_elevator.setRollerPower(0.85))))
+                     .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter)
+                              .alongWith(new InstantCommand(() -> m_elevator.setRollerPower(0), m_elevator)));
+    
+    DriverRightTrigger.whileTrue(new IntakeCommand(m_IntakeShooter, 1, -1)
+                                .alongWith(new InstantCommand(() -> m_elevator.setRollerPower(0.85), m_elevator)))
+                      .onFalse(new IntakeCommand(m_IntakeShooter, 0, 0));
+
 
     operatorRightYTrigger.onTrue(new InstantCommand(() -> m_elevator.setPivotPower((Math.abs(m_operatorController.getRightY()) > 0.1) ? m_operatorController.getRightY() : 0.0 ), m_elevator))
                          .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0), m_elevator));
@@ -210,17 +245,7 @@ public class RobotContainer {
     OperatorXButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setStowPower(-1), m_IntakeShooter))
                    .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
 
-    //TODO: Probably need to change greater/less than signs in the implementation of the method the command calls
-    DriverBButton.onTrue(new elevatorPositionNoPID(m_elevator, ElevatorPositions.AMP)); 
-    //TODO: Probably need to change greater/less than signs in the implementation of the method the command calls
-    DriverXButton.onTrue(new elevatorPositionNoPID(m_elevator, ElevatorPositions.SOURCE));
 
-
- 
-    DriverLeftBumper.whileTrue(new InstantCommand(() -> m_elevator.setRollerPower(-0.85)))
-    .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
-    DriverRightBumper.whileTrue(new InstantCommand(() -> m_elevator.setRollerPower(0.85)))
-    .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
 
     // aButton.onTrue(new ElevatorPosSet(m_elevatorModule, "cube_pickup")
     //           .andThen(new WristPosSet(m_wristModule, "cube_high")));

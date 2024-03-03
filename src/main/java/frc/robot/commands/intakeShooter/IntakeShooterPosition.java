@@ -9,16 +9,16 @@ import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 
 public class IntakeShooterPosition extends Command{
     Timer t = new Timer();
-    private IntakeShooter i;
-    private IntakeShooterPositions ii;
+    private IntakeShooter m_intakeShooter;
+    private IntakeShooterPositions targetPosition;
 
     private boolean isFinished;
 
 
     public IntakeShooterPosition(IntakeShooter intakeShooter, IntakeShooterPositions position){
-        i = intakeShooter;
-        this.ii = position;
-        addRequirements(i);
+        this.m_intakeShooter = intakeShooter;
+        this.targetPosition = position;
+        addRequirements(m_intakeShooter);
     }
 
     /**
@@ -29,7 +29,6 @@ public class IntakeShooterPosition extends Command{
     public void initialize(){
         t.reset();
         t.start();
-        
     }
 
     /**
@@ -40,7 +39,7 @@ public class IntakeShooterPosition extends Command{
     public void execute(){
        //m_elevator.setElevatorPositionNOPID(targetPosition);
         //    m_elevator.setPivotPosition(targetPosition);
-        isFinished = i.setToPosition(ii);
+        isFinished = m_intakeShooter.setToPosition(targetPosition);
     }
 
     /**
