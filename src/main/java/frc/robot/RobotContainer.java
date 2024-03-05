@@ -42,6 +42,7 @@ import frc.robot.commands.elevator.elevatorPosition;
 import frc.robot.commands.intakeShooter.IntakeCommand;
 import frc.robot.commands.intakeShooter.IntakeShooterPosition;
 import frc.robot.commands.intakeShooter.ShootAtRPM;
+import frc.robot.commands.intakeShooter.ShootForTimeCommand;
 //import frc.robot.commands.Intake.IntakeCommand;
 //import frc.robot.commands.elevator.ElevatorCommand;
 //import frc.robot.commands.elevator.ElevatorPosSet;
@@ -146,7 +147,7 @@ public class RobotContainer {
     m_IntakeShooter.setDefaultCommand(new InstantCommand(() -> m_IntakeShooter.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? m_operatorController.getLeftY() : 0.00), m_IntakeShooter));
     led.setDefaultCommand(new LEDCommand(led, beamBreak));
     //test.setDefaultCommand(new testCommand(test, m_driverController));
-    NamedCommands.registerCommand("Shoot", new ShootAtRPM(m_IntakeShooter, 3000, 500));
+    NamedCommands.registerCommand("Shoot", new ShootForTimeCommand(m_IntakeShooter, 3));
 
   }
 
@@ -270,6 +271,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new PathPlannerAuto("NewAutoy");
+    return new PathPlannerAuto("ShootAndMoveAuton");
   }
 }
