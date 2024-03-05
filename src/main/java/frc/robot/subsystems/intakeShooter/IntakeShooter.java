@@ -86,12 +86,14 @@ public class IntakeShooter extends SubsystemBase {
             switch (position) {
                 case STOW:
                     setPoint = IntakeShooterConstants.kStowPivotPosition;
+                    this.setRollerPower(0);
                     break;
                 case INTAKE:
                     setPoint = IntakeShooterConstants.kIntakePivotPosition;
                     break;
                 case SHOOT_NEAR_SPEAKER:
                     setPoint = IntakeShooterConstants.kShootNearSpeakerPivotPosition;
+                    this.setRollerPower(-1);
                     break;
                 case SHOOT_FAR_SPEAKER:
                     setPoint = IntakeShooterConstants.kShootFarSpeakerPivotPosition;
@@ -125,7 +127,7 @@ public class IntakeShooter extends SubsystemBase {
         lowerRollerMotor.set(0);
         stowMotor.set(0);
     }
-    
+
     public void stopPivotMotor(){
         pivotMotor.set(0);
     }

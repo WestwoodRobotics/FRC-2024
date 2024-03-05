@@ -178,22 +178,25 @@ public class RobotContainer {
     // of the method the command calls
     DriverXButton.onTrue(new elevatorPositionNoPID(m_elevator, ElevatorPositions.SOURCE));
 
-    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER));
+    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
 
     DriverRightBumper.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.STOW))
-      .onTrue(new elevatorPositionNoPID(m_elevator, ElevatorPositions.STOW));
+      .onTrue(new elevatorPositionNoPID(m_elevator, ElevatorPositions.STOW));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
 
     DriverLeftBumper.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.INTAKE));
 
     driverLeftTrigger.whileTrue(new InstantCommand(() -> {
       m_elevator.setRollerPower(0.85);
       m_IntakeShooter.setRollerPower(-1);
+      m_IntakeShooter.setStowPower(1);
     }, m_elevator, m_IntakeShooter))
         .onFalse(new StopAllRollersCommand(m_IntakeShooter, m_elevator));
 
     driverRightTrigger.whileTrue(new InstantCommand(() -> {
-      m_elevator.setRollerPower(0.85);
+      // Intake
+      m_elevator.setRollerPower(-0.85);
       m_IntakeShooter.setRollerPower(1);
+      m_IntakeShooter.setStowPower(-1);
     }, m_elevator, m_IntakeShooter))
         .onFalse(new StopAllRollersCommand(m_IntakeShooter, m_elevator));
 
