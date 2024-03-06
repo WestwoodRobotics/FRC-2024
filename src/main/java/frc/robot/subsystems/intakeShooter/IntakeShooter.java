@@ -131,21 +131,25 @@ public class IntakeShooter extends SubsystemBase {
         if (positionValue < currentPosition){
             pivotPIDController.setSetpoint(positionValue);
             pivotMotor.set(pivotPIDController.calculate(currentPosition)/4);
-            System.out.println("Pivot Going 1");
+            System.out.println("Pivot Below Setpoint");
             return false;
         } 
         if(positionValue > currentPosition){
             pivotPIDController.setSetpoint(positionValue);
             pivotMotor.set(pivotPIDController.calculate(currentPosition)/4);
-            System.out.println("Pivot Going 2");
+            System.out.println("Pivot Above Setpoint");
         }
         if (positionValue == currentPosition){
             pivotMotor.set(0);
             //elevatorPivotPosition = positions;
-            System.out.println("Pivot Reached");
+            System.out.println("Pivot Reached Setpoint");
             return true;
         }
         return false;
+    }
+
+    public void setPositionState(IntakeShooterPositions position){
+        intakeShooterPosition = position;
     }
 
     @Override

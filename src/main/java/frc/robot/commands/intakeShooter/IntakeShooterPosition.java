@@ -48,6 +48,15 @@ public class IntakeShooterPosition extends Command{
      */
     @Override
     public boolean isFinished(){
+        
        return (t.get() > 3) || isFinished;
     }
+
+    @Override
+    public void end(boolean interrupted){
+        m_intakeShooter.setRollerPower(0);
+        m_intakeShooter.setStowPower(0);
+        m_intakeShooter.setPositionState( interrupted ? IntakeShooterPositions.MANUAL : targetPosition);
+    }
+    
 }

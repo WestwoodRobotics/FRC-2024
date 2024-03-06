@@ -37,8 +37,8 @@ public class ShootForTimeCommand extends Command{
      */
     @Override
     public void execute(){
-        m_intakeShooter.setToPosition(IntakeShooterPositions.SHOOT_NEAR_SPEAKER);
-        Timer.delay(0.7);
+        // m_intakeShooter.setToPosition(IntakeShooterPositions.SHOOT_NEAR_SPEAKER);
+        // Timer.delay(0.7);
         m_intakeShooter.setRollerPower(1);
         Timer.delay(rampUpTime);
         m_intakeShooter.setStowPower(1);

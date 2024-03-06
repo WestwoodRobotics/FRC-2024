@@ -11,7 +11,6 @@ public class StopAllRollersCommand extends Command {
     public StopAllRollersCommand(IntakeShooter intakeShooter, Elevator elevator){
         m_intakeShooter = intakeShooter;
         m_elevator = elevator;
-
         addRequirements(intakeShooter, elevator);
     }
     
