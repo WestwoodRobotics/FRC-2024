@@ -44,7 +44,7 @@ public class elevatorPosition extends Command{
  
         //    m_elevator.setPivotPosition(targetPosition);
         m_elevator.setPivotPosition(targetPosition);
-        isFinished = m_elevator.setElevatorPosition(targetPosition);
+        m_elevator.setElevatorPosition(targetPosition);
 
         
     }
@@ -55,6 +55,6 @@ public class elevatorPosition extends Command{
      */
     @Override
     public boolean isFinished(){
-       return (t.get() > 0.7) && ((l.get() > 2) || isFinished);
+       return ((t.get() > 0.7) && (l.get() > 2));
     }
 }

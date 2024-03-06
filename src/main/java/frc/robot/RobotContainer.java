@@ -47,6 +47,7 @@ import frc.robot.commands.intakeShooter.ShootForTimeCommand;
 //import frc.robot.commands.elevator.ElevatorCommand;
 //import frc.robot.commands.elevator.ElevatorPosSet;
 import frc.robot.commands.swerve.driveCommand;
+import frc.robot.commands.utils.StopAllRollersCommand;
 import frc.robot.commands.vision.LEDCommand;
 import frc.robot.subsystems.vision.BeamBreak;
 import frc.robot.subsystems.elevator.Elevator;
@@ -71,69 +72,61 @@ import frc.robot.subsystems.vision.LED;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems
   private final SwerveDrive m_robotDrive = new SwerveDrive();
   private final Elevator m_elevator = new Elevator();
   private final IntakeShooter m_IntakeShooter = new IntakeShooter();
   private LED led = new LED(9);
   private BeamBreak beamBreak = new BeamBreak(9);
-  //private final Test test = new Test();
 
   // LED for indicating robot state, not implemented in hardware.
-
-  // private final IntakeModule m_intakeModule = new IntakeModule();
-  // private final ElevatorModule m_elevatorModule = new ElevatorModule();
-  // private final WristModule m_wristModule = new WristModule();
-  
 
   // The driver's controller
   XboxController m_driverController = new XboxController(PortConstants.kDriverControllerPort);
   XboxController m_operatorController = new XboxController(PortConstants.kOperatorControllerPort);
-  
-  // private final JoystickButton yButton = new JoystickButton(m_driverController, XboxController.Button.kY.value);
+
   private final JoystickButton DriverAButton = new JoystickButton(m_driverController, XboxController.Button.kA.value);
   private final JoystickButton DriverBButton = new JoystickButton(m_driverController, XboxController.Button.kB.value);
   private final JoystickButton DriverXButton = new JoystickButton(m_driverController, XboxController.Button.kX.value);
   private final JoystickButton DriverYButton = new JoystickButton(m_driverController, XboxController.Button.kY.value);
+  private final JoystickButton DriverGyroButton = new JoystickButton(m_driverController,
+      XboxController.Button.kStart.value);
 
   private final POVButton DriverDPadUp = new POVButton(m_driverController, 0);
   private final POVButton DriverDPadRight = new POVButton(m_driverController, 90);
   private final POVButton DriverDPadDown = new POVButton(m_driverController, 180);
   private final POVButton DriverDPadLeft = new POVButton(m_driverController, 270);
-  
-  private final JoystickButton DriverRightBumper = new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value);
-  private final JoystickButton DriverLeftBumper = new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value);
 
-  private final Trigger DriverLeftTrigger = new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.75);
-  private final Trigger DriverRightTrigger = new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.75);
+  private final JoystickButton DriverRightBumper = new JoystickButton(m_driverController,
+      XboxController.Button.kRightBumper.value);
+  private final JoystickButton DriverLeftBumper = new JoystickButton(m_driverController,
+      XboxController.Button.kLeftBumper.value);
+      
+  private final Trigger driverLeftTrigger = new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.5);
+  private final Trigger driverRightTrigger = new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.5);
 
-
-  private final JoystickButton OperatorAButton = new JoystickButton(m_operatorController, XboxController.Button.kA.value);
-  private final JoystickButton OperatorBButton = new JoystickButton(m_operatorController, XboxController.Button.kB.value);
-  private final JoystickButton OperatorXButton = new JoystickButton(m_operatorController, XboxController.Button.kX.value);
-  private final JoystickButton OperatorYButton = new JoystickButton(m_operatorController, XboxController.Button.kY.value);
+  private final JoystickButton OperatorAButton = new JoystickButton(m_operatorController,
+      XboxController.Button.kA.value);
+  private final JoystickButton OperatorBButton = new JoystickButton(m_operatorController,
+      XboxController.Button.kB.value);
+  private final JoystickButton OperatorXButton = new JoystickButton(m_operatorController,
+      XboxController.Button.kX.value);
+  private final JoystickButton OperatorYButton = new JoystickButton(m_operatorController,
+      XboxController.Button.kY.value);
 
   private final POVButton OperatorDPadUp = new POVButton(m_operatorController, 0);
-  private final POVButton OperatorDPadRight = new POVButton(m_operatorController, 90);  
+  private final POVButton OperatorDPadRight = new POVButton(m_operatorController, 90);
   private final POVButton OperatorDPadDown = new POVButton(m_operatorController, 180);
   private final POVButton OperatorDPadLeft = new POVButton(m_operatorController, 270);
 
   private Trigger operatorRightYTrigger = new Trigger(() -> Math.abs(m_operatorController.getRightY()) > 0.10);
 
-  private Trigger operatorLeftTrigger = new Trigger(() -> m_operatorController.getLeftTriggerAxis() > 0.75);
-  private Trigger operatorRightTrigger = new Trigger(() -> m_operatorController.getRightTriggerAxis() > 0.75);
+  private final Trigger operatorLeftTrigger = new Trigger(() -> m_operatorController.getLeftTriggerAxis() > 0.5);
+  private final Trigger operatorRightTrigger = new Trigger(() -> m_operatorController.getRightTriggerAxis() > 0.5);
 
-  private final JoystickButton OperatorRightBumper = new JoystickButton(m_operatorController, XboxController.Button.kRightBumper.value);
-  private final JoystickButton OperatorLeftBumper = new JoystickButton(m_operatorController, XboxController.Button.kLeftBumper.value);
-
-
-
-  // private final JoystickButton y2Button = new JoystickButton(m_operatorController, XboxController.Button.kY.value);
-  // private final JoystickButton a2Button = new JoystickButton(m_operatorController, XboxController.Button.kA.value);
-  // private final JoystickButton b2Button = new JoystickButton(m_operatorController, XboxController.Button.kB.value);
-  // private final JoystickButton x2Button = new JoystickButton(m_operatorController, XboxController.Button.kX.value);
-
-
+  private final JoystickButton OperatorRightBumper = new JoystickButton(m_operatorController,
+      XboxController.Button.kRightBumper.value);
+  private final JoystickButton OperatorLeftBumper = new JoystickButton(m_operatorController,
+      XboxController.Button.kLeftBumper.value);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -160,110 +153,93 @@ public class RobotContainer {
    * passing it to a
    * {@link JoystickButton}.
    */
-  private void configureButtonBindings() {
+  
+   private void configureButtonBindings() {
+    /*
+     * DRIVER BUTTON MAPPINGS
+     */
+    DriverGyroButton.whileTrue(new InstantCommand(
+        () -> m_robotDrive.resetGyro(),
+        m_robotDrive));
 
-    /*new JoystickButton(m_driverController, Button.kR1.value) // if R1 is pressed wheels should go into x formation
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX()0,
-            m_robotDrive));*/
-   
-    // review button mapping
-    DriverYButton.whileTrue(new InstantCommand(
-            () -> m_robotDrive.resetGyro(),
-            m_robotDrive));
-
-    // reference for future command mapping
-
-    DriverDPadUp.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(1.0)))
-    .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
-    DriverDPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(-1)))
-    .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
-
-    
-    // DriverDPadLeft.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(-0.25)))
-    // .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
-    // DriverDPadRight.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(0.25)))
-    // .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
-
-    DriverDPadLeft.onTrue(new InstantCommand(() -> m_IntakeShooter.setPivotPower(0.5)))
-    .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
-    DriverDPadRight.onTrue(new InstantCommand(() -> m_IntakeShooter.setPivotPower(-0.5)))
-    .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0)));
+    DriverDPadUp.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(1.0), m_elevator))
+        .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0), m_elevator));
+    DriverDPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(-1), m_elevator))
+        .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0), m_elevator));
+    DriverDPadLeft.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(-0.25), m_elevator))
+        .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0), m_elevator));
+    DriverDPadRight.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(0.25), m_elevator))
+        .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0), m_elevator));
 
     DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER))
-                 .onFalse(new InstantCommand(() -> m_IntakeShooter.setPivotPower(0), m_IntakeShooter));
+        .onFalse(new InstantCommand(() -> m_IntakeShooter.setPivotPower(0), m_IntakeShooter));
 
-    //TODO: Probably need to change greater/less than signs in the implementation of the method the command calls
-    DriverBButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AMP)); 
-    //TODO: Probably need to change greater/less than signs in the implementation of the method the command calls
-    DriverYButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.SOURCE));
-    DriverXButton.onTrue((new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.HANDOFF))
-                         .alongWith(new elevatorPosition(m_elevator, ElevatorPositions.HANDOFF)));
-    
-    DriverLeftBumper.whileTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.INTAKE)
-                               .alongWith(new elevatorPosition(m_elevator, ElevatorPositions.AMP)))
-                    .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
+    DriverBButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AMP));
+    // TODO: Probably need to change greater/less than signs in the implementation
+    // of the method the command calls
+    DriverXButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.SOURCE));
 
-    DriverRightBumper.whileTrue(new elevatorPosition(m_elevator, ElevatorPositions.HOME)
-                               .alongWith(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.HOME)))
-    .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
+    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
 
-    DriverLeftTrigger.whileTrue(new InstantCommand(() -> m_IntakeShooter.setStowPower(1), m_IntakeShooter)
-                               .alongWith(new InstantCommand(() -> m_elevator.setRollerPower(0.85))))
-                     .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter)
-                              .alongWith(new InstantCommand(() -> m_elevator.setRollerPower(0), m_elevator)));
-    
-    DriverRightTrigger.whileTrue(new IntakeCommand(m_IntakeShooter, 1, -1)
-                                .alongWith(new InstantCommand(() -> m_elevator.setRollerPower(0.85), m_elevator)))
-                      .onFalse(new IntakeCommand(m_IntakeShooter, 0, 0));
+    DriverRightBumper.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.HOME))
+      .onTrue(new elevatorPosition(m_elevator, ElevatorPositions.HOME));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
 
+    DriverLeftBumper.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.INTAKE));
 
-    operatorRightYTrigger.onTrue(new InstantCommand(() -> m_elevator.setPivotPower((Math.abs(m_operatorController.getRightY()) > 0.1) ? m_operatorController.getRightY() : 0.0 ), m_elevator))
-                         .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0), m_elevator));
+    driverLeftTrigger.whileTrue(new InstantCommand(() -> {
+      m_elevator.setRollerPower(0.85);
+      m_IntakeShooter.setRollerPower(-1);
+      m_IntakeShooter.setStowPower(1);
+    }, m_elevator, m_IntakeShooter))
+        .onFalse(new StopAllRollersCommand(m_IntakeShooter, m_elevator));
 
-    OperatorDPadUp.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(1.0)))
-    .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
-    OperatorDPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(-1)))
-    .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0)));
-    OperatorDPadLeft.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(1.0)))
-    .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
-    OperatorDPadRight.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-1)))
-    .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0)));
+    driverRightTrigger.whileTrue(new InstantCommand(() -> {
+      // Intake
+      m_elevator.setRollerPower(-0.85);
+      m_IntakeShooter.setRollerPower(1);
+      m_IntakeShooter.setStowPower(-1);
+    }, m_elevator, m_IntakeShooter))
+        .onFalse(new StopAllRollersCommand(m_IntakeShooter, m_elevator));
 
-    
-    //Operator Intake
-    operatorLeftTrigger.onTrue(new IntakeCommand(m_IntakeShooter, 1, -1))
-                       .onFalse(new InstantCommand(() -> m_IntakeShooter.stopAllIntakeShooterRollers(), m_IntakeShooter));
+    /*
+     * OPERATOR BUTTON MAPPING
+     */
+    operatorRightYTrigger
+        .onTrue(new InstantCommand(
+            () -> m_elevator.setPivotPower(
+                (Math.abs(m_operatorController.getRightY()) > 0.1) ? m_operatorController.getRightY() : 0.0),
+            m_elevator))
+        .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0), m_elevator));
 
-    //Operator Outtake
+    OperatorDPadUp.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(1.0), m_elevator))
+        .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0), m_elevator));
+    OperatorDPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(-1), m_elevator))
+        .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0), m_elevator));
+    OperatorDPadLeft.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(1.0), m_elevator))
+        .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0), m_elevator));
+    OperatorDPadRight.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-1), m_elevator))
+        .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0), m_elevator));
+
+    operatorLeftTrigger.onTrue(new IntakeCommand(m_IntakeShooter, 1, -1, true))
+        .onFalse(new InstantCommand(() -> m_IntakeShooter.stopAllIntakeShooterRollers(), m_IntakeShooter));
+
     operatorRightTrigger.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter))
-                        .onFalse(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
-    
-    //Operator Intake
+        .onFalse(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
+
     OperatorBButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setStowPower(1), m_IntakeShooter))
-                   .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
-    //Operator Outtake
+        .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
     OperatorXButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setStowPower(-1), m_IntakeShooter))
-                   .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
+        .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
+    OperatorYButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(.5)))
+        .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
 
-
-
-    // aButton.onTrue(new ElevatorPosSet(m_elevatorModule, "cube_pickup")
-    //           .andThen(new WristPosSet(m_wristModule, "cube_high")));
-    // yButton.onTrue(new ElevatorPosSet(m_elevatorModule, "elevator_init")
-    //           .andThen(new WristPosSet(m_wristModule, "cone_high/cube_mid")));
-    // bButton.onTrue(new ElevatorPosSet(m_elevatorModule, "elevator_init")
-    //           .andThen(new WristPosSet(m_wristModule, "cube_high")));
-    // xButton.onTrue(new ElevatorPosSet(m_elevatorModule, "elevator_init")
-    //           .andThen(new WristPosSet(m_wristModule, "cube_high")));
-
-
-    //a2Button.onTrue(new ElevatorPosSet(m_elevatorModule, "home/low_cube")
-    //           .andThen(new WristPosSet(m_wristModule, "home/low_cube")));  
-
+    OperatorRightBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-0.85), m_elevator))
+    .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0), m_elevator));
     
-    
+    OperatorLeftBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(0.85), m_elevator))
+    .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0), m_elevator));
   }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

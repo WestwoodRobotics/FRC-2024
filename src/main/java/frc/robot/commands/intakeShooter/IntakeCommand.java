@@ -12,14 +12,16 @@ public class IntakeCommand extends Command{
     private IntakeShooter m_intakeShooter;
     private double rollerPower;
     private double stowPower;
+    private boolean manualOverride;
 
 
     private boolean isFinished;
 
-    public IntakeCommand(IntakeShooter intakeShooter, double rollerPower, double stowPower){
+    public IntakeCommand(IntakeShooter intakeShooter, double rollerPower, double stowPower, boolean manualOverride){
         m_intakeShooter = intakeShooter;
         this.rollerPower = rollerPower;
         this.stowPower = stowPower;
+        this.manualOverride = manualOverride;
         addRequirements(intakeShooter);
     }
 
@@ -39,8 +41,10 @@ public class IntakeCommand extends Command{
      */
     @Override
     public void execute(){
-        m_intakeShooter.setToPosition(IntakeShooterPositions.INTAKE);
-        Timer.delay(1);
+        if (!manualOverride){
+            m_intakeShooter.setToPosition(IntakeShooterPositions.INTAKE);
+            Timer.delay(1);
+        }
         m_intakeShooter.setRollerPower(rollerPower);
         m_intakeShooter.setStowPower(stowPower);
         Timer.delay(1);
@@ -50,6 +54,12 @@ public class IntakeCommand extends Command{
     @Override
     public boolean isFinished(){
         return isFinished;
+    }
+
+    @Override
+    public void end(boolean interrupted){
+        m_intakeShooter.setRollerPower(0);
+        m_intakeShooter.setStowPower(0);
     }
 
 
