@@ -77,7 +77,8 @@ public class RobotContainer {
   private final Elevator m_elevator = new Elevator();
   private final IntakeShooter m_IntakeShooter = new IntakeShooter();
   private LED led = new LED(9);
-  private BeamBreak beamBreak = new BeamBreak(9);
+  private BeamBreak intakeShooterBeamBreak = new BeamBreak(9);
+  private BeamBreak elevatorPivotBeamBreak = new BeamBreak(8);
 
   // LED for indicating robot state, not implemented in hardware.
 
@@ -141,7 +142,7 @@ public class RobotContainer {
     // Configure default commands 
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
     m_IntakeShooter.setDefaultCommand(new InstantCommand(() -> m_IntakeShooter.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooter));
-    led.setDefaultCommand(new LEDCommand(led, beamBreak));
+    led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
     //test.setDefaultCommand(new testCommand(test, m_driverController));
     NamedCommands.registerCommand("Shoot", new ShootForTimeCommand(m_IntakeShooter, 3, 1));
     NamedCommands.registerCommand("GetElevatorOutOfWay", new elevatorPosition(m_elevator, ElevatorPositions.SOURCE));

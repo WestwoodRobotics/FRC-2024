@@ -7,22 +7,30 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class LEDCommand extends Command {
 
     private LED led;
-    private BeamBreak b;
+    private BeamBreak beamBreakIntakePivot, beamBreakElevatorPivot;
 
-    public LEDCommand(LED i, BeamBreak beam){
+    public LEDCommand(LED i, BeamBreak IntakeShooterBeamBreak, BeamBreak ElevatorBeamBreak){
         led = i;
         addRequirements(i);
-        b = beam;
+        beamBreakIntakePivot = IntakeShooterBeamBreak;
+        beamBreakElevatorPivot = ElevatorBeamBreak;
+
     }
 
     @Override
     public void execute(){        
-        if(!b.getStatus()) {
+        // if(!b.getStatus()) {
+        //     led.setLights(0.77);
+        // } else {
+        //     led.setLights(0.61);
+        // }
+        // SmartDashboard.putBoolean("b", b.getStatus());
+
+        if(beamBreakIntakePivot.getStatus() && beamBreakElevatorPivot.getStatus()){
             led.setLights(0.77);
         } else {
             led.setLights(0.61);
         }
-        SmartDashboard.putBoolean("b", b.getStatus());
     }
     
     
