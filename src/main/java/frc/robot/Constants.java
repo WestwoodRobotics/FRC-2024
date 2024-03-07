@@ -50,10 +50,10 @@ public final class Constants {
     // Angular offsets of the modules relative to the chassis in radians
     // These values are the angle offset of the wheels when the robot is facing forwards (Absolute Encoders)
     //DO NOT CHANGE THESE VALUES UNLESS YOU KNOW WHAT YOU'RE DOING!!
-    public static final double kFrontLeftChassisAngularOffset = Math.PI + (Math.PI/2);
+    public static final double kFrontLeftChassisAngularOffset = Math.PI/2;
     public static final double kFrontRightChassisAngularOffset = 0;
     public static final double kRearLeftChassisAngularOffset = Math.PI;
-    public static final double kRearRightChassisAngularOffset = (3*Math.PI/2);
+    public static final double kRearRightChassisAngularOffset = -1*Math.PI/2;
 
 
 
@@ -207,7 +207,9 @@ public final class Constants {
     public static double kElevatorHandoffPosition = 0; //TODO: Change this value
 
     public static double kElevatorPodiumPivotPosition = 0; //TODO: Change this value
-    public static double kElevatorSourcePivotPosition = 27.5; //TODO: Change this value
+    //public static double kElevatorSourcePivotPosition = 27.5; //TODO: Change this value
+    public static double kElevatorSourcePivotPosition = 35; //TODO: Change this value
+
     public static double kElevatorAmpPivotPosition = 19; //TODO: Change this value
     public static double kElevatorHomePivotPosition = 0; //TODO: Change this value
     public static double kElevatorHandoffPivotPosition = 0; //TODO: Change this value
@@ -233,21 +235,17 @@ public final class Constants {
     public static double kLowerRollerD = 0; //TODO: Change this value
     public static double kLowerRollerFF = 0; //TODO: Change this value
 
-    public static double kPivotP = 0.2; //TODO: Change this value
+    public static double kPivotP = 3; //TODO: Change this value
     public static double kPivotI = 0; //TODO: Change this value 
     public static double kPivotD = 0; //TODO: Change this value
-    public static double kPivotFF = 0; //TODO: Change this value
+    public static double kPivotFF = 30; //TODO: Change this value
 
 
 
-    public static double kHomePivotPosition = 0; //TODO: Change this value
-    public static double kIntakePivotPosition = 115; //TODO: Change this value
-    public static double kShootNearSpeakerPivotPosition = 40;
-    public static double kShootFarSpeakerPivotPosition = 3.428;
-    public static double kHandoffPivotPosition = -3.69;
-
-
-
-
+    public static double kHomePivotPosition = 0.4468; //TODO: Change this value
+    public static double kIntakePivotPosition = 0.93; //TODO: Change this value
+    public static double kShootNearSpeakerPivotPosition = 0.602942;
+    public static double kShootFarSpeakerPivotPosition = 0.6078;
+    public static double kHandoffPivotPosition = 0.4468; 
   }
 }

@@ -22,7 +22,7 @@ public class IntakeCommand extends Command{
         this.rollerPower = rollerPower;
         this.stowPower = stowPower;
         this.manualOverride = manualOverride;
-        addRequirements(intakeShooter);
+        //addRequirements(intakeShooter);
     }
 
     /**

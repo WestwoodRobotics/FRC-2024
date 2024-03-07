@@ -1,5 +1,9 @@
 package frc.robot.commands.intakeShooter;
 
+import java.util.concurrent.SynchronousQueue;
+
+import com.revrobotics.CANSparkBase.IdleMode;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
@@ -11,13 +15,16 @@ public class ShootForTimeCommand extends Command{
     Timer t = new Timer();
     private IntakeShooter m_intakeShooter;
     private double rampUpTime;
+    private double power;
 
 
     private boolean isFinished;
 
-    public ShootForTimeCommand(IntakeShooter intakeShooter, double rampUpTime){
+    public ShootForTimeCommand(IntakeShooter intakeShooter, double rampUpTime, double power){
         m_intakeShooter = intakeShooter;
+        m_intakeShooter.pivotMotor.setIdleMode(IdleMode.kBrake);
         this.rampUpTime = rampUpTime;
+        this.power = power;
         addRequirements(intakeShooter);
     }
 
@@ -39,10 +46,11 @@ public class ShootForTimeCommand extends Command{
     public void execute(){
         // m_intakeShooter.setToPosition(IntakeShooterPositions.SHOOT_NEAR_SPEAKER);
         // Timer.delay(0.7);
-        m_intakeShooter.setRollerPower(1);
+        System.out.println("geot here");
+        m_intakeShooter.setRollerPower(-power);
         Timer.delay(rampUpTime);
-        m_intakeShooter.setStowPower(1);
-        Timer.delay(1);
+        m_intakeShooter.setStowPower(power);
+        Timer.delay(2);
         isFinished = true;
     }
 

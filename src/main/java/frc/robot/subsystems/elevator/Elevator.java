@@ -190,7 +190,7 @@ public class Elevator extends SubsystemBase{
     @Override
     public void periodic(){
         SmartDashboard.putNumber("Elevator Position", elevatorMotor1.getAbsoluteEncoder(Type.kDutyCycle).getPosition());
-        SmartDashboard.putNumber("Elevating Pivot Position", pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition());
+        SmartDashboard.putNumber("Elevating Pivot Position", pivotMotor.getEncoder().getPosition());
 
         boolean motor1Follower = elevatorMotor1.isFollower();
         boolean motor2Follower = elevatorMotor2.isFollower();

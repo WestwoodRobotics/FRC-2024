@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 1.35,
+      "y": 5.58
+    },
+    "rotation": 0
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -12,6 +18,12 @@
               {
                 "type": "named",
                 "data": {
+                  "name": "GetElevatorOutOfWay"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
                   "name": "Shoot"
                 }
               },
@@ -19,6 +31,42 @@
                 "type": "path",
                 "data": {
                   "pathName": "ShootAndMove"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToIntakePosition"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "IntakeAndDrive"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToStowPosition"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "GoBackToStart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
                 }
               }
             ]

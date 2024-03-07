@@ -28,7 +28,7 @@ public class IntakeShooter extends SubsystemBase {
 
     private CANSparkMax stowMotor;
 
-    private CANSparkMax pivotMotor;
+    public CANSparkMax pivotMotor;
     private PIDController pivotPIDController;
 
     private IntakeShooterPositions intakeShooterPosition;
@@ -91,9 +91,9 @@ public class IntakeShooter extends SubsystemBase {
     public boolean setToPosition(IntakeShooterPositions position) {
         double setPoint = pivotPositionValues.get(position);     
         pivotPIDController.setSetpoint(setPoint);
-        pivotMotor.set(pivotPIDController.calculate(pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition()));
+        pivotMotor.set(pivotPIDController.calculate(pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition()+0.1));
         intakeShooterPosition = position;
-        return (pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition() == setPoint);
+        return (pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition()+0.1 == setPoint);
     }
 
     public void stopAllMotors(){
@@ -155,7 +155,7 @@ public class IntakeShooter extends SubsystemBase {
     @Override
     public void periodic(){
         SmartDashboard.putString ("Intake Shooter State" , intakeShooterPosition.toString()); 
-        SmartDashboard.putNumber("Pivot Position", pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition());
+        SmartDashboard.putNumber("Pivot Position", pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition()+0.1);
         SmartDashboard.putNumber("Upper Roller RPM", upperRollerMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("Lower Roller RPM", lowerRollerMotor.getEncoder().getVelocity());
     }

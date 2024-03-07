@@ -27,6 +27,7 @@ public class IntakeShooterPosition extends Command{
      */
     @Override
     public void initialize(){
+        m_intakeShooter.setRollerPower(0);
         t.reset();
         t.start();
     }
@@ -40,6 +41,14 @@ public class IntakeShooterPosition extends Command{
        //m_elevator.setElevatorPositionNOPID(targetPosition);
         //    m_elevator.setPivotPosition(targetPosition);
         isFinished = m_intakeShooter.setToPosition(targetPosition);
+        if (targetPosition == IntakeShooterPositions.SHOOT_FAR_SPEAKER || targetPosition == IntakeShooterPositions.SHOOT_NEAR_SPEAKER){
+            m_intakeShooter.setRollerPower(-1);
+        }
+        else{
+            m_intakeShooter.setRollerPower(0);
+        }
+        
+
     }
 
     /**
