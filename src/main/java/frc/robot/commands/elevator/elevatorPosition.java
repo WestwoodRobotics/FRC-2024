@@ -18,7 +18,7 @@ public class elevatorPosition extends Command{
     public elevatorPosition(Elevator elevator, ElevatorPositions position){
         m_elevator = elevator;
         this.targetPosition = position;
-        addRequirements(m_elevator);
+        // addRequirements(m_elevator);
     }
 
     /**

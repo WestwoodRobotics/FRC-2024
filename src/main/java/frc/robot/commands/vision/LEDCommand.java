@@ -9,13 +9,14 @@ public class LEDCommand extends Command {
     private LED led;
     private BeamBreak beamBreakIntakePivot, beamBreakElevatorPivot;
 
+
     public LEDCommand(LED i, BeamBreak IntakeShooterBeamBreak, BeamBreak ElevatorBeamBreak){
         led = i;
         addRequirements(i);
         beamBreakIntakePivot = IntakeShooterBeamBreak;
         beamBreakElevatorPivot = ElevatorBeamBreak;
-
     }
+
 
     @Override
     public void execute(){        
@@ -25,12 +26,16 @@ public class LEDCommand extends Command {
         //     led.setLights(0.61);
         // }
         // SmartDashboard.putBoolean("b", b.getStatus());
-
-        if(beamBreakIntakePivot.getStatus() && beamBreakElevatorPivot.getStatus()){
+        SmartDashboard.putBoolean("elevator beam break", beamBreakElevatorPivot.getStatus());
+        SmartDashboard.putBoolean("intake shooter beam break", beamBreakIntakePivot.getStatus());
+        if(!beamBreakIntakePivot.getStatus() || !beamBreakElevatorPivot.getStatus()){
+            
+            //if(!beamBreakIntakePivot.getStatus()){
             led.setLights(0.77);
-        } else {
+            } else {
             led.setLights(0.61);
-        }
+            }
+
     }
     
     

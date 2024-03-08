@@ -78,7 +78,7 @@ public class RobotContainer {
   private final IntakeShooter m_IntakeShooter = new IntakeShooter();
   private LED led = new LED(9);
   private BeamBreak intakeShooterBeamBreak = new BeamBreak(9);
-  private BeamBreak elevatorPivotBeamBreak = new BeamBreak(8);
+  private BeamBreak elevatorPivotBeamBreak = new BeamBreak(7);
 
   // LED for indicating robot state, not implemented in hardware.
 
@@ -144,11 +144,12 @@ public class RobotContainer {
     m_IntakeShooter.setDefaultCommand(new InstantCommand(() -> m_IntakeShooter.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooter));
     led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
     //test.setDefaultCommand(new testCommand(test, m_driverController));
-    NamedCommands.registerCommand("Shoot", new ShootForTimeCommand(m_IntakeShooter, 3, 1));
+    NamedCommands.registerCommand("Shoot", new InstantCommand(()-> m_IntakeShooter.setRollerPower(-1)));
     NamedCommands.registerCommand("GetElevatorOutOfWay", new elevatorPosition(m_elevator, ElevatorPositions.SOURCE));
     NamedCommands.registerCommand("GoToIntakePosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.INTAKE));
+    NamedCommands.registerCommand("ReleasePreRoller", new InstantCommand(() -> m_IntakeShooter.setStowPower(1)));
     NamedCommands.registerCommand("Intake", new InstantCommand(() -> m_IntakeShooter.setRollerPower(1)).alongWith(new InstantCommand(() -> m_IntakeShooter.setStowPower(-1))));
-    NamedCommands.registerCommand("GoToStowPosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.HOME));
+    NamedCommands.registerCommand("GoToShootPosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT));
   }
 
   /*
@@ -185,7 +186,7 @@ public class RobotContainer {
     DriverBButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AMP));
     // TODO: Probably need to change greater/less than signs in the implementation
     // of the method the command calls
-    DriverXButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.SOURCE));
+    DriverXButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.SOURCE)).onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT)).onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1)));
 
     DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
 
@@ -215,7 +216,7 @@ public class RobotContainer {
     operatorRightYTrigger
         .onTrue(new InstantCommand(
             () -> m_elevator.setPivotPower(
-                (Math.abs(m_operatorController.getRightY()) > 0.1) ? m_operatorController.getRightY() : 0.0),
+                (Math.abs(m_operatorController.getRightY()) > 0.1) ? m_operatorController.getRightY()*2 : 0.0),
             m_elevator))
         .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0), m_elevator));
 
@@ -240,6 +241,7 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
     OperatorYButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(.5)))
         .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
+    OperatorAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT));
 
     OperatorRightBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-0.85), m_elevator))
     .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0), m_elevator));
@@ -255,10 +257,12 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    m_chooser.setDefaultOption("Shoot and move", new PathPlannerAuto("ShootAndMoveAuton"));
-    m_chooser.addOption("Shoot and move and nothing else", new PathPlannerAuto("ShootAndMoveAuton"));
+    
+    m_chooser.setDefaultOption("Two note", new PathPlannerAuto("TwoNoteAuton"));
+    m_chooser.addOption("Get out of the way source", new PathPlannerAuto("GetOutOfTheWay1Auton"));
+    m_chooser.addOption("Get out of the way amp", new PathPlannerAuto("GetOutOfTheWay2Auton"));
     SmartDashboard.putData("auto choices", m_chooser);
-    return m_chooser.getSelected();
+    return new PathPlannerAuto("TwoNoteAuton");
 
   }
 }

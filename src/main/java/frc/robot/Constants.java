@@ -53,7 +53,7 @@ public final class Constants {
     public static final double kFrontLeftChassisAngularOffset = Math.PI/2;
     public static final double kFrontRightChassisAngularOffset = 0;
     public static final double kRearLeftChassisAngularOffset = Math.PI;
-    public static final double kRearRightChassisAngularOffset = -1*Math.PI/2;
+    public static final double kRearRightChassisAngularOffset = -1*Math.PI/2 + Math.PI;
 
 
 
@@ -242,12 +242,12 @@ public final class Constants {
 
 
 
-    public static double kHomePivotPosition = 0.4468; //TODO: Change this value
+    public static double kHomePivotPosition = 0.389; //TODO: Change this value
     public static double kIntakePivotPosition = 0.93; //TODO: Change this value
     public static double kShootNearSpeakerPivotPosition = 0.602942;
     public static double kShootFarSpeakerPivotPosition = 0.6078;
 
     public static double kIntakeAutonPivotPosition = 0.93; //TODO: Change this value
-    public static double kShootNearSpeakerAutonPivotPosition = 0.602942;
+    public static double kShootNearSpeakerAutonPivotPosition = 0.4;
   }
 }
