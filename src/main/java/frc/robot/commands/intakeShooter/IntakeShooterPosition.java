@@ -54,9 +54,11 @@ public class IntakeShooterPosition extends Command{
         if(changePower){
             if (targetPosition == IntakeShooterPositions.SHOOT_FAR_SPEAKER || targetPosition == IntakeShooterPositions.SHOOT_NEAR_SPEAKER || targetPosition == IntakeShooterPositions.AUTON_SHOOT){
                 m_intakeShooter.setRollerPower(-1);
+                m_intakeShooter.setStowPower(0);
             }
             else{
                 m_intakeShooter.setRollerPower(0);
+                m_intakeShooter.setStowPower(0);
             }
         }
         

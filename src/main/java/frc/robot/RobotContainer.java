@@ -175,6 +175,7 @@ public class RobotContainer {
     /*
      * DRIVER BUTTON MAPPINGS
      */
+
     DriverGyroButton.whileTrue(new InstantCommand(
         () -> m_robotDrive.resetGyro(),
         m_robotDrive));
@@ -268,8 +269,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     
 
-    //return m_chooser.getSelected();
-    return new PathPlannerAuto("TwoNoteAuton");
+    SmartDashboard.putData("selected auto", m_chooser.getSelected());
+    
+    return m_chooser.getSelected();
+    //return new PathPlannerAuto("TwoNoteAuton");
 
   }
 }
