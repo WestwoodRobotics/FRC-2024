@@ -54,7 +54,7 @@ public class IntakeShooter extends SubsystemBase {
         pivotPositionValues.put(IntakeShooterPositions.HOME, IntakeShooterConstants.kHomePivotPosition);
         pivotPositionValues.put(IntakeShooterPositions.SHOOT_NEAR_SPEAKER, IntakeShooterConstants.kShootNearSpeakerPivotPosition);
         pivotPositionValues.put(IntakeShooterPositions.SHOOT_FAR_SPEAKER, IntakeShooterConstants.kShootFarSpeakerPivotPosition);
-        pivotPositionValues.put(IntakeShooterPositions.HANDOFF, IntakeShooterConstants.kHandoffPivotPosition);
+
 
 
     }

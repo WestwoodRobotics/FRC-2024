@@ -246,6 +246,8 @@ public final class Constants {
     public static double kIntakePivotPosition = 0.93; //TODO: Change this value
     public static double kShootNearSpeakerPivotPosition = 0.602942;
     public static double kShootFarSpeakerPivotPosition = 0.6078;
-    public static double kHandoffPivotPosition = 0.4468; 
+
+    public static double kIntakeAutonPivotPosition = 0.93; //TODO: Change this value
+    public static double kShootNearSpeakerAutonPivotPosition = 0.602942;
   }
 }
