@@ -14,13 +14,31 @@
         {
           "type": "named",
           "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "GetElevatorOutOfWay"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "ReleasePreRoller"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopAllShooters"
           }
         },
         {

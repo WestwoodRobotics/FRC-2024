@@ -61,13 +61,14 @@ public class Robot extends TimedRobot {
     if(m_robotContainer.getAutonomousCommand().getName().equals("TwoNoteAuton")){
       m_autonomousCommand = new PathPlannerAuto("TwoNoteAuton");
     }
-    else if(m_robotContainer.getAutonomousCommand().getName().equals("GetOutOfTheWay1")){
-      m_autonomousCommand = new PathPlannerAuto("GetOutOfTheWay1");
+    else if(m_robotContainer.getAutonomousCommand().getName().equals("GetOutOfTheWay1Auton")){
+      m_autonomousCommand = new PathPlannerAuto("GetOutOfTheWay1Auton");
     }
-    else if(m_robotContainer.getAutonomousCommand().getName().equals("GetOutOfTheWay2")){
-      m_autonomousCommand = new PathPlannerAuto("GetOutOfTheWay2");
+    else if(m_robotContainer.getAutonomousCommand().getName().equals("GetOutOfTheWay2Auton")){
+      m_autonomousCommand = new PathPlannerAuto("GetOutOfTheWay2Auton");
     }
-  
+
+    //m_autonomousCommand = new PathPlannerAuto("TwoNoteAuton");
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
@@ -97,6 +98,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
   }
 
   /** This function is called periodically during operator control. */

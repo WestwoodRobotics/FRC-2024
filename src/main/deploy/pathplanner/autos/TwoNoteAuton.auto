@@ -34,6 +34,12 @@
                 }
               },
               {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
                 "type": "named",
                 "data": {
                   "name": "GoToIntakePosition"
@@ -55,12 +61,6 @@
                 "type": "named",
                 "data": {
                   "name": "GoToShootPosition"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot"
                 }
               },
               {
