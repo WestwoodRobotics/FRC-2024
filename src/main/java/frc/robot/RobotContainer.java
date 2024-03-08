@@ -158,6 +158,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("ReleasePreRoller", new InstantCommand(() -> m_IntakeShooter.setStowPower(1)));
     NamedCommands.registerCommand("Intake", new InstantCommand(() -> m_IntakeShooter.setRollerPower(1)).alongWith(new InstantCommand(() -> m_IntakeShooter.setStowPower(-1))));
     NamedCommands.registerCommand("GoToShootPosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT));
+    NamedCommands.registerCommand("StopAllShooters", new StopAllRollersCommand(m_IntakeShooter, m_elevator));
   }
 
   /*
@@ -194,7 +195,7 @@ public class RobotContainer {
     DriverBButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AMP));
     // TODO: Probably need to change greater/less than signs in the implementation
     // of the method the command calls
-    DriverXButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.SOURCE)).onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT)).onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1)));
+    DriverXButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.SOURCE)).onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT));
 
     DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
 
@@ -249,7 +250,7 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
     OperatorYButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(.5)))
         .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
-    OperatorAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT));
+    OperatorAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, false));
 
     OperatorRightBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-0.85), m_elevator))
     .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0), m_elevator));
@@ -267,8 +268,8 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     
 
-    return m_chooser.getSelected();
-    //return new PathPlannerAuto("TwoNoteAuton");
+    //return m_chooser.getSelected();
+    return new PathPlannerAuto("TwoNoteAuton");
 
   }
 }

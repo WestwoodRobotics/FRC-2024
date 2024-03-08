@@ -12,12 +12,22 @@ public class IntakeShooterPosition extends Command{
     private IntakeShooter m_intakeShooter;
     private IntakeShooterPositions targetPosition;
 
+    private boolean changePower = true;
     private boolean isFinished;
 
 
     public IntakeShooterPosition(IntakeShooter intakeShooter, IntakeShooterPositions position){
         this.m_intakeShooter = intakeShooter;
         this.targetPosition = position;
+        addRequirements(m_intakeShooter);
+
+    }
+
+    public IntakeShooterPosition(IntakeShooter intakeShooter, IntakeShooterPositions position, boolean changePower){
+        this.m_intakeShooter = intakeShooter;
+        this.targetPosition = position;
+        this.changePower = changePower;
+        addRequirements(m_intakeShooter);
 
     }
 
@@ -41,11 +51,13 @@ public class IntakeShooterPosition extends Command{
        //m_elevator.setElevatorPositionNOPID(targetPosition);
         //    m_elevator.setPivotPosition(targetPosition);
         isFinished = m_intakeShooter.setToPosition(targetPosition);
-        if (targetPosition == IntakeShooterPositions.SHOOT_FAR_SPEAKER || targetPosition == IntakeShooterPositions.SHOOT_NEAR_SPEAKER){
-            m_intakeShooter.setRollerPower(-1);
-        }
-        else{
-            m_intakeShooter.setRollerPower(0);
+        if(changePower){
+            if (targetPosition == IntakeShooterPositions.SHOOT_FAR_SPEAKER || targetPosition == IntakeShooterPositions.SHOOT_NEAR_SPEAKER || targetPosition == IntakeShooterPositions.AUTON_SHOOT){
+                m_intakeShooter.setRollerPower(-1);
+            }
+            else{
+                m_intakeShooter.setRollerPower(0);
+            }
         }
         
 
@@ -63,8 +75,8 @@ public class IntakeShooterPosition extends Command{
 
     @Override
     public void end(boolean interrupted){
-        m_intakeShooter.setRollerPower(0);
-        m_intakeShooter.setStowPower(0);
+        //m_intakeShooter.setRollerPower(0);
+        //m_intakeShooter.setStowPower(0);
         m_intakeShooter.setPositionState( interrupted ? IntakeShooterPositions.MANUAL : targetPosition);
     }
     

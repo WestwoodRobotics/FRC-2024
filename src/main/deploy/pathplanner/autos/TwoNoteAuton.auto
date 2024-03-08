@@ -54,13 +54,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "GoToStowPosition"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "GoBackToStart"
+                  "name": "GoToShootPosition"
                 }
               },
               {
@@ -70,15 +64,27 @@
                 }
               },
               {
+                "type": "path",
+                "data": {
+                  "pathName": "GoBackToStart"
+                }
+              },
+              {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.0
+                  "waitTime": 0.5
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "ReleasePreRoller"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "StopAllShooters"
                 }
               }
             ]
