@@ -73,12 +73,14 @@ import frc.robot.subsystems.vision.LED;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
   private final SwerveDrive m_robotDrive = new SwerveDrive();
   private final Elevator m_elevator = new Elevator();
   private final IntakeShooter m_IntakeShooter = new IntakeShooter();
   private LED led = new LED(9);
   private BeamBreak intakeShooterBeamBreak = new BeamBreak(9);
   private BeamBreak elevatorPivotBeamBreak = new BeamBreak(7);
+  
 
   // LED for indicating robot state, not implemented in hardware.
 
@@ -143,6 +145,12 @@ public class RobotContainer {
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
     m_IntakeShooter.setDefaultCommand(new InstantCommand(() -> m_IntakeShooter.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooter));
     led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
+
+    m_chooser.setDefaultOption("Two note", new PathPlannerAuto("TwoNoteAuton"));
+    m_chooser.addOption("Get out of the way source", new PathPlannerAuto("GetOutOfTheWay1Auton"));
+    m_chooser.addOption("Get out of the way amp", new PathPlannerAuto("GetOutOfTheWay2Auton"));
+    SmartDashboard.putData(m_chooser);
+
     //test.setDefaultCommand(new testCommand(test, m_driverController));
     NamedCommands.registerCommand("Shoot", new InstantCommand(()-> m_IntakeShooter.setRollerPower(-1)));
     NamedCommands.registerCommand("GetElevatorOutOfWay", new elevatorPosition(m_elevator, ElevatorPositions.SOURCE));
@@ -258,11 +266,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     
-    m_chooser.setDefaultOption("Two note", new PathPlannerAuto("TwoNoteAuton"));
-    m_chooser.addOption("Get out of the way source", new PathPlannerAuto("GetOutOfTheWay1Auton"));
-    m_chooser.addOption("Get out of the way amp", new PathPlannerAuto("GetOutOfTheWay2Auton"));
-    SmartDashboard.putData("auto choices", m_chooser);
-    return new PathPlannerAuto("TwoNoteAuton");
+
+    return m_chooser.getSelected();
+    //return new PathPlannerAuto("TwoNoteAuton");
 
   }
 }

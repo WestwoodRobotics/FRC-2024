@@ -18,7 +18,7 @@ public class IntakeShooterPosition extends Command{
     public IntakeShooterPosition(IntakeShooter intakeShooter, IntakeShooterPositions position){
         this.m_intakeShooter = intakeShooter;
         this.targetPosition = position;
-        addRequirements(m_intakeShooter);
+
     }
 
     /**

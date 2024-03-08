@@ -25,7 +25,7 @@ public class ShootForTimeCommand extends Command{
         m_intakeShooter.pivotMotor.setIdleMode(IdleMode.kBrake);
         this.rampUpTime = rampUpTime;
         this.power = power;
-        addRequirements(intakeShooter);
+
     }
 
     /**
