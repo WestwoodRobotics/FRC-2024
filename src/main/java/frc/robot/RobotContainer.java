@@ -147,7 +147,7 @@ public class RobotContainer {
     led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
 
     m_chooser.setDefaultOption("Two note", new PathPlannerAuto("TwoNoteAuton"));
-    m_chooser.addOption("Get out of the way source", new PathPlannerAuto("GetOutOfTheWay1Auton"));
+    m_chooser.addOption("Just shoot", new PathPlannerAuto("JustShootAuton"));
     m_chooser.addOption("Get out of the way amp", new PathPlannerAuto("GetOutOfTheWay2Auton"));
     SmartDashboard.putData(m_chooser);
 

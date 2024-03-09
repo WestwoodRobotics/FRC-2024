@@ -61,8 +61,8 @@ public class Robot extends TimedRobot {
     if(m_robotContainer.getAutonomousCommand().getName().equals("TwoNoteAuton")){
       m_autonomousCommand = new PathPlannerAuto("TwoNoteAuton");
     }
-    else if(m_robotContainer.getAutonomousCommand().getName().equals("GetOutOfTheWay1Auton")){
-      m_autonomousCommand = new PathPlannerAuto("GetOutOfTheWay1Auton");
+    else if(m_robotContainer.getAutonomousCommand().getName().equals("JustShootAuton")){
+      m_autonomousCommand = new PathPlannerAuto("JustShootAuton");
     }
     else if(m_robotContainer.getAutonomousCommand().getName().equals("GetOutOfTheWay2Auton")){
       m_autonomousCommand = new PathPlannerAuto("GetOutOfTheWay2Auton");

@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 0.71,
-      "y": 4.446409092116653
-    },
-    "rotation": 30.0
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -36,15 +30,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "StopAllShooters"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "GetOutOfTheWay1"
+            "pathName": "Straight"
           }
         }
       ]
