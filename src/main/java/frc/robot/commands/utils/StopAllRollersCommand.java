@@ -16,6 +16,16 @@ public class StopAllRollersCommand extends Command {
     
     @Override
     public void execute(){
+        
+    }
+
+    @Override
+    public boolean isFinished(){
+        return true;
+    }
+
+    @Override 
+    public void end(boolean interrupted){
         m_intakeShooter.setRollerPower(0);
         m_intakeShooter.setStowPower(0);
         m_elevator.setRollerPower(0);

@@ -235,19 +235,18 @@ public final class Constants {
     public static double kLowerRollerD = 0; //TODO: Change this value
     public static double kLowerRollerFF = 0; //TODO: Change this value
 
-    public static double kPivotP = 3; //TODO: Change this value
+    public static double kPivotP = 3.5; //TODO: Change this value
     public static double kPivotI = 0; //TODO: Change this value 
     public static double kPivotD = 0; //TODO: Change this value
     public static double kPivotFF = 30; //TODO: Change this value
 
 
 
-    public static double kHomePivotPosition = 0.389; //TODO: Change this value
-    public static double kIntakePivotPosition = 0.882; //TODO: Change this value
-    public static double kShootNearSpeakerPivotPosition = 0.602942;
-    public static double kShootFarSpeakerPivotPosition = 0.6078;
+    public static double kHomePivotPosition = 0.487; //TODO: Change this value
+    public static double kIntakePivotPosition = 0.98; //TODO: Change this value
+    public static double kShootNearSpeakerPivotPosition = 0.69;
+    public static double kShootFarSpeakerPivotPosition = 0.7058;
 
-    public static double kIntakeAutonPivotPosition = 0.93; //TODO: Change this value
-    public static double kShootNearSpeakerAutonPivotPosition = 0.4;
+    public static double kShootNearSpeakerAutonPivotPosition = 0.498;
   }
 }

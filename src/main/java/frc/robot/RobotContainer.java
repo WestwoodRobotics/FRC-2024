@@ -147,8 +147,8 @@ public class RobotContainer {
     led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
 
     m_chooser.setDefaultOption("Two note", new PathPlannerAuto("TwoNoteAuton"));
-    m_chooser.addOption("Get out of the way source", new PathPlannerAuto("GetOutOfTheWay1Auton"));
-    m_chooser.addOption("Get out of the way amp", new PathPlannerAuto("GetOutOfTheWay2Auton"));
+    m_chooser.addOption("Just shoot", new PathPlannerAuto("JustShootAuton"));
+    m_chooser.addOption("Shoot and leave", new PathPlannerAuto("ShootAndMobilityAuton"));
     SmartDashboard.putData(m_chooser);
 
     //test.setDefaultCommand(new testCommand(test, m_driverController));
@@ -175,6 +175,7 @@ public class RobotContainer {
     /*
      * DRIVER BUTTON MAPPINGS
      */
+
     DriverGyroButton.whileTrue(new InstantCommand(
         () -> m_robotDrive.resetGyro(),
         m_robotDrive));
@@ -268,8 +269,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     
 
-    //return m_chooser.getSelected();
-    return new PathPlannerAuto("TwoNoteAuton");
+    SmartDashboard.putData("selected auto", m_chooser.getSelected());
+    
+    return m_chooser.getSelected();
+    //return new PathPlannerAuto("TwoNoteAuton");
 
   }
 }

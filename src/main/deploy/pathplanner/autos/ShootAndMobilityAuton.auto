@@ -1,16 +1,16 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 0.71,
-      "y": 4.446409092116653
-    },
-    "rotation": 30.0
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
         {
           "type": "named",
           "data": {
@@ -20,13 +20,19 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "ReleasePreRoller"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "GetOutOfTheWay1"
+            "pathName": "Straight"
           }
         }
       ]

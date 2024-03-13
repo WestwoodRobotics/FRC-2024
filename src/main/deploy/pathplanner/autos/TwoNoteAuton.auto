@@ -34,6 +34,12 @@
                 }
               },
               {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
                 "type": "named",
                 "data": {
                   "name": "GoToIntakePosition"
@@ -52,33 +58,33 @@
                 }
               },
               {
-                "type": "named",
-                "data": {
-                  "name": "GoToShootPosition"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot"
-                }
-              },
-              {
                 "type": "path",
                 "data": {
                   "pathName": "GoBackToStart"
                 }
               },
               {
+                "type": "named",
+                "data": {
+                  "name": "GoToShootPosition"
+                }
+              },
+              {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.5
+                  "waitTime": 0.75
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "ReleasePreRoller"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
                 }
               },
               {

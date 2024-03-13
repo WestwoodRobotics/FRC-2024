@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -56,7 +58,20 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    if(m_robotContainer.getAutonomousCommand().getName().equals("TwoNoteAuton")){
+      m_autonomousCommand = new PathPlannerAuto("TwoNoteAuton");
+    }
+    else if(m_robotContainer.getAutonomousCommand().getName().equals("JustShootAuton")){
+      m_autonomousCommand = new PathPlannerAuto("JustShootAuton");
+    }
+    else if(m_robotContainer.getAutonomousCommand().getName().equals("GetOutOfTheWay2Auton")){
+      m_autonomousCommand = new PathPlannerAuto("GetOutOfTheWay2Auton");
+    }
+    else if(m_robotContainer.getAutonomousCommand().getName().equals("ShootAndMobilityAuton")){
+      m_autonomousCommand = new PathPlannerAuto("ShootAndMobilityAuton");
+    }
+
+    //m_autonomousCommand = new PathPlannerAuto("TwoNoteAuton");
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
@@ -73,7 +88,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    System.out.println(m_robotContainer.getAutonomousCommand().getName());
+  }
 
   @Override
   public void teleopInit() {
@@ -84,6 +101,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
   }
 
   /** This function is called periodically during operator control. */
