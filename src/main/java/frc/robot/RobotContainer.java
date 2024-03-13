@@ -148,7 +148,7 @@ public class RobotContainer {
 
     m_chooser.setDefaultOption("Two note", new PathPlannerAuto("TwoNoteAuton"));
     m_chooser.addOption("Just shoot", new PathPlannerAuto("JustShootAuton"));
-    m_chooser.addOption("Get out of the way amp", new PathPlannerAuto("GetOutOfTheWay2Auton"));
+    m_chooser.addOption("Shoot and leave", new PathPlannerAuto("ShootAndMobilityAuton"));
     SmartDashboard.putData(m_chooser);
 
     //test.setDefaultCommand(new testCommand(test, m_driverController));

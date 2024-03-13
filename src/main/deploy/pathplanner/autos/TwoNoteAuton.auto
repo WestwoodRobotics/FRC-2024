@@ -58,15 +58,15 @@
                 }
               },
               {
-                "type": "named",
-                "data": {
-                  "name": "GoToShootPosition"
-                }
-              },
-              {
                 "type": "path",
                 "data": {
                   "pathName": "GoBackToStart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToShootPosition"
                 }
               },
               {

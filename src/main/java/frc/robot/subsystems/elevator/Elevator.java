@@ -50,8 +50,14 @@ public class Elevator extends SubsystemBase{
         this.elevatorMotor2 = new CANSparkMax(ElevatorConstants.kElevatorMotor2Port, CANSparkMax.MotorType.kBrushless);
         this.elevatorMotor1.setInverted(true);
 
+
         this.pivotMotor = new CANSparkMax(ElevatorConstants.kElevatorPivotMotorPort, CANSparkMax.MotorType.kBrushless);
         this.rollerMotor = new CANSparkMax(ElevatorConstants.kRollerMotorPort, CANSparkMax.MotorType.kBrushless);
+
+        this.rollerMotor.setInverted(false); //TODO: Check
+        this.pivotMotor.setInverted(false); //TODO: Check 
+        this.pivotMotor.getEncoder().setPosition(0);
+
 
         elevatorPIDController = new PIDController(ElevatorConstants.kElevatorP, ElevatorConstants.kElevatorI, ElevatorConstants.kElevatorD);
         elevatorPivotPIDController = new PIDController(ElevatorConstants.kElevatorPivotP, ElevatorConstants.kElevatorPivotI, ElevatorConstants.kElevatorPivotD);
@@ -59,6 +65,7 @@ public class Elevator extends SubsystemBase{
         this.setElevatorBrakeMode(true);
         this.setPivotBrakeMode(true);
         this.setRollerBrakeMode(true);
+
 
     }
 
@@ -195,8 +202,6 @@ public class Elevator extends SubsystemBase{
 
         SmartDashboard.putBoolean("Elevator Motor 1 Is Follower", motor1Follower);
         SmartDashboard.putBoolean("Elevator Motor 2 Is Follower", motor2Follower);
-        
-        
     }
 
     

@@ -28,8 +28,8 @@ public class IntakeShooterPosition extends Command{
         this.targetPosition = position;
         this.changePower = changePower;
         addRequirements(m_intakeShooter);
-
     }
+
 
     /**
      * Called when the command is initially scheduled.
@@ -72,7 +72,7 @@ public class IntakeShooterPosition extends Command{
     @Override
     public boolean isFinished(){
         
-       return (t.get() > 3) || isFinished;
+       return (t.get() > 2.7) || isFinished;
     }
 
     @Override
