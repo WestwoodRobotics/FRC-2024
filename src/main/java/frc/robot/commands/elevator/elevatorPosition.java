@@ -8,8 +8,8 @@ import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 
 public class elevatorPosition extends Command{
-    Timer t = new Timer();
-    Timer l = new Timer();
+
+    Timer timer = new Timer();
     private Elevator m_elevator;
     private ElevatorPositions targetPosition;
     private boolean isFinished;
@@ -27,10 +27,8 @@ public class elevatorPosition extends Command{
      */
     @Override
     public void initialize(){
-        t.reset();
-        t.start();
-        l.reset();
-        l.start();
+        timer.reset();
+        timer.start();
         
         
     }
@@ -42,7 +40,7 @@ public class elevatorPosition extends Command{
     @Override
     public void execute(){
  
-        //    m_elevator.setPivotPosition(targetPosition);
+        //m_elevator.setPivotPosition(targetPosition);
         m_elevator.setPivotPosition(targetPosition);
         m_elevator.setElevatorPosition(targetPosition);
 
@@ -55,6 +53,6 @@ public class elevatorPosition extends Command{
      */
     @Override
     public boolean isFinished(){
-       return ((t.get() > 0.7) && (l.get() > 2));
+       return (timer.get() > 2);
     }
 }

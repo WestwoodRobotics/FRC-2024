@@ -267,12 +267,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    
-
     SmartDashboard.putData("selected auto", m_chooser.getSelected());
-    
     return m_chooser.getSelected();
     //return new PathPlannerAuto("TwoNoteAuton");
-
   }
 }

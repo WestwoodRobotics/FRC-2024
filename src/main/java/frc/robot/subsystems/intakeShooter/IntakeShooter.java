@@ -94,7 +94,8 @@ public class IntakeShooter extends SubsystemBase {
         pivotPIDController.setSetpoint(setPoint);
         pivotMotor.set(pivotPIDController.calculate(pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition()));
         intakeShooterPosition = position;
-        return (pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition() == setPoint);
+        //return Math.abs(pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition() - setPoint) <= 0.05;
+        return Math.abs(pivotMotor.getEncoder().getPosition() - setPoint) <= 0.05;
     }
 
     public void stopAllMotors(){
@@ -128,23 +129,22 @@ public class IntakeShooter extends SubsystemBase {
     public boolean setPivotPosition (IntakeShooterPositions positions){
         double positionValue = pivotPositionValues.get(positions);
         double currentPosition = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition();
-        
-        if (positionValue < currentPosition){
+        if (Math.abs(positionValue - currentPosition) <= 0.05){
+            pivotMotor.set(0);
+            //elevatorPivotPosition = positions;
+            System.out.println("Pivot Reached Setpoint");
+            return true;
+        }
+        else if (positionValue < currentPosition){
             pivotPIDController.setSetpoint(positionValue);
             pivotMotor.set(pivotPIDController.calculate(currentPosition)/4);
             System.out.println("Pivot Below Setpoint");
             return false;
         } 
-        if(positionValue > currentPosition){
+        else if(positionValue > currentPosition){
             pivotPIDController.setSetpoint(positionValue);
             pivotMotor.set(pivotPIDController.calculate(currentPosition)/4);
             System.out.println("Pivot Above Setpoint");
-        }
-        if (positionValue == currentPosition){
-            pivotMotor.set(0);
-            //elevatorPivotPosition = positions;
-            System.out.println("Pivot Reached Setpoint");
-            return true;
         }
         return false;
     }

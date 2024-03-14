@@ -58,18 +58,19 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    if(m_robotContainer.getAutonomousCommand().getName().equals("TwoNoteAuton")){
-      m_autonomousCommand = new PathPlannerAuto("TwoNoteAuton");
-    }
-    else if(m_robotContainer.getAutonomousCommand().getName().equals("JustShootAuton")){
-      m_autonomousCommand = new PathPlannerAuto("JustShootAuton");
-    }
-    else if(m_robotContainer.getAutonomousCommand().getName().equals("GetOutOfTheWay2Auton")){
-      m_autonomousCommand = new PathPlannerAuto("GetOutOfTheWay2Auton");
-    }
-    else if(m_robotContainer.getAutonomousCommand().getName().equals("ShootAndMobilityAuton")){
-      m_autonomousCommand = new PathPlannerAuto("ShootAndMobilityAuton");
-    }
+    // if(m_robotContainer.getAutonomousCommand().getName().equals("TwoNoteAuton")){
+    //   m_autonomousCommand = new PathPlannerAuto("TwoNoteAuton");
+    // }
+    // else if(m_robotContainer.getAutonomousCommand().getName().equals("JustShootAuton")){
+    //   m_autonomousCommand = new PathPlannerAuto("JustShootAuton");
+    // }
+    // else if(m_robotContainer.getAutonomousCommand().getName().equals("GetOutOfTheWay2Auton")){
+    //   m_autonomousCommand = new PathPlannerAuto("GetOutOfTheWay2Auton");
+    // }
+    // else if(m_robotContainer.getAutonomousCommand().getName().equals("ShootAndMobilityAuton")){
+    //   m_autonomousCommand = new PathPlannerAuto("ShootAndMobilityAuton");
+    // }
+    m_autonomousCommand = new PathPlannerAuto(m_robotContainer.getAutonomousCommand().getName());
 
     //m_autonomousCommand = new PathPlannerAuto("TwoNoteAuton");
 
@@ -88,9 +89,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {
-    System.out.println(m_robotContainer.getAutonomousCommand().getName());
-  }
+  public void autonomousPeriodic() {  }
 
   @Override
   public void teleopInit() {
@@ -101,7 +100,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-
   }
 
   /** This function is called periodically during operator control. */
