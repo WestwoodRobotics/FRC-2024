@@ -92,7 +92,7 @@ public class IntakeShooter extends SubsystemBase {
     public boolean setToPosition(IntakeShooterPositions position) {
         double setPoint = pivotPositionValues.get(position);     
         pivotPIDController.setSetpoint(setPoint);
-        pivotMotor.set(pivotPIDController.calculate(pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition()));
+        pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
         intakeShooterPosition = position;
         //return Math.abs(pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition() - setPoint) <= 0.05;
         return Math.abs(pivotMotor.getEncoder().getPosition() - setPoint) <= 0.05;
@@ -156,7 +156,7 @@ public class IntakeShooter extends SubsystemBase {
     @Override
     public void periodic(){
         SmartDashboard.putString ("Intake Shooter State" , intakeShooterPosition.toString()); 
-        SmartDashboard.putNumber("Pivot Position", pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition());
+        SmartDashboard.putNumber("Pivot Position", pivotMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("Upper Roller RPM", upperRollerMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("Lower Roller RPM", lowerRollerMotor.getEncoder().getVelocity());
     }
