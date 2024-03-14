@@ -72,7 +72,7 @@ public class IntakeShooterPosition extends Command{
     @Override
     public boolean isFinished(){
         
-       return (t.get() > 2.7) || isFinished;
+       return (t.get() > 1.5) || isFinished;
     }
 
     @Override

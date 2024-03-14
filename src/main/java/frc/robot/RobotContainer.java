@@ -149,6 +149,9 @@ public class RobotContainer {
     m_chooser.setDefaultOption("Two note", new PathPlannerAuto("TwoNoteAuton"));
     m_chooser.addOption("Just shoot", new PathPlannerAuto("JustShootAuton"));
     m_chooser.addOption("Shoot and leave", new PathPlannerAuto("ShootAndMobilityAuton"));
+    m_chooser.addOption("Test One Meter", new PathPlannerAuto("MeterTestPathAuton"));
+    m_chooser.addOption("Get Middle Notes Out" , new PathPlannerAuto("MoveCenterNotesAwayAuton"));
+    
     SmartDashboard.putData(m_chooser);
 
     //test.setDefaultCommand(new testCommand(test, m_driverController));
