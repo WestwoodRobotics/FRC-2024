@@ -55,25 +55,28 @@ public class IntakeShooterPosition extends Command{
        //m_elevator.setElevatorPositionNOPID(targetPosition);
         //    m_elevator.setPivotPosition(targetPosition);
         if(targetPosition == IntakeShooterPositions.HOME){
-            if(!l.getStatus()){
-                m_intakeShooter.setPivotPower(-0.1);
+            if(!m_intakeShooter.getPivotLimitReached()){
+                m_intakeShooter.setPivotPower(-1);
+                isFinished = false;
             }
             else{
                 m_intakeShooter.setPivotPower(0);
+                m_intakeShooter.resetEncoder();
+                isFinished = true;
             }
-            m_intakeShooter.resetEncoder();
         }
-
-        isFinished = m_intakeShooter.setToPosition(targetPosition);
-        if(changePower){
-            if (targetPosition == IntakeShooterPositions.SHOOT_FAR_SPEAKER || targetPosition == IntakeShooterPositions.SHOOT_NEAR_SPEAKER || targetPosition == IntakeShooterPositions.AUTON_SHOOT){
-                m_intakeShooter.setRollerPower(-1);
-                m_intakeShooter.setStowPower(0);
-            }
-            else{
-                m_intakeShooter.setRollerPower(0);
-                m_intakeShooter.setStowPower(0);
-            }
+        else{
+            isFinished = m_intakeShooter.setToPosition(targetPosition);
+            if(changePower){
+                if (targetPosition == IntakeShooterPositions.SHOOT_FAR_SPEAKER || targetPosition == IntakeShooterPositions.SHOOT_NEAR_SPEAKER || targetPosition == IntakeShooterPositions.AUTON_SHOOT){
+                    m_intakeShooter.setRollerPower(-1);
+                    m_intakeShooter.setStowPower(0);
+                }  
+                else{
+                    m_intakeShooter.setRollerPower(0);
+                    m_intakeShooter.setStowPower(0);
+                }
+            }   
         }
         
 
@@ -86,7 +89,7 @@ public class IntakeShooterPosition extends Command{
     @Override
     public boolean isFinished(){
         
-       return (t.get() > 1.5) || isFinished;
+       return isFinished;
     }
 
     @Override
@@ -94,6 +97,7 @@ public class IntakeShooterPosition extends Command{
         //m_intakeShooter.setRollerPower(0);
         //m_intakeShooter.setStowPower(0);
         m_intakeShooter.setPositionState( interrupted ? IntakeShooterPositions.MANUAL : targetPosition);
+        System.out.println("finished!!");
     }
     
 }

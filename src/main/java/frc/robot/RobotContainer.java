@@ -78,11 +78,12 @@ public class RobotContainer {
 
   private final SwerveDrive m_robotDrive = new SwerveDrive();
   private final Elevator m_elevator = new Elevator();
-  private final IntakeShooter m_IntakeShooter = new IntakeShooter();
   private LED led = new LED(9);
   private BeamBreak intakeShooterBeamBreak = new BeamBreak(9);
   private BeamBreak elevatorPivotBeamBreak = new BeamBreak(7);
   private LimitSwitch limitSwitch = new LimitSwitch(6);
+  private final IntakeShooter m_IntakeShooter = new IntakeShooter(limitSwitch);
+  
   
 
   // LED for indicating robot state, not implemented in hardware.

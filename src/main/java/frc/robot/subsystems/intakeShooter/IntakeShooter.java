@@ -36,8 +36,9 @@ public class IntakeShooter extends SubsystemBase {
     private IntakeShooterPositions intakeShooterPosition;
     HashMap<IntakeShooterPositions, Double> pivotPositionValues = new HashMap<>();
 
-    private LimitSwitch l = new LimitSwitch(8);
-    public IntakeShooter(){
+    private LimitSwitch l;
+    public IntakeShooter(LimitSwitch l){
+        this.l = l;
         upperRollerMotor = new CANSparkMax(IntakeShooterConstants.kUpperMotorPort, MotorType.kBrushless);
         lowerRollerMotor = new CANSparkMax(IntakeShooterConstants.kLowerMotorPort, MotorType.kBrushless);
         stowMotor = new CANSparkMax(IntakeShooterConstants.kStowMotorPort, MotorType.kBrushless);
@@ -68,6 +69,10 @@ public class IntakeShooter extends SubsystemBase {
         lowerRollerMotor.set(-power);
     }
 
+    public boolean getPivotLimitReached(){
+        return l.getStatus();
+    }
+
     public void setRollerRPM (double upperRollerRPM, double lowerRollerRPM){
         upperRollerPIDController.setSetpoint(upperRollerRPM);
         lowerRollerPIDController.setSetpoint(lowerRollerRPM);
@@ -88,18 +93,24 @@ public class IntakeShooter extends SubsystemBase {
     }
 
     public void setPivotPower(double power){
-        pivotMotor.set(power);
-        intakeShooterPosition = IntakeShooterPositions.MANUAL;
+        if (this.getPivotLimitReached() && power < 0){
+            pivotMotor.set(0);
+            this.resetEncoder();
+        }
+        else{
+            pivotMotor.set(power);
+            intakeShooterPosition = IntakeShooterPositions.MANUAL;
+        }
     }
+
 
     public boolean setToPosition(IntakeShooterPositions position) {
         double setPoint = pivotPositionValues.get(position);     
         pivotPIDController.setSetpoint(setPoint);
-
         pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
         intakeShooterPosition = position;
         //return Math.abs(pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition() - setPoint) <= 0.05;
-        return Math.abs(pivotMotor.getEncoder().getPosition() - setPoint) <= 0.05;
+        return Math.abs(pivotMotor.getEncoder().getPosition() - setPoint) <= 3;
     }
 
     public void stopAllMotors(){
@@ -167,6 +178,7 @@ public class IntakeShooter extends SubsystemBase {
         SmartDashboard.putNumber("Pivot Position", pivotMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("Upper Roller RPM", upperRollerMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("Lower Roller RPM", lowerRollerMotor.getEncoder().getVelocity());
+        SmartDashboard.putBoolean("Limit", this.getPivotLimitReached());
     }
 
 }
