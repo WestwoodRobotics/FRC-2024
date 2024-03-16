@@ -250,7 +250,7 @@ public class NeoADIS16470 implements AutoCloseable, NTSendable {
   }
 
   public NeoADIS16470() {
-    this(SPI.Port.kOnboardCS0, CalibrationTime._4s);
+    this(SPI.Port.kOnboardCS0, CalibrationTime._1s);
   }
 
   /**
