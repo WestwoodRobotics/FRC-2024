@@ -264,6 +264,7 @@ public class NeoADIS16470 implements AutoCloseable, NTSendable {
     m_acquire_task = new Thread(new AcquireTask(this));
 
     m_simDevice = SimDevice.create("Gyro:ADIS16470", port.value);
+
     if (m_simDevice != null) {
       m_simConnected = m_simDevice.createBoolean("connected", SimDevice.Direction.kInput, true);
       m_simGyroAngleX = m_simDevice.createDouble("gyro_angle_x", SimDevice.Direction.kInput, 0.0);
