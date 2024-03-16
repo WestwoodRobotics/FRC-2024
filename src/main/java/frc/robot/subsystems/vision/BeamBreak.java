@@ -6,8 +6,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class BeamBreak extends GenericDigitalPinObject{
     private DigitalInput input;
+    private double channel;
 
     public BeamBreak(int channel){
        super(channel);
+       this.channel = channel;
+    }
+
+    @Override
+    public void periodic(){
+        SmartDashboard.putBoolean("Beam Break " + channel, this.getStatus());
     }
 }
