@@ -16,6 +16,9 @@ public class Gyro extends SubsystemBase {
   public NeoADIS16470 gyro;
 
   public Rotation2d yawOffset = new Rotation2d(0);
+  public Rotation2d pitchOffset = new Rotation2d(0);
+  public Rotation2d rollOffset = new Rotation2d(0);
+
 
 
   /**
@@ -38,12 +41,39 @@ public class Gyro extends SubsystemBase {
     yawOffset = getRawRot2dYaw().minus(Rotation2d.fromDegrees(degrees));
   }
 
-  public Rotation2d getProcessedRot2dYaw() {
-    return getRawRot2dYaw().minus(yawOffset).times(-1);
+  public void setGyroPitchOffset(double degrees) {
+    pitchOffset = getRawRot2dPitch().minus(Rotation2d.fromDegrees(degrees));
   }
+
+  public void setGyroRollOffset(double degrees) {
+    rollOffset = getRawRot2dRoll().minus(Rotation2d.fromDegrees(degrees));
+  }
+
+
+  public Rotation2d getProcessedRot2dYaw() {
+    return getRawRot2dYaw().minus(yawOffset);
+  }
+
+  public Rotation2d getProcessedRot2dPitch() {
+    return getRawRot2dPitch().minus(pitchOffset);
+  }
+
+  public Rotation2d getProcessedRot2dRoll() {
+    return getRawRot2dRoll().minus(rollOffset);
+  }
+
+
 
   public Rotation2d getRawRot2dYaw() {
     return Rotation2d.fromDegrees(gyro.getXAngle());
+  }
+
+  public Rotation2d getRawRot2dPitch() {
+    return Rotation2d.fromDegrees(gyro.getYAngle());
+  }
+
+  public Rotation2d getRawRot2dRoll() {
+    return Rotation2d.fromDegrees(gyro.getZAngle());
   }
 
   public double getXAngle(){
