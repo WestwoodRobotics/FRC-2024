@@ -3,26 +3,14 @@
   "startingPose": {
     "position": {
       "x": 0.71,
-      "y": 4.446409092116653
+      "y": 4.45
     },
-    "rotation": 30.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
-        {
-          "type": "named",
-          "data": {
-            "name": "GetElevatorOutOfWay"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
         {
           "type": "path",
           "data": {

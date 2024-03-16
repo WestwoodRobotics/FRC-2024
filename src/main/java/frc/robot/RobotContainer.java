@@ -62,6 +62,8 @@ import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 import frc.robot.subsystems.vision.LED;
+import frc.robot.subsystems.vision.LimitSwitch;
+import pabeles.concurrency.ConcurrencyOps.NewInstance;
 
 
 
@@ -80,6 +82,7 @@ public class RobotContainer {
   private LED led = new LED(9);
   private BeamBreak intakeShooterBeamBreak = new BeamBreak(9);
   private BeamBreak elevatorPivotBeamBreak = new BeamBreak(7);
+  private LimitSwitch limitSwitch = new LimitSwitch(6);
   
 
   // LED for indicating robot state, not implemented in hardware.
@@ -148,19 +151,20 @@ public class RobotContainer {
 
     m_chooser.setDefaultOption("Two note", new PathPlannerAuto("TwoNoteAuton"));
     m_chooser.addOption("Just shoot", new PathPlannerAuto("JustShootAuton"));
-    m_chooser.addOption("Shoot and leave", new PathPlannerAuto("ShootAndMobilityAuton"));
+    m_chooser.addOption("Shoot and leave", new PathPlannerAuto("GetOutOfTheWay1Auton"));
     m_chooser.addOption("Test One Meter", new PathPlannerAuto("MeterTestPathAuton"));
     m_chooser.addOption("Get Middle Notes Out" , new PathPlannerAuto("MoveCenterNotesAwayAuton"));
+    m_chooser.addOption("Parallel Commands", new PathPlannerAuto("ParallelAuton"));
     
     SmartDashboard.putData(m_chooser);
 
     //test.setDefaultCommand(new testCommand(test, m_driverController));
     NamedCommands.registerCommand("Shoot", new InstantCommand(()-> m_IntakeShooter.setRollerPower(-1)));
     NamedCommands.registerCommand("GetElevatorOutOfWay", new elevatorPosition(m_elevator, ElevatorPositions.SOURCE));
-    NamedCommands.registerCommand("GoToIntakePosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.INTAKE));
+    NamedCommands.registerCommand("GoToIntakePosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.INTAKE, limitSwitch));
     NamedCommands.registerCommand("ReleasePreRoller", new InstantCommand(() -> m_IntakeShooter.setStowPower(1)));
     NamedCommands.registerCommand("Intake", new InstantCommand(() -> m_IntakeShooter.setRollerPower(1)).alongWith(new InstantCommand(() -> m_IntakeShooter.setStowPower(-1))));
-    NamedCommands.registerCommand("GoToShootPosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT));
+    NamedCommands.registerCommand("GoToShootPosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, limitSwitch));
     NamedCommands.registerCommand("StopAllShooters", new StopAllRollersCommand(m_IntakeShooter, m_elevator));
   }
 
@@ -192,21 +196,21 @@ public class RobotContainer {
     DriverDPadRight.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(0.25), m_elevator))
         .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0), m_elevator));
 
-    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER));
+    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch));
     //DriverAButton.onTrue(new ShootForTimeCommand(m_IntakeShooter, 2.0).andThen(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER)));
 
 
     DriverBButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AMP));
     // TODO: Probably need to change greater/less than signs in the implementation
     // of the method the command calls
-    DriverXButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.SOURCE)).onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT));
+    DriverXButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.SOURCE)).onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, limitSwitch));
 
-    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
+    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
 
-    DriverRightBumper.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.HOME))
+    DriverRightBumper.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.HOME, limitSwitch))
       .onTrue(new elevatorPosition(m_elevator, ElevatorPositions.HOME));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
 
-    DriverLeftBumper.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.INTAKE));
+    DriverLeftBumper.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.INTAKE, limitSwitch));
 
     driverLeftTrigger.whileTrue(new InstantCommand(() -> {
       m_elevator.setRollerPower(0.85);
@@ -254,7 +258,7 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
     OperatorYButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(.5)))
         .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
-    OperatorAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, false));
+    OperatorAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, false, limitSwitch));
 
     OperatorRightBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-0.85), m_elevator))
     .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0), m_elevator));

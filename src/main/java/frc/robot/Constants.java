@@ -221,7 +221,7 @@ public final class Constants {
   public static final class IntakeShooterConstants {
     public static final int kUpperMotorPort = 21;
     public static final int kLowerMotorPort = 22;
-    public static final int kStowMotorPort =20;
+    public static final int kStowMotorPort = 20;
     public static final int kPivotMotorPort = 23;
 
 
@@ -235,10 +235,10 @@ public final class Constants {
     public static double kLowerRollerD = 0; //TODO: Change this value
     public static double kLowerRollerFF = 0; //TODO: Change this value
 
-    public static double kPivotP = 0.9; //TODO: Change this value
+    public static double kPivotP = 0.15; //TODO: Change this value
     public static double kPivotI = 0; //TODO: Change this value 
-    public static double kPivotD = 0.03; //TODO: Change this value
-    public static double kPivotFF = 10; //TODO: Change this value
+    public static double kPivotD = 0; //TODO: Change this value
+    public static double kPivotFF = 15; //TODO: Change this value
 
 
 

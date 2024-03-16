@@ -15,6 +15,8 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
+import frc.robot.subsystems.vision.LimitSwitch;
+
 import com.revrobotics.jni.CANSparkMaxJNI;
 
 public class IntakeShooter extends SubsystemBase {
@@ -34,6 +36,7 @@ public class IntakeShooter extends SubsystemBase {
     private IntakeShooterPositions intakeShooterPosition;
     HashMap<IntakeShooterPositions, Double> pivotPositionValues = new HashMap<>();
 
+    private LimitSwitch l = new LimitSwitch(8);
     public IntakeShooter(){
         upperRollerMotor = new CANSparkMax(IntakeShooterConstants.kUpperMotorPort, MotorType.kBrushless);
         lowerRollerMotor = new CANSparkMax(IntakeShooterConstants.kLowerMotorPort, MotorType.kBrushless);
@@ -92,6 +95,7 @@ public class IntakeShooter extends SubsystemBase {
     public boolean setToPosition(IntakeShooterPositions position) {
         double setPoint = pivotPositionValues.get(position);     
         pivotPIDController.setSetpoint(setPoint);
+
         pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
         intakeShooterPosition = position;
         //return Math.abs(pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition() - setPoint) <= 0.05;
@@ -124,6 +128,10 @@ public class IntakeShooter extends SubsystemBase {
 
     public IntakeShooterPositions getState() {
         return intakeShooterPosition;
+    }
+
+    public void resetEncoder(){
+        pivotMotor.getEncoder().setPosition(0);
     }
 
     public boolean setPivotPosition (IntakeShooterPositions positions){
