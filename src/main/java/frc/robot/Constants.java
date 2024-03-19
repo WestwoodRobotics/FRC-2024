@@ -191,7 +191,7 @@ public final class Constants {
     public static final int kElevatorPivotMotorPort = 33;
 
     public static double kElevatorP = 0.1; //TODO: Change this value
-    public static double kElevatorI = 0.1; //TODO: Change this value
+    public static double kElevatorI = 0.02; //TODO: Change this value
     public static double kElevatorD = 0; //TODO: Change this value
     public static double kElevatorFF = 0; //TODO: Change this value
 
@@ -201,16 +201,15 @@ public final class Constants {
     public static double kElevatorPivotFF = 0; //TODO: Change this value
 
     public static double kElevatorPodiumPosition = 0; //TODO: Change this value
-    public static double kElevatorSourcePosition = 0;
+    public static double kElevatorSourcePosition = 12.595;
     public static double kElevatorAmpPosition = 12.595; //TODO: Change this value
     public static double kElevatorHomePosition = 0; //TODO: Change this value
     public static double kElevatorHandoffPosition = 0; //TODO: Change this value
 
     public static double kElevatorPodiumPivotPosition = 0; //TODO: Change this value
     //public static double kElevatorSourcePivotPosition = 27.5; //TODO: Change this value
-    public static double kElevatorSourcePivotPosition = 35; //TODO: Change this value
-
-    public static double kElevatorAmpPivotPosition = 19; //TODO: Change this value
+    public static double kElevatorSourcePivotPosition = -19; //TODO: Change this value
+    public static double kElevatorAmpPivotPosition = -19; //TODO: Change this value
     public static double kElevatorHomePivotPosition = 0; //TODO: Change this value
     public static double kElevatorHandoffPivotPosition = 0; //TODO: Change this value
 
@@ -225,15 +224,15 @@ public final class Constants {
     public static final int kPivotMotorPort = 23;
 
 
-    public static double kUpperRollerP = 0; //TODO: Change this value
+    public static double kUpperRollerP = 2; //TODO: Change this value
     public static double kUpperRollerI = 0; //TODO: Change this value
     public static double kUpperRollerD = 0; //TODO: Change this value
-    public static double kUpperRollerFF = 0; //TODO: Change this value
+    public static double kUpperRollerFF = 100; //TODO: Change this value
 
-    public static double kLowerRollerP = 0; //TODO: Change this value
+    public static double kLowerRollerP = 0.00045; //TODO: Change this value
     public static double kLowerRollerI = 0; //TODO: Change this value
     public static double kLowerRollerD = 0; //TODO: Change this value
-    public static double kLowerRollerFF = 0; //TODO: Change this value
+    public static double kLowerRollerFF = 200; //TODO: Change this value
 
     public static double kPivotP = 0.15; //TODO: Change this value
     public static double kPivotI = 0; //TODO: Change this value 
@@ -243,10 +242,10 @@ public final class Constants {
 
 
     public static double kHomePivotPosition = 4.666664; //TODO: Change this value
-    public static double kIntakePivotPosition = 100.764587; //TODO: Change this value
+    public static double kIntakePivotPosition = 102.764587; //TODO: Change this value
     public static double kShootNearSpeakerPivotPosition = 42.309082;
     public static double kShootFarSpeakerPivotPosition = 33.2139;
-
     public static double kShootNearSpeakerAutonPivotPosition = 0.498;
+    public static double kShootPivotAmp = 37.618683;
   }
 }

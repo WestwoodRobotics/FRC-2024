@@ -39,7 +39,7 @@ public class ShootAtRPM extends Command{
         timer = new Timer();
         timer.start();
         m_intakeShooter = intakeShooter;
-        this.targetUpperRPM = targetUpperRPM;
+        this.targetUpperRPM =  targetUpperRPM;
         this.targetLowerRPM = targetLowerRPM;
         this.timerTolerance = timerTolerance;
     }
@@ -50,13 +50,17 @@ public class ShootAtRPM extends Command{
      */
     @Override
     public void initialize(){
-        if (m_intakeShooter.getState() == IntakeShooterPositions.SHOOT_FAR_SPEAKER || m_intakeShooter.getState() == IntakeShooterPositions.SHOOT_NEAR_SPEAKER){
-            m_intakeShooter.setRollerRPM(targetUpperRPM, targetLowerRPM);
-        }
-        else{
-            System.out.println("Intake Shooter State is not SHOOT_FAR_SPEAKER or SHOOT_NEAR_SPEAKER (Current State: " + m_intakeShooter.getState().toString() + ")");
-            isFinished = true;
-        }
+        // if (m_intakeShooter.getState() == IntakeShooterPositions.SHOOT_FAR_SPEAKER || m_intakeShooter.getState() == IntakeShooterPositions.SHOOT_NEAR_SPEAKER){
+        //     m_intakeShooter.setRollerRPM(targetUpperRPM, targetLowerRPM);
+        // }
+        // else{
+        //     System.out.println("Intake Shooter State is not SHOOT_FAR_SPEAKER or SHOOT_NEAR_SPEAKER (Current State: " + m_intakeShooter.getState().toString() + ")");
+        //     isFinished = true;
+        // }
+        m_intakeShooter.setRollerRPM(targetUpperRPM, targetLowerRPM);
+        timer.reset();
+        timer.start();
+
     }
 
     /**
@@ -65,12 +69,10 @@ public class ShootAtRPM extends Command{
      */
     @Override
     public void execute(){
-        if (Math.abs(m_intakeShooter.getUpperRPM() - targetUpperRPM) < 100.0 && Math.abs(m_intakeShooter.getLowerRPM() - targetLowerRPM) < 100.0) {
-            if (timer.get() > timerTolerance) {
-                m_intakeShooter.setStowPower(1.0);
-                Timer.delay(1.0);
-                m_intakeShooter.setRollerPower(0.0);
-                m_intakeShooter.setPivotPower(0.0);
+        if (((Math.abs(m_intakeShooter.getUpperRPM()) - Math.abs(targetUpperRPM) < 100.0) 
+        && (Math.abs(m_intakeShooter.getLowerRPM()) - Math.abs(targetLowerRPM) < 100.0 )) 
+        || (timer.get() > timerTolerance)) {
+            {
                 isFinished = true;
             }
         } else {
@@ -85,6 +87,10 @@ public class ShootAtRPM extends Command{
      */
     @Override
     public boolean isFinished(){
-        return isFinished;
+        return true;
+    }
+
+    public void end (boolean interrupted){
+
     }
 }

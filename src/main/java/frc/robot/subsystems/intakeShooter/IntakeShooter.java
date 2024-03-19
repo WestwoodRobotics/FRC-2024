@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intakeShooter;
 
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
+import frc.robot.subsystems.vision.BeamBreak;
 import frc.robot.subsystems.vision.LimitSwitch;
 
 import com.revrobotics.jni.CANSparkMaxJNI;
@@ -34,7 +36,10 @@ public class IntakeShooter extends SubsystemBase {
     private PIDController pivotPIDController;
 
     private IntakeShooterPositions intakeShooterPosition;
-    HashMap<IntakeShooterPositions, Double> pivotPositionValues = new HashMap<>();
+    private HashMap<IntakeShooterPositions, Double> pivotPositionValues = new HashMap<>();
+    private boolean isRollerPIDControl;
+
+
 
     private LimitSwitch l;
     public IntakeShooter(LimitSwitch l){
@@ -59,12 +64,14 @@ public class IntakeShooter extends SubsystemBase {
         pivotPositionValues.put(IntakeShooterPositions.SHOOT_NEAR_SPEAKER, IntakeShooterConstants.kShootNearSpeakerPivotPosition);
         pivotPositionValues.put(IntakeShooterPositions.SHOOT_FAR_SPEAKER, IntakeShooterConstants.kShootFarSpeakerPivotPosition);
         pivotPositionValues.put(IntakeShooterPositions.AUTON_SHOOT, IntakeShooterConstants.kShootNearSpeakerAutonPivotPosition);
+        pivotPositionValues.put(IntakeShooterPositions.AMP, IntakeShooterConstants.kShootPivotAmp);
 
 
 
     }
 
     public void setRollerPower(double power){
+        isRollerPIDControl = false;
         upperRollerMotor.set(power);
         lowerRollerMotor.set(-power);
     }
@@ -74,10 +81,11 @@ public class IntakeShooter extends SubsystemBase {
     }
 
     public void setRollerRPM (double upperRollerRPM, double lowerRollerRPM){
+        isRollerPIDControl = true;
         upperRollerPIDController.setSetpoint(upperRollerRPM);
         lowerRollerPIDController.setSetpoint(lowerRollerRPM);
-        upperRollerMotor.set(upperRollerPIDController.calculate(upperRollerMotor.getEncoder().getVelocity() + IntakeShooterConstants.kUpperRollerFF));
-        lowerRollerMotor.set(lowerRollerPIDController.calculate(lowerRollerMotor.getEncoder().getVelocity() + IntakeShooterConstants.kLowerRollerFF));
+        // upperRollerMotor.set(upperRollerPIDController.calculate(upperRollerMotor.getEncoder().getVelocity() + IntakeShooterConstants.kUpperRollerFF));
+        // lowerRollerMotor.set(lowerRollerPIDController.calculate(lowerRollerMotor.getEncoder().getVelocity() + IntakeShooterConstants.kLowerRollerFF));
     }
 
     public double getUpperRPM(){
@@ -179,6 +187,11 @@ public class IntakeShooter extends SubsystemBase {
         SmartDashboard.putNumber("Upper Roller RPM", upperRollerMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("Lower Roller RPM", lowerRollerMotor.getEncoder().getVelocity());
         SmartDashboard.putBoolean("Limit", this.getPivotLimitReached());
+
+        if (isRollerPIDControl){
+            upperRollerMotor.set(-1*lowerRollerPIDController.calculate(upperRollerMotor.getEncoder().getVelocity())+IntakeShooterConstants.kUpperRollerFF);
+            lowerRollerMotor.set(lowerRollerPIDController.calculate(lowerRollerMotor.getEncoder().getVelocity())+IntakeShooterConstants.kLowerRollerFF);
+        }
     }
 
 }

@@ -18,7 +18,8 @@ public class IntakeShooterPosition extends Command{
     private boolean isFinished;
 
 
-    public IntakeShooterPosition(IntakeShooter intakeShooter, IntakeShooterPositions position, LimitSwitch limitSwitch){
+    public IntakeShooterPosition(IntakeShooter intakeShooter, IntakeShooterPositions position, LimitSwitch limitSwitch
+    ){
         this.m_intakeShooter = intakeShooter;
         this.targetPosition = position;
         addRequirements(m_intakeShooter);
@@ -56,7 +57,7 @@ public class IntakeShooterPosition extends Command{
         //    m_elevator.setPivotPosition(targetPosition);
         if(targetPosition == IntakeShooterPositions.HOME){
             if(!m_intakeShooter.getPivotLimitReached()){
-                m_intakeShooter.setPivotPower(-1);
+                m_intakeShooter.setPivotPower(-0.75);
                 isFinished = false;
             }
             else{

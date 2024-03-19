@@ -31,6 +31,9 @@ public class Elevator extends SubsystemBase{
     private Map<ElevatorPositions, Double> ElevatorPositionValues;
     private Map<ElevatorPositions, Double> pivotPositionValues;
 
+    private boolean isElevatorPIDControl = false;
+    private boolean isPivotPIDCOntrol = false;
+
     public Elevator(){
 
         ElevatorPositionValues = new HashMap<>();
@@ -49,6 +52,7 @@ public class Elevator extends SubsystemBase{
         this.elevatorMotor1 = new CANSparkMax(ElevatorConstants.kElevatorMotor1Port, CANSparkMax.MotorType.kBrushless);
         this.elevatorMotor2 = new CANSparkMax(ElevatorConstants.kElevatorMotor2Port, CANSparkMax.MotorType.kBrushless);
         this.elevatorMotor1.setInverted(true);
+        this.elevatorMotor2.setInverted(false );
 
 
         this.pivotMotor = new CANSparkMax(ElevatorConstants.kElevatorPivotMotorPort, CANSparkMax.MotorType.kBrushless);
@@ -67,71 +71,65 @@ public class Elevator extends SubsystemBase{
         this.setRollerBrakeMode(true);
 
 
+
     }
 
     public void setElevatorPower(double power){
+        isElevatorPIDControl = false;
+
         elevatorMotor1.set(power);
         elevatorMotor2.set(power);
         elevatorPosition = ElevatorPositions.MANUAL;
     }
 
-    public boolean setElevatorPosition(ElevatorPositions position){
+    public void setElevatorPosition(ElevatorPositions position){
         double positionValue = ElevatorPositionValues.get(position);
-        double currentPosition = elevatorMotor1.getEncoder().getPosition();
-        
-        if (Math.abs(positionValue - currentPosition) <= 0.05){
-            elevatorPIDController.setSetpoint(positionValue);
-            elevatorMotor1.set(elevatorPIDController.calculate(elevatorMotor1.getEncoder().getPosition()));
-            elevatorMotor2.set(elevatorPIDController.calculate(elevatorMotor2.getAbsoluteEncoder(Type.kDutyCycle).getPosition()));
-            System.out.println("Pivot Going 1");
-            return false;
-        } 
-        if(positionValue > currentPosition){
-            elevatorPIDController.setSetpoint(positionValue);
-            elevatorMotor1.set(elevatorPIDController.calculate(elevatorMotor1.getEncoder().getPosition()));
-            elevatorMotor2.set(elevatorPIDController.calculate(elevatorMotor2.getEncoder().getPosition()));
-            System.out.println("Pivot Going 1");
-            return false;
-        }
-        if (positionValue == currentPosition){
-            elevatorMotor1.set(0);
-            elevatorMotor2.set(0);
-            //elevatorPivotPosition = positions;
-            System.out.println("Pivot Reached");
-            return true;
-        }
-        return false;
+        elevatorPIDController.setSetpoint(positionValue);
+        System.out.println(positionValue);
+        isElevatorPIDControl = true;
+    }
+
+    public double getTargetElevatorPositionEncoderValue(ElevatorPositions position){
+        return ElevatorPositionValues.get(position);
     }
 
     public void setPivotPower(double power){
+        isPivotPIDCOntrol = false;
         pivotMotor.set(power);
         elevatorPivotPosition = ElevatorPositions.MANUAL;
     }
 
-    public boolean setPivotPosition (ElevatorPositions positions){
+    public void setPivotPosition (ElevatorPositions positions){
         double positionValue = pivotPositionValues.get(positions);
-        double currentPosition = pivotMotor.getEncoder().getPosition();
+        elevatorPivotPIDController.setSetpoint(positionValue);
+        System.out.println(positionValue);
+        isPivotPIDCOntrol = true;
+        // if (Math.abs(positionValue - currentPosition) <= 0.05){
+        //     pivotMotor.set(0);
+        //     //elevatorPivotPosition = positions;
+        //     System.out.println("Pivot Reached");
+        //     return true;
+        // }
+        // else if (positionValue < currentPosition){
+            
+        // } 
+        // else if(positionValue > currentPosition){
+        //     elevatorPivotPIDController.setSetpoint(positionValue);
+        //     double power = elevatorPivotPIDController.calculate(currentPosition);
+        //     if(power > 0.5) {
+        //         power = 0.5;
+        //     }
+        //     else if (power < -0.5) {
+        //         power = -0.5;
+        //     }
+        //     pivotMotor.set(-1*power);
+        //     return false;
+        // }
+        // return false;
+    }
 
-        if (Math.abs(positionValue - currentPosition) <= 0.05){
-            pivotMotor.set(0);
-            //elevatorPivotPosition = positions;
-            System.out.println("Pivot Reached");
-            return true;
-        }
-        else if (positionValue < currentPosition){
-            elevatorPivotPIDController.setSetpoint(positionValue);
-            pivotMotor.set(elevatorPivotPIDController.calculate(currentPosition));
-            System.out.println("Pivot Going 1");
-            return false;
-        } 
-
-        else if(positionValue > currentPosition){
-            elevatorPivotPIDController.setSetpoint(positionValue);
-            pivotMotor.set(elevatorPivotPIDController.calculate(currentPosition));
-            System.out.println("Pivot Going 2");
-            return false;
-        }
-        return false;
+    public void resetEncoder(){
+        pivotMotor.getEncoder().setPosition(0);
     }
 
     public boolean setElevatorPositionNOPID (ElevatorPositions positions){
@@ -188,6 +186,10 @@ public class Elevator extends SubsystemBase{
         return elevatorPosition;
     }
 
+    public double getElevatorEncoderPosition(){
+        return elevatorMotor1.getEncoder().getPosition();
+        }
+
     public ElevatorPositions getPivotPosition(){
         return elevatorPivotPosition;
     }
@@ -195,6 +197,27 @@ public class Elevator extends SubsystemBase{
     public void periodic(){
         SmartDashboard.putNumber("Elevator Position", elevatorMotor1.getEncoder().getPosition());
         SmartDashboard.putNumber("Elevating Pivot Position", pivotMotor.getEncoder().getPosition());
+        
+        if (isElevatorPIDControl){
+            elevatorMotor1.set(elevatorPIDController.calculate(elevatorMotor1.getEncoder().getPosition()));
+            elevatorMotor2.set(elevatorPIDController.calculate(elevatorMotor2.getEncoder().getPosition()));
+        }
+
+        if (isPivotPIDCOntrol){
+            double power = elevatorPivotPIDController.calculate(pivotMotor.getEncoder().getPosition());
+            if(power > 0.5) {
+                power = 0.5;
+            }
+            else if (power < -0.5) {
+                power = -0.5;
+            }
+            pivotMotor.set(power);
+            // System.out.println("power: " + power);
+            // System.out.println("setpoint " + elevatorPivotPIDController.getSetpoint());
+            // System.out.println("encoder pose " + pivotMotor.getEncoder().getPosition());
+
+        }
+
     }
 
     

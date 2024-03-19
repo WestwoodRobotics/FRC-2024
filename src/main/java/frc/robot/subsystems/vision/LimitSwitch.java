@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LimitSwitch extends GenericDigitalPinObject
 {
-    private DigitalInput input;
     private double channel;
 
     public LimitSwitch(int channel){

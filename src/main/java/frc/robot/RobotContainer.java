@@ -23,6 +23,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -40,6 +41,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PortConstants;
 import frc.robot.commands.elevator.elevatorPosition;
+import frc.robot.commands.intakeShooter.IntakeBeamBreakCommand;
 import frc.robot.commands.intakeShooter.IntakeCommand;
 import frc.robot.commands.intakeShooter.IntakeShooterPosition;
 import frc.robot.commands.intakeShooter.ShootAtRPM;
@@ -77,11 +79,12 @@ import pabeles.concurrency.ConcurrencyOps.NewInstance;
 public class RobotContainer {
 
   private final SwerveDrive m_robotDrive = new SwerveDrive();
-  private final Elevator m_elevator = new Elevator();
-  private LED led = new LED(9);
+  public final Elevator m_elevator = new Elevator();
+  //private LED led = new LED(9);
   private BeamBreak intakeShooterBeamBreak = new BeamBreak(9);
-  private BeamBreak elevatorPivotBeamBreak = new BeamBreak(7);// TODO
+  private BeamBreak elevatorPivotBeamBreak = new BeamBreak(8);
   private LimitSwitch limitSwitch = new LimitSwitch(6);
+
   private final IntakeShooter m_IntakeShooter = new IntakeShooter(limitSwitch);
   
   
@@ -96,8 +99,7 @@ public class RobotContainer {
   private final JoystickButton DriverBButton = new JoystickButton(m_driverController, XboxController.Button.kB.value);
   private final JoystickButton DriverXButton = new JoystickButton(m_driverController, XboxController.Button.kX.value);
   private final JoystickButton DriverYButton = new JoystickButton(m_driverController, XboxController.Button.kY.value);
-  private final JoystickButton DriverGyroButton = new JoystickButton(m_driverController,
-      XboxController.Button.kStart.value);
+  private final JoystickButton DriverGyroButton = new JoystickButton(m_driverController, XboxController.Button.kStart.value);
 
   private final POVButton DriverDPadUp = new POVButton(m_driverController, 0);
   private final POVButton DriverDPadRight = new POVButton(m_driverController, 90);
@@ -148,7 +150,7 @@ public class RobotContainer {
     // Configure default commands 
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
     m_IntakeShooter.setDefaultCommand(new InstantCommand(() -> m_IntakeShooter.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooter));
-    led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
+    //led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
 
     m_chooser.setDefaultOption("Two note", new PathPlannerAuto("TwoNoteAuton"));
     m_chooser.addOption("Just shoot", new PathPlannerAuto("JustShootAuton"));
@@ -204,9 +206,10 @@ public class RobotContainer {
     DriverBButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AMP));
     // TODO: Probably need to change greater/less than signs in the implementation
     // of the method the command calls
-    DriverXButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.SOURCE)).onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, limitSwitch));
+    DriverXButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.SOURCE));//onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, limitSwitch));
 
-    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
+    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch)).onTrue(new ShootAtRPM(m_IntakeShooter, 55000, -55000, 1));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
+    DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AMP, limitSwitch));
 
     DriverRightBumper.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.HOME, limitSwitch))
       .onTrue(new elevatorPosition(m_elevator, ElevatorPositions.HOME));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
@@ -215,11 +218,13 @@ public class RobotContainer {
 
     driverLeftTrigger.whileTrue(new InstantCommand(() -> {
       m_elevator.setRollerPower(0.85);
-      m_IntakeShooter.setRollerPower(-1);
       m_IntakeShooter.setStowPower(1);
     }, m_elevator, m_IntakeShooter))
         .onFalse(new StopAllRollersCommand(m_IntakeShooter, m_elevator));
 
+    //driverLeftTrigger.onTrue(new ShootAtRPM(m_IntakeShooter, 3500, -3500, 1));
+        //.onFalse(new StopAllRollersCommand(m_IntakeShooter, m_elevator));
+// 
     driverRightTrigger.whileTrue(new InstantCommand(() -> {
       // Intake
       m_elevator.setRollerPower(-0.85);

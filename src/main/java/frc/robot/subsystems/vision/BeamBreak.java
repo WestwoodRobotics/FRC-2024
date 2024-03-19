@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class BeamBreak extends GenericDigitalPinObject{
-    private DigitalInput input;
+
     private double channel;
 
     public BeamBreak(int channel){

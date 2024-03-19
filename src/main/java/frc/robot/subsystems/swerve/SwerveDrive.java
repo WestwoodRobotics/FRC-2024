@@ -157,10 +157,13 @@ public class SwerveDrive extends SubsystemBase {
             m_rearRight.getPosition()
         }
     );
+
+
     SmartDashboard.putNumber("Z Gyro Angle", gyro.getZAngle());
     SmartDashboard.putNumber("X Gyro Angle", gyro.getXAngle());
     SmartDashboard.putNumber("Y Gyro Angle", gyro.getYAngle());
     m_field.setRobotPose(getPose());
+    SmartDashboard.putNumber("mod stuff", m_frontLeft.getDriveEncoder().getVelocity());
 
   }
 
