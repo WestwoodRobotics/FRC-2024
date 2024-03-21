@@ -16,7 +16,7 @@ public class IntakeShooterPosition extends Command{
 
     private boolean changePower = true;
     private boolean isFinished;
-
+    private static boolean isAlreadyPressed;
 
     public IntakeShooterPosition(IntakeShooter intakeShooter, IntakeShooterPositions position, LimitSwitch limitSwitch
     ){
@@ -43,6 +43,7 @@ public class IntakeShooterPosition extends Command{
     @Override
     public void initialize(){
         m_intakeShooter.setRollerPower(0);
+        isAlreadyPressed = m_intakeShooter.getPivotLimitReached();
         t.reset();
         t.start();
     }
@@ -66,12 +67,27 @@ public class IntakeShooterPosition extends Command{
                 isFinished = true;
             }
         }
-        else{
+        else if(targetPosition == IntakeShooterPositions.AUTON_SHOOT){
+            if(isAlreadyPressed){
+                isFinished = m_intakeShooter.setToPosition(targetPosition);
+
+            }
+            else if(!m_intakeShooter.getPivotLimitReached()){
+                isFinished = m_intakeShooter.setToPosition(targetPosition);
+            }
+            else if(m_intakeShooter.getPivotLimitReached()){
+                m_intakeShooter.setPivotPower(0);
+                isFinished = true;
+            }
+        }
+        else{    
             isFinished = m_intakeShooter.setToPosition(targetPosition);
+
             if(changePower){
                 if (targetPosition == IntakeShooterPositions.SHOOT_FAR_SPEAKER || targetPosition == IntakeShooterPositions.SHOOT_NEAR_SPEAKER || targetPosition == IntakeShooterPositions.AUTON_SHOOT){
                     m_intakeShooter.setRollerPower(-1);
                     m_intakeShooter.setStowPower(0);
+                    
                 }  
                 else{
                     m_intakeShooter.setRollerPower(0);
@@ -79,8 +95,6 @@ public class IntakeShooterPosition extends Command{
                 }
             }   
         }
-        
-
     }
 
     /**
@@ -90,13 +104,14 @@ public class IntakeShooterPosition extends Command{
     @Override
     public boolean isFinished(){
         
-       return isFinished;
+       return isFinished || (l.getStatus() && (targetPosition == (IntakeShooterPositions.HOME) ||  targetPosition ==(IntakeShooterPositions.AUTON_SHOOT)));
     }
 
     @Override
     public void end(boolean interrupted){
         //m_intakeShooter.setRollerPower(0);
         //m_intakeShooter.setStowPower(0);
+        //m_intakeShooter.setPivotPower(0);
         m_intakeShooter.setPositionState( interrupted ? IntakeShooterPositions.MANUAL : targetPosition);
         System.out.println("finished!!");
     }

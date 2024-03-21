@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -32,6 +33,8 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     m_robotContainer.m_elevator.resetEncoder();
+    m_robotContainer.m_robotDrive.resetGyro();
+
     CameraServer.startAutomaticCapture();
     CameraServer.startAutomaticCapture();
     CameraServer.startAutomaticCapture();
@@ -76,7 +79,7 @@ public class Robot extends TimedRobot {
     // else if(m_robotContainer.getAutonomousCommand().getName().equals("ShootAndMobilityAuton")){
     //   m_autonomousCommand = new PathPlannerAuto("ShootAndMobilityAuton");
     // }
-    m_autonomousCommand = new PathPlannerAuto(m_robotContainer.getAutonomousCommand().getName());
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     //m_autonomousCommand = new PathPlannerAuto("TwoNoteAuton");
 

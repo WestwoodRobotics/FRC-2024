@@ -118,7 +118,7 @@ public class IntakeShooter extends SubsystemBase {
         pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
         intakeShooterPosition = position;
         //return Math.abs(pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition() - setPoint) <= 0.05;
-        return Math.abs(pivotMotor.getEncoder().getPosition() - setPoint) <= 3;
+        return Math.abs(Math.abs(pivotMotor.getEncoder().getPosition()) - setPoint) <= 1;
     }
 
     public void stopAllMotors(){

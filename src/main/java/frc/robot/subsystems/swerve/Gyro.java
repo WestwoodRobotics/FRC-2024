@@ -108,6 +108,9 @@ public class Gyro extends SubsystemBase {
 
   public void reset(){
     this.resetYaw();
+    this.yawOffset = new Rotation2d(0);
+    this.rollOffset = new Rotation2d(0);
+    this.pitchOffset = new Rotation2d(0);
   }
     
 }

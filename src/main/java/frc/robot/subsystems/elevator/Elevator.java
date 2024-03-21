@@ -41,12 +41,15 @@ public class Elevator extends SubsystemBase{
         ElevatorPositionValues.put(ElevatorPositions.AMP, ElevatorConstants.kElevatorAmpPosition);
         ElevatorPositionValues.put(ElevatorPositions.HOME, ElevatorConstants.kElevatorHomePosition);
         ElevatorPositionValues.put(ElevatorPositions.SOURCE, ElevatorConstants.kElevatorSourcePosition);
+        ElevatorPositionValues.put(ElevatorPositions.AUTO_SHOOT, ElevatorConstants.kElevatorAutoShootPosition);
 
         pivotPositionValues = new HashMap<>();
         pivotPositionValues.put(ElevatorPositions.PODIUM, ElevatorConstants.kElevatorPodiumPivotPosition);
         pivotPositionValues.put(ElevatorPositions.AMP, ElevatorConstants.kElevatorAmpPivotPosition);
         pivotPositionValues.put(ElevatorPositions.HOME, ElevatorConstants.kElevatorHomePivotPosition);
         pivotPositionValues.put(ElevatorPositions.SOURCE, ElevatorConstants.kElevatorSourcePivotPosition);
+        pivotPositionValues.put(ElevatorPositions.AUTO_SHOOT, ElevatorConstants.kElevatorAutoShootPivotPosition);
+
         
 
         this.elevatorMotor1 = new CANSparkMax(ElevatorConstants.kElevatorMotor1Port, CANSparkMax.MotorType.kBrushless);
@@ -212,12 +215,11 @@ public class Elevator extends SubsystemBase{
                 power = -0.5;
             }
             pivotMotor.set(power);
-            // System.out.println("power: " + power);
-            // System.out.println("setpoint " + elevatorPivotPIDController.getSetpoint());
-            // System.out.println("encoder pose " + pivotMotor.getEncoder().getPosition());
-
+            System.out.println("power: " + power);
+            System.out.println("setpoint " + elevatorPivotPIDController.getSetpoint());
+            System.out.println("encoder pose " + pivotMotor.getEncoder().getPosition());
         }
-
+        
     }
 
     

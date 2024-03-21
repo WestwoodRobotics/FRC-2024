@@ -115,6 +115,7 @@ public class SwerveDrive extends SubsystemBase {
       gyro.reset();
     }
 
+    
     m_field = new Field2d();
     SmartDashboard.putData("Field", m_field);
 
@@ -353,12 +354,15 @@ public class SwerveDrive extends SubsystemBase {
       System.out.println("Warning: Gyro not responding. Returning default heading.");
       return 0.0; // Return a default value
     }
-
   }
+
+  public void setGyroYawOffset(double offset){
+    this.gyro.setGyroYawOffset(offset);
+  } 
 
   public Rotation2d getHeadingObject() {
     if (gyro != null) {
-      return (Rotation2d.fromDegrees(gyro.getZAngle()));
+      return (gyro.getProcessedRot2dYaw());
     } else {
       System.out.println("Warning: Gyro not responding. Returning default heading.");
       return Rotation2d.fromDegrees(0); // Return a default value
@@ -413,6 +417,8 @@ public class SwerveDrive extends SubsystemBase {
       },
       Pose);
   }
+
+
 
 
 
