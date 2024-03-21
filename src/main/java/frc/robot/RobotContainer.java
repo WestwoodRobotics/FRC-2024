@@ -285,7 +285,7 @@ public class RobotContainer {
   }
 
 //------------- autonomous modes -------------
-  public Command twoNoteAuto(){
+    public Command twoNoteAuto(){
     PathPlannerPath intakeAndDrive = PathPlannerPath.fromPathFile("IntakeAndDrive");
     PathPlannerPath goBackToStart = PathPlannerPath.fromPathFile("GoBackToStart");
     return new SequentialCommandGroup(
@@ -301,10 +301,11 @@ public class RobotContainer {
         AutoBuilder.followPath(goBackToStart),
         new WaitCommand(0.5),
         NamedCommands.getCommand("ReleasePreRoller"),
+        new WaitCommand(0.5),
         NamedCommands.getCommand("StopAllShooters"),
         new WaitCommand(100)
     );
-  }
+    }
 
     public Command getOutOfTheWay(){
         PathPlannerPath getOutOfTheWay = PathPlannerPath.fromPathFile("GetOutOfTheWay1");
