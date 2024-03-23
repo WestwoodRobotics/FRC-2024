@@ -38,6 +38,8 @@ public class IntakeShooter extends SubsystemBase {
     private IntakeShooterPositions intakeShooterPosition;
     private HashMap<IntakeShooterPositions, Double> pivotPositionValues = new HashMap<>();
     private boolean isRollerPIDControl;
+    private boolean isPivotPIDControl;
+    private double calculatedPivotPIDValue;
 
 
 
@@ -112,17 +114,41 @@ public class IntakeShooter extends SubsystemBase {
     }
 
 
+    // public boolean setToPosition(IntakeShooterPositions position) {
+    //     if (l.getStatus() && ((position == IntakeShooterPositions.HOME))){
+    //         return true;
+    //     }
+        
+    //     double setPoint = pivotPositionValues.get(position);     
+    //     pivotPIDController.setSetpoint(setPoint);
+    //     pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
+    //     intakeShooterPosition = position;
+    //     //return Math.abs(pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition() - setPoint) <= 0.05;
+    //     return Math.abs(pivotMotor.getEncoder().getPosition() - setPoint) <= 1;
+    // }
+
     public boolean setToPosition(IntakeShooterPositions position) {
+
         if (l.getStatus() && ((position == IntakeShooterPositions.HOME))){
             return true;
         }
         double setPoint = pivotPositionValues.get(position);     
         pivotPIDController.setSetpoint(setPoint);
-        pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
+        calculatedPivotPIDValue = pivotPIDController.calculate(pivotMotor.getEncoder().getPosition());
+        if (calculatedPivotPIDValue > 0) {
+            pivotMotor.set(calculatedPivotPIDValue);
+        }
+        else {
+            pivotMotor.set(0);;
+        } 
         intakeShooterPosition = position;
         //return Math.abs(pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition() - setPoint) <= 0.05;
         return Math.abs(pivotMotor.getEncoder().getPosition() - setPoint) <= 1;
+
+        
     }
+
+
 
     public void stopAllMotors(){
         stopPivotMotor();
@@ -195,6 +221,10 @@ public class IntakeShooter extends SubsystemBase {
             upperRollerMotor.set(-1*lowerRollerPIDController.calculate(upperRollerMotor.getEncoder().getVelocity())+IntakeShooterConstants.kUpperRollerFF);
             lowerRollerMotor.set(lowerRollerPIDController.calculate(lowerRollerMotor.getEncoder().getVelocity())+IntakeShooterConstants.kLowerRollerFF);
         }
+
+
+
+
     }
 
 }

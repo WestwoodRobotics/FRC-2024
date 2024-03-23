@@ -95,7 +95,7 @@ public class IntakeShooterPosition extends Command{
     @Override
     public boolean isFinished(){
         
-       return (t.get() > 2) || (l.getStatus() && (targetPosition == (IntakeShooterPositions.HOME) ||  targetPosition ==(IntakeShooterPositions.AUTON_SHOOT)));
+       return (t.get() > 3);
     }
 
     @Override
