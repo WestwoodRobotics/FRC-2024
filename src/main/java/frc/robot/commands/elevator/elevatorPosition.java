@@ -43,10 +43,6 @@ public class elevatorPosition extends Command{
     public void execute(){
         
         //m_elevator.setPivotPosition(targetPosition);
-
-
-
-        
     }
 
     /**
@@ -55,6 +51,6 @@ public class elevatorPosition extends Command{
      */
     @Override
     public boolean isFinished(){
-       return (Math.abs(m_elevator.getElevatorEncoderPosition() - m_elevator.getTargetElevatorPositionEncoderValue(targetPosition)) < 1) || timer.get()>2;
+       return timer.get()>2;
     }
 }

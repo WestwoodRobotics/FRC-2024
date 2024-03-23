@@ -56,6 +56,7 @@ public class IntakeShooterPosition extends Command{
     public void execute(){
        //m_elevator.setElevatorPositionNOPID(targetPosition);
         //    m_elevator.setPivotPosition(targetPosition);
+
         if(targetPosition == IntakeShooterPositions.HOME){
             if(!m_intakeShooter.getPivotLimitReached()){
                 m_intakeShooter.setPivotPower(-0.75);
@@ -68,17 +69,7 @@ public class IntakeShooterPosition extends Command{
             }
         }
         else if(targetPosition == IntakeShooterPositions.AUTON_SHOOT){
-            if(isAlreadyPressed){
-                isFinished = m_intakeShooter.setToPosition(targetPosition);
-
-            }
-            else if(!m_intakeShooter.getPivotLimitReached()){
-                isFinished = m_intakeShooter.setToPosition(targetPosition);
-            }
-            else if(m_intakeShooter.getPivotLimitReached()){
-                m_intakeShooter.setPivotPower(0);
-                isFinished = true;
-            }
+            isFinished = m_intakeShooter.setToPosition(targetPosition);
         }
         else{    
             isFinished = m_intakeShooter.setToPosition(targetPosition);
@@ -104,7 +95,7 @@ public class IntakeShooterPosition extends Command{
     @Override
     public boolean isFinished(){
         
-       return isFinished || (l.getStatus() && (targetPosition == (IntakeShooterPositions.HOME) ||  targetPosition ==(IntakeShooterPositions.AUTON_SHOOT)));
+       return (t.get() > 2) || (l.getStatus() && (targetPosition == (IntakeShooterPositions.HOME) ||  targetPosition ==(IntakeShooterPositions.AUTON_SHOOT)));
     }
 
     @Override
