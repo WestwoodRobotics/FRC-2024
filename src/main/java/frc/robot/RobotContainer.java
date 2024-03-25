@@ -218,12 +218,15 @@ public class RobotContainer {
     DriverBButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AMP));
     // TODO: Probably need to change greater/less than signs in the implementation
     // of the method the command calls
-    DriverXButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.SOURCE)).onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, limitSwitch));
+    DriverXButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.SOURCE))
+    .onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, limitSwitch));
 
     //DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch)).onTrue(new ShootAtRPM(m_IntakeShooter, 55000, -55000, 1));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
-    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, limitSwitch)).onTrue(new ShootAtRPM(m_IntakeShooter, 55000, -55000, 1)).onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
+    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, limitSwitch)
+    .alongWith(new ShootAtRPM(m_IntakeShooter, 55000, -55000, 1))
+    .andThen(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter)));
 
-    DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AMP, limitSwitch));
+    //DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AMP, limitSwitch));
 
     DriverRightBumper.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.HOME, limitSwitch))
       .onTrue(new elevatorPosition(m_elevator, ElevatorPositions.HOME));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
@@ -234,7 +237,7 @@ public class RobotContainer {
       m_elevator.setRollerPower(-0.85);
       m_IntakeShooter.setStowPower(1);
       m_IntakeShooter.setRollerPower(-1);
-
+      //m_IntakeShooter.setRollerRPM(55000, -55000);
     }, m_elevator, m_IntakeShooter))
         .onFalse(new StopAllRollersCommand(m_IntakeShooter, m_elevator));
 

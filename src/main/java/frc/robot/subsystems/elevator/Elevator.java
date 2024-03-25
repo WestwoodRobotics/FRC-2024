@@ -178,8 +178,6 @@ public class Elevator extends SubsystemBase{
         rollerMotor.setIdleMode(brakeMode ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast);
     }
 
-
-
     public void setPosition(ElevatorPositions position){
         this.setPivotPosition(position);
         elevatorPosition = position;
