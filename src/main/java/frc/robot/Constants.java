@@ -201,8 +201,8 @@ public final class Constants {
     public static double kElevatorPivotFF = 0; //TODO: Change this value
 
     public static double kElevatorPodiumPosition = 0; //TODO: Change this value
-    public static double kElevatorSourcePosition = 19.476120;//12.595;
-    public static double kElevatorAmpPosition = 4.928566; //TODO: Change this value
+    public static double kElevatorSourcePosition = 11.785769;//12.595;
+    public static double kElevatorAmpPosition = 12; //TODO: Change this value
     public static double kElevatorAutoShootPosition = 0;
     public static double kElevatorHomePosition = 0; //TODO: Change this value
     public static double kElevatorHandoffPosition = 0; //TODO: Change this value
@@ -211,7 +211,7 @@ public final class Constants {
     //public static double kElevatorSourcePivotPosition = 27.5; //TODO: Change this value
     public static double kElevatorSourcePivotPosition = -17.857100; //TODO: Change this value
     public static double kElevatorAutoShootPivotPosition = -40;
-    public static double kElevatorAmpPivotPosition = -27.214090; //TODO: Change this value
+    public static double kElevatorAmpPivotPosition = -28; //TODO: Change this value
     public static double kElevatorHomePivotPosition = 0; //TODO: Change this value
     public static double kElevatorHandoffPivotPosition = 0; //TODO: Change this value
 
@@ -244,10 +244,12 @@ public final class Constants {
 
 
     public static double kHomePivotPosition = 0; //TODO: Change this value
-    public static double kIntakePivotPosition = 104.811676; //TODO: Change this value
-    public static double kShootNearSpeakerPivotPosition = 38.690093994140625;
-    public static double kShootFarSpeakerPivotPosition = 33.2139;
-    public static double kShootNearSpeakerAutonPivotPosition = 4.047615051269531;
-    public static double kShootPivotAmp = 37.618683;
+    public static double kIntakePivotPosition = 106.597160; //TODO: Change this value
+    public static double kShootNearSpeakerPivotPosition = 7.071438;
+    public static double kShootNearSpeakerFacingForwardsPivotPosition = 44.475716;
+
+    public static double kShootFarSpeakerPivotPosition = 19.92834;
+    public static double kShootNearSpeakerAutonPivotPosition = 7.071438;
+    public static double kShootPivotAmp = 22.5712098;
   } 
 }

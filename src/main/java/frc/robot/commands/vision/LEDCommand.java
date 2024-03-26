@@ -28,6 +28,7 @@ public class LEDCommand extends Command {
         // SmartDashboard.putBoolean("b", b.getStatus());
         SmartDashboard.putBoolean("elevator beam break", beamBreakElevatorPivot.getStatus());
         SmartDashboard.putBoolean("intake shooter beam break", beamBreakIntakePivot.getStatus());
+
         if(!beamBreakIntakePivot.getStatus() || !beamBreakElevatorPivot.getStatus()){
             //if(!beamBreakIntakePivot.getStatus()){
             led.setLights(0.77);

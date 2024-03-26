@@ -362,7 +362,7 @@ public class SwerveDrive extends SubsystemBase {
 
   public Rotation2d getHeadingObject() {
     if (gyro != null) {
-      return (gyro.getProcessedRot2dYaw());
+      return (gyro.getRawRot2dYaw());
     } else {
       System.out.println("Warning: Gyro not responding. Returning default heading.");
       return Rotation2d.fromDegrees(0); // Return a default value

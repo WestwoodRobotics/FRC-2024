@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.utils.MotorControlGroup;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
+import frc.robot.subsystems.vision.BeamBreak;
 
 public class Elevator extends SubsystemBase{
 
@@ -163,7 +164,7 @@ public class Elevator extends SubsystemBase{
 
 
     public void setRollerPower(double power){
-        rollerMotor.set(power);
+            rollerMotor.set(power);
     }
 
     public void setElevatorBrakeMode(boolean brakeMode){
@@ -196,6 +197,7 @@ public class Elevator extends SubsystemBase{
     }
     @Override
     public void periodic(){
+        
         SmartDashboard.putNumber("Elevator Position", elevatorMotor1.getEncoder().getPosition());
         SmartDashboard.putNumber("Elevating Pivot Position", pivotMotor.getEncoder().getPosition());
         

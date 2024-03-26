@@ -67,22 +67,25 @@ public class IntakeShooter extends SubsystemBase {
         pivotPositionValues.put(IntakeShooterPositions.SHOOT_FAR_SPEAKER, IntakeShooterConstants.kShootFarSpeakerPivotPosition);
         pivotPositionValues.put(IntakeShooterPositions.AUTON_SHOOT, IntakeShooterConstants.kShootNearSpeakerAutonPivotPosition);
         pivotPositionValues.put(IntakeShooterPositions.AMP, IntakeShooterConstants.kShootPivotAmp);
-
+        pivotPositionValues.put(IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, IntakeShooterConstants.kShootNearSpeakerFacingForwardsPivotPosition);
 
 
     }
 
-    public void setRollerPower(double power){
+    public void setRollerPower(double power)
+    {
         isRollerPIDControl = false;
         upperRollerMotor.set(power);
         lowerRollerMotor.set(-power);
     }
 
-    public boolean getPivotLimitReached(){
+    public boolean getPivotLimitReached()
+    {
         return l.getStatus();
     }
 
-    public void setRollerRPM (double upperRollerRPM, double lowerRollerRPM){
+    public void setRollerRPM (double upperRollerRPM, double lowerRollerRPM)
+    {
         isRollerPIDControl = true;
         upperRollerPIDController.setSetpoint(upperRollerRPM);
         lowerRollerPIDController.setSetpoint(lowerRollerRPM);
@@ -135,18 +138,16 @@ public class IntakeShooter extends SubsystemBase {
         double setPoint = pivotPositionValues.get(position);     
         pivotPIDController.setSetpoint(setPoint);
         calculatedPivotPIDValue = pivotPIDController.calculate(pivotMotor.getEncoder().getPosition());
-        if (calculatedPivotPIDValue > 0) {
+        //if (calculatedPivotPIDValue > 0) {
             pivotMotor.set(calculatedPivotPIDValue);
-        }
-        else {
-            pivotMotor.set(0);;
-        } 
+        //}
+        //else {
+        //    pivotMotor.set(0);
+        //} 
         intakeShooterPosition = position;
         //return Math.abs(pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition() - setPoint) <= 0.05;
-        return Math.abs(pivotMotor.getEncoder().getPosition() - setPoint) <= 1;
-
-        
-    }
+        return (Math.abs(pivotMotor.getEncoder().getPosition() - setPoint) <= 1);
+    }   
 
 
 

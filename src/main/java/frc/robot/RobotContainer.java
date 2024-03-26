@@ -46,6 +46,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PortConstants;
 import frc.robot.commands.elevator.elevatorPosition;
+import frc.robot.commands.elevator.elevatorRollerCommand;
 import frc.robot.commands.intakeShooter.IntakeBeamBreakCommand;
 import frc.robot.commands.intakeShooter.IntakeCommand;
 import frc.robot.commands.intakeShooter.IntakeShooterPosition;
@@ -84,10 +85,10 @@ import pabeles.concurrency.ConcurrencyOps.NewInstance;
 public class RobotContainer {
 
   public final SwerveDrive m_robotDrive = new SwerveDrive();
-  public final Elevator m_elevator = new Elevator();
   //private LED led = new LED(9);
   private BeamBreak intakeShooterBeamBreak = new BeamBreak(9);
   private BeamBreak elevatorPivotBeamBreak = new BeamBreak(8);
+public final Elevator m_elevator = new Elevator();
   private LimitSwitch limitSwitch = new LimitSwitch(6);
 
   private final IntakeShooter m_IntakeShooter = new IntakeShooter(limitSwitch);
@@ -211,7 +212,7 @@ public class RobotContainer {
     DriverDPadRight.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(0.25), m_elevator))
         .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0), m_elevator));
 
-    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch));
+    //DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch));
     //DriverAButton.onTrue(new ShootForTimeCommand(m_IntakeShooter, 2.0).andThen(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER)));
 
 
@@ -222,11 +223,9 @@ public class RobotContainer {
     .onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, limitSwitch));
 
     //DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch)).onTrue(new ShootAtRPM(m_IntakeShooter, 55000, -55000, 1));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
-    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, limitSwitch)
-    .alongWith(new ShootAtRPM(m_IntakeShooter, 55000, -55000, 1))
-    .andThen(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter)));
+    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch).alongWith(new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT)));
 
-    //DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AMP, limitSwitch));
+    DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch));
 
     DriverRightBumper.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.HOME, limitSwitch))
       .onTrue(new elevatorPosition(m_elevator, ElevatorPositions.HOME));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
@@ -234,19 +233,18 @@ public class RobotContainer {
     DriverLeftBumper.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.INTAKE, limitSwitch));
 
     driverLeftTrigger.whileTrue(new InstantCommand(() -> {
-      m_elevator.setRollerPower(-0.85);
+      m_elevator.setRollerPower(-1);
       m_IntakeShooter.setStowPower(1);
       m_IntakeShooter.setRollerPower(-1);
       //m_IntakeShooter.setRollerRPM(55000, -55000);
     }, m_elevator, m_IntakeShooter))
-        .onFalse(new StopAllRollersCommand(m_IntakeShooter, m_elevator));
+        .onFalse(new StopAllRollersCommand(m_IntakeShooter, m_elevator)).onFalse(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.HOME, limitSwitch)).onFalse(new elevatorPosition(m_elevator, ElevatorPositions.HOME));
 
     //driverLeftTrigger.onTrue(new ShootAtRPM(m_IntakeShooter, 3500, -3500, 1));
         //.onFalse(new StopAllRollersCommand(m_IntakeShooter, m_elevator));
 // 
-    driverRightTrigger.whileTrue(new InstantCommand(() -> {
+    driverRightTrigger.whileTrue(new elevatorRollerCommand(m_elevator, 1, elevatorPivotBeamBreak)).whileTrue(new InstantCommand(() -> {
       // Intake
-      m_elevator.setRollerPower(0.40);
       m_IntakeShooter.setRollerPower(1);
       m_IntakeShooter.setStowPower(-1);
     }, m_elevator, m_IntakeShooter))
@@ -281,8 +279,9 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
     OperatorXButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setStowPower(-1), m_IntakeShooter))
         .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
-    OperatorYButton.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(.5)))
-        .onFalse(new InstantCommand(() -> m_IntakeShooter.setStowPower(0), m_IntakeShooter));
+
+    OperatorYButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch));
+
     OperatorAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, false, limitSwitch));
     OperatorStartButton.onTrue(new InstantCommand(() -> m_elevator.resetEncoder()));
 
@@ -294,6 +293,7 @@ public class RobotContainer {
   }
 
 //------------- autonomous modes -------------
+
     public Command twoNoteAuto(){
     PathPlannerPath intakeAndDrive = PathPlannerPath.fromPathFile("IntakeAndDrive");
     PathPlannerPath goBackToStart = PathPlannerPath.fromPathFile("GoBackToStart");
@@ -383,8 +383,8 @@ public class RobotContainer {
     /*return new SequentialCommandGroup(new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(-Math.PI/3)))),
                                       new InstantCommand(() -> m_robotDrive.setGyroYawOffset(-60)),
                                       new PathPlannerAuto("GetOutOfTheWay1Auton"))*/
-    //return twoNoteAuto();
-    return new PathPlannerAuto("JJustShoot");
+    return twoNoteAuto();
+    //return new PathPlannerAuto("JJustShoot");
 
   }
 }
