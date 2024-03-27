@@ -245,6 +245,7 @@ public final class Constants {
 
     public static double kHomePivotPosition = 0; //TODO: Change this value
     public static double kIntakePivotPosition = 106.597160; //TODO: Change this value
+    public static double kAutoIntakePivotPosition = 104.597160; //TODO: Change this value
     public static double kShootNearSpeakerPivotPosition = 7.071438;
     public static double kShootNearSpeakerFacingForwardsPivotPosition = 44.475716;
 

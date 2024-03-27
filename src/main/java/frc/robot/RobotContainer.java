@@ -162,9 +162,9 @@ public final Elevator m_elevator = new Elevator();
     m_IntakeShooter.setDefaultCommand(new InstantCommand(() -> m_IntakeShooter.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooter));
     //led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
 
-    m_chooser.setDefaultOption("Two note", twoNoteAuto());
-    m_chooser.addOption("get out of the way", getOutOfTheWay());
-    m_chooser.addOption("shoot and move", shootAndMobility());
+    m_chooser.setDefaultOption("two note", twoNoteAuto());
+    m_chooser.addOption("shoot pickup from middle shoot", shootPickupShoot());
+    m_chooser.addOption("shoot pickup from middle", shootAndPickup());
     //m_chooser.addOption("Shoot and leave", new PathPlannerAuto("GetOutOfTheWay1Auton"));
     //m_chooser.addOption("Test One Meter", new PathPlannerAuto("MeterTestPathAuton"));
     //m_chooser.addOption("Get Middle Notes Out" , new PathPlannerAuto("MoveCenterNotesAwayAuton"));
@@ -177,10 +177,10 @@ public final Elevator m_elevator = new Elevator();
     NamedCommands.registerCommand("Shoot", new InstantCommand(()-> m_IntakeShooter.setRollerPower(-1)));
     NamedCommands.registerCommand("IntakeShooterGoHome", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.HOME, limitSwitch));
     NamedCommands.registerCommand("GetElevatorOutOfWay", new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT));
-    NamedCommands.registerCommand("GoToIntakePosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.INTAKE, limitSwitch));
+    NamedCommands.registerCommand("GoToIntakePosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_INTAKE, limitSwitch));
     NamedCommands.registerCommand("ReleasePreRoller", new InstantCommand(() -> m_IntakeShooter.setStowPower(1)));
     NamedCommands.registerCommand("Intake", new InstantCommand(() -> m_IntakeShooter.setRollerPower(1)).alongWith(new InstantCommand(() -> m_IntakeShooter.setStowPower(-1))));
-    NamedCommands.registerCommand("GoToShootPosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, limitSwitch));
+    NamedCommands.registerCommand("GoToShootPosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch));
     NamedCommands.registerCommand("StopAllShooters", new StopAllRollersCommand(m_IntakeShooter, m_elevator));
   }
 
@@ -223,7 +223,7 @@ public final Elevator m_elevator = new Elevator();
     .onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, limitSwitch));
 
     //DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch)).onTrue(new ShootAtRPM(m_IntakeShooter, 55000, -55000, 1));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
-    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch).alongWith(new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT)));
+    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch)).onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT));
 
     DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch));
 
@@ -295,32 +295,10 @@ public final Elevator m_elevator = new Elevator();
 //------------- autonomous modes -------------
 
     public Command twoNoteAuto(){
-    PathPlannerPath intakeAndDrive = PathPlannerPath.fromPathFile("IntakeAndDrive");
-    PathPlannerPath goBackToStart = PathPlannerPath.fromPathFile("GoBackToStart");
     return new SequentialCommandGroup(
-            new InstantCommand(() -> m_robotDrive.resetGyro()),
-            NamedCommands.getCommand("GoToShootPosition"),
-            NamedCommands.getCommand("Shoot"),
-            new WaitCommand(0.5),
-            NamedCommands.getCommand("GetElevatorOutOfWay"),
-            new WaitCommand(1),
-            NamedCommands.getCommand("ReleasePreRoller"),
-            new WaitCommand(0.5),
-            NamedCommands.getCommand("GoToIntakePosition"),
-            NamedCommands.getCommand("Intake"),
-            AutoBuilder.followPath(intakeAndDrive),
-            NamedCommands.getCommand("GoToShootPosition"),
-            new WaitCommand(0.5),
-            AutoBuilder.followPath(goBackToStart),
-            new WaitCommand(0.5),
-            NamedCommands.getCommand("StopAllShooters"),
-            new WaitCommand(1),
-            NamedCommands.getCommand("Shoot"),
-            new WaitCommand(1),
-            NamedCommands.getCommand("ReleasePreRoller"),
-            new WaitCommand(0.75),
-            NamedCommands.getCommand("StopAllShooters"),
-            new WaitCommand(100)
+            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(1.35,5.58, new Rotation2d(0)))),
+            new InstantCommand(() -> m_robotDrive.setGyroYawOffset(0)),
+            new PathPlannerAuto("TwoNoteAuton")
         );
     }
 
@@ -347,27 +325,19 @@ public final Elevator m_elevator = new Elevator();
         );
     }
 
-    public Command shootAndMobility(){
-        PathPlannerPath getOutOfTheWay = PathPlannerPath.fromPathFile("GetOutOfTheWay2");
-        PathPlannerPath goBackToStart = PathPlannerPath.fromPathFile("GoBackToStart");
-        m_robotDrive.resetGyro();
-
+    public Command shootAndPickup(){
         return new SequentialCommandGroup(
-            NamedCommands.getCommand("Shoot"),
-            NamedCommands.getCommand("GetElevatorOutOfWay"),
-            NamedCommands.getCommand("ReleasePreRoller"),
-            new WaitCommand(0.5),
-            //NamedCommands.getCommand("GoToIntakePosition"),
-            //NamedCommands.getCommand("Intake"),
-            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.77,6.84, new Rotation2d(0)))),
-            AutoBuilder.followPath(getOutOfTheWay)
-        
-        /*NamedCommands.getCommand("GoToShootPosition"),
-        AutoBuilder.followPath(goBackToStart),
-        new WaitCommand(0.5),
-        NamedCommands.getCommand("ReleasePreRoller"),
-        NamedCommands.getCommand("StopAllShooters"),
-        new WaitCommand(100)*/
+            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(-Math.PI/3)))),
+            new InstantCommand(() -> m_robotDrive.setGyroYawOffset(-60)),
+            new PathPlannerAuto("ShootAndPickupAuton")
+        );
+    }
+
+    public Command shootPickupShoot(){
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(-Math.PI/3)))),
+            new InstantCommand(() -> m_robotDrive.setGyroYawOffset(-60)),
+            new PathPlannerAuto("ShootPickupShootAuton")
         );
     }
 
@@ -380,11 +350,6 @@ public final Elevator m_elevator = new Elevator();
   public Command getAutonomousCommand() {
     SmartDashboard.putData("selected auto", m_chooser.getSelected());
     //return m_chooser.getSelected();
-    /*return new SequentialCommandGroup(new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(-Math.PI/3)))),
-                                      new InstantCommand(() -> m_robotDrive.setGyroYawOffset(-60)),
-                                      new PathPlannerAuto("GetOutOfTheWay1Auton"))*/
-    return twoNoteAuto();
-    //return new PathPlannerAuto("JJustShoot");
-
+    return shootPickupShoot();
   }
 }

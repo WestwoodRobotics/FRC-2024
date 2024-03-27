@@ -7,6 +7,7 @@ public enum IntakeShooterPositions {
     SHOOT_NEAR_SPEAKER_FACING_FORWARDS,
     SHOOT_FAR_SPEAKER,
     AUTON_SHOOT,
+    AUTON_INTAKE,
     AMP,
     MANUAL
 }

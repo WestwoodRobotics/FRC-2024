@@ -69,9 +69,6 @@ public class IntakeShooterPosition extends Command{
                 isFinished = true;
             }
         }
-        else if(targetPosition == IntakeShooterPositions.AUTON_SHOOT){
-            isFinished = m_intakeShooter.setToPosition(targetPosition);
-        }
         else{    
             isFinished = m_intakeShooter.setToPosition(targetPosition);
 

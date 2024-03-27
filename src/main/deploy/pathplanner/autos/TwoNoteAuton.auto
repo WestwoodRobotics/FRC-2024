@@ -18,25 +18,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "GoToShootPosition"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "Shoot"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
                 }
               },
               {
@@ -49,6 +31,12 @@
                 "type": "named",
                 "data": {
                   "name": "ReleasePreRoller"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
                 }
               },
               {
@@ -91,6 +79,12 @@
                 "type": "named",
                 "data": {
                   "name": "ReleasePreRoller"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
                 }
               },
               {

@@ -34,11 +34,12 @@ public class elevatorRollerCommand extends Command{
     public void initialize(){
         t.reset(); 
         t.start();
+        isFinished = false;
         alreadyBeamBreak = elevatorBeamBreak.getStatus();
-        if(alreadyBeamBreak){
-            timerStart = t.get();
-            System.out.println("broken");
-        }
+        // if(alreadyBeamBreak){
+        //     timerStart = t.get();
+        //     System.out.println("broken");
+        // }
     }
 
     /**
@@ -47,16 +48,25 @@ public class elevatorRollerCommand extends Command{
      */
     @Override
     public void execute(){
-        if(alreadyBeamBreak && !elevatorBeamBreak.getStatus()){
-            if((t.get() - timerStart) >= 1.5){
-                elevator.setRollerPower(0);
-                System.out.println("stopped");
-                System.out.println(t.get());
-                System.out.println(timerStart);
-            }
+        if(alreadyBeamBreak){
+            timerStart = t.get();
+        }
+        if((t.get() - timerStart) >= 0.1){
+            elevator.setRollerPower(0);
+            System.out.println("stopped");
+            System.out.println(t.get());
+            System.out.println(timerStart);
+            isFinished = true;
         }
         else{
             elevator.setRollerPower(rollerPower);
+        }
+
+        if(elevatorBeamBreak.getStatus() && !alreadyBeamBreak){
+            alreadyBeamBreak = true;
+        }
+        else{
+            alreadyBeamBreak = false;
         }
     }
 
