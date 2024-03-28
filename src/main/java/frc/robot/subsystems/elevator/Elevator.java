@@ -51,8 +51,6 @@ public class Elevator extends SubsystemBase{
         pivotPositionValues.put(ElevatorPositions.SOURCE, ElevatorConstants.kElevatorSourcePivotPosition);
         pivotPositionValues.put(ElevatorPositions.AUTO_SHOOT, ElevatorConstants.kElevatorAutoShootPivotPosition);
 
-        
-
         this.elevatorMotor1 = new CANSparkMax(ElevatorConstants.kElevatorMotor1Port, CANSparkMax.MotorType.kBrushless);
         this.elevatorMotor2 = new CANSparkMax(ElevatorConstants.kElevatorMotor2Port, CANSparkMax.MotorType.kBrushless);
         this.elevatorMotor1.setInverted(true);
@@ -93,7 +91,8 @@ public class Elevator extends SubsystemBase{
         isElevatorPIDControl = true;
     }
 
-    public double getTargetElevatorPositionEncoderValue(ElevatorPositions position){
+    public double getTargetElevatorPositionEncoderValue(ElevatorPositions position)
+    {
         return ElevatorPositionValues.get(position);
     }
 

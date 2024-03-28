@@ -37,9 +37,9 @@ public final class Constants {
     public static final double kRotationalSlewRate = 2; // percent per second (1 = 100%)
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(18.5);
+    public static final double kTrackWidth = Units.inchesToMeters(21.5);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(20.5);
+    public static final double kWheelBase = Units.inchesToMeters(21.5);
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -93,7 +93,7 @@ public final class Constants {
     // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
     // This changes the drive speed of the module (a pinion gear with more teeth will result in a
     // robot that drives faster).
-    public static final int kDrivingMotorPinionTeeth = 14;
+    public static final int kDrivingMotorPinionTeeth = 15;
 
     // Invert the turning encoder, since the output shaft rotates in the opposite direction of
     // the steering motor in the MAXSwerve Module.
@@ -104,7 +104,7 @@ public final class Constants {
     public static final double kWheelDiameterMeters = 0.0762;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
-    public static final double kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 15);
+    public static final double kDrivingMotorReduction = (45.0 * 20) / (kDrivingMotorPinionTeeth * 15);
     public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters)
         / kDrivingMotorReduction;
 
@@ -121,7 +121,7 @@ public final class Constants {
 
 
     // These PID Gains have been tested
-    public static final double kDrivingP = 0.1;
+    public static final double kDrivingP = 0.2;
     public static final double kDrivingI = 0; 
     public static final double kDrivingD = 0.002; 
     public static final double kDrivingFF = 1 / kDriveWheelFreeSpeedRps; 
@@ -145,7 +145,7 @@ public final class Constants {
   }
 
   public static final class ControllerConstants {
-    public static final double kDriveDeadband = 0.2;
+    public static final double kDriveDeadband = 0.1;
   }
 
   public static final class AutoConstants {
@@ -184,6 +184,7 @@ public final class Constants {
   public static final class VortexMotorConstants {
     public static final double kFreeSpeedRpm = 6784;
   }
+
   public static final class ElevatorConstants {
     public static final int kElevatorMotor1Port = 30;
     public static final int kElevatorMotor2Port = 31;

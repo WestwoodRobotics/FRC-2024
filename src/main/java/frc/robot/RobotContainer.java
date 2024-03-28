@@ -85,10 +85,10 @@ import pabeles.concurrency.ConcurrencyOps.NewInstance;
 public class RobotContainer {
 
   public final SwerveDrive m_robotDrive = new SwerveDrive();
-  //private LED led = new LED(9);
+  private LED led = new LED(9);
   private BeamBreak intakeShooterBeamBreak = new BeamBreak(9);
   private BeamBreak elevatorPivotBeamBreak = new BeamBreak(8);
-public final Elevator m_elevator = new Elevator();
+  public final Elevator m_elevator = new Elevator();
   private LimitSwitch limitSwitch = new LimitSwitch(6);
 
   private final IntakeShooter m_IntakeShooter = new IntakeShooter(limitSwitch);
@@ -161,15 +161,17 @@ public final Elevator m_elevator = new Elevator();
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
     m_IntakeShooter.setDefaultCommand(new InstantCommand(() -> m_IntakeShooter.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooter));
     //led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
-
+    led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
     m_chooser.setDefaultOption("two note", twoNoteAuto());
+
     m_chooser.addOption("shoot pickup from middle shoot", shootPickupShoot());
     m_chooser.addOption("shoot pickup from middle", shootAndPickup());
+    m_chooser.addOption("amp side", ampSide());
     //m_chooser.addOption("Shoot and leave", new PathPlannerAuto("GetOutOfTheWay1Auton"));
     //m_chooser.addOption("Test One Meter", new PathPlannerAuto("MeterTestPathAuton"));
     //m_chooser.addOption("Get Middle Notes Out" , new PathPlannerAuto("MoveCenterNotesAwayAuton"));
     //m_chooser.addOption("Parallel Commands", new PathPlannerAuto("ParallelAuton"));
-    //m_chooser.addOption("two note take two", twoNoteAuto());
+    m_chooser.addOption("two note", twoNoteAuto());
     
     SmartDashboard.putData(m_chooser);
 
@@ -205,10 +207,13 @@ public final Elevator m_elevator = new Elevator();
 
     DriverDPadUp.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(1.0), m_elevator))
         .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0), m_elevator));
+
     DriverDPadDown.onTrue(new InstantCommand(() -> m_elevator.setElevatorPower(-1), m_elevator))
         .onFalse(new InstantCommand(() -> m_elevator.setElevatorPower(0), m_elevator));
+
     DriverDPadLeft.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(-0.25), m_elevator))
         .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0), m_elevator));
+
     DriverDPadRight.onTrue(new InstantCommand(() -> m_elevator.setPivotPower(0.25), m_elevator))
         .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0), m_elevator));
 
@@ -292,7 +297,7 @@ public final Elevator m_elevator = new Elevator();
     .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0), m_elevator));
   }
 
-//------------- autonomous modes -------------
+//------------------------------------------- autonomous modes -------------------------------------------
 
     public Command twoNoteAuto(){
     return new SequentialCommandGroup(
@@ -340,6 +345,22 @@ public final Elevator m_elevator = new Elevator();
             new PathPlannerAuto("ShootPickupShootAuton")
         );
     }
+
+    public Command ampSide(){
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(-Math.PI/3)))),
+            new InstantCommand(() -> m_robotDrive.setGyroYawOffset(60)),
+            new PathPlannerAuto("AmpSideAuton")
+        );
+    }
+
+    // public Command testingOtherSideSubwoofer(){
+    //     return new SequentialCommandGroup(
+    //         new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.74,6.68, new Rotation2d(Math.PI/3)))),
+    //         new InstantCommand(() -> m_robotDrive.setGyroYawOffset(60)),
+    //         new PathPlannerAuto("TestingOtherSideSubwooferAuton")
+    //     );
+    // }
 
 
   /**

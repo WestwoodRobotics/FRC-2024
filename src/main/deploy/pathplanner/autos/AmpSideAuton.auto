@@ -50,7 +50,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "PickupFromMiddle"
+            "pathName": "AmpSidePickupShort"
           }
         },
         {
@@ -68,7 +68,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AfterPickupShoot"
+            "pathName": "AmpSideBack"
           }
         },
         {
@@ -86,7 +86,19 @@
         {
           "type": "named",
           "data": {
-            "name": "StopAllShooters"
+            "name": "GoToIntakePosition"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AmpSidePickupLong"
           }
         }
       ]
