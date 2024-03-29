@@ -80,6 +80,7 @@ public class Robot extends TimedRobot {
     //   m_autonomousCommand = new PathPlannerAuto("ShootAndMobilityAuton");
     // }
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_robotContainer.m_robotDrive.resetGyro();
 
     //m_autonomousCommand = new PathPlannerAuto("TwoNoteAuton");
 
