@@ -172,6 +172,7 @@ public class RobotContainer {
     //m_chooser.addOption("Get Middle Notes Out" , new PathPlannerAuto("MoveCenterNotesAwayAuton"));
     //m_chooser.addOption("Parallel Commands", new PathPlannerAuto("ParallelAuton"));
     m_chooser.addOption("two note", twoNoteAuto());
+    m_chooser.addOption("meterTest" , meterTestAuto());
     
     SmartDashboard.putData(m_chooser);
 
@@ -181,9 +182,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("GetElevatorOutOfWay", new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT));
     NamedCommands.registerCommand("GoToIntakePosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_INTAKE, limitSwitch));
     NamedCommands.registerCommand("ReleasePreRoller", new InstantCommand(() -> m_IntakeShooter.setStowPower(1)));
-    NamedCommands.registerCommand("Intake", new InstantCommand(() -> m_IntakeShooter.setRollerPower(1)).alongWith(new InstantCommand(() -> m_IntakeShooter.setStowPower(-1))));
-    NamedCommands.registerCommand("GoToShootPosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch));
+    NamedCommands.registerCommand("Intake", new InstantCommand(() -> m_IntakeShooter.setRollerPower(1)).andThen(new InstantCommand(() -> m_IntakeShooter.setStowPower(-1))));
+    NamedCommands.registerCommand("GoToShootPosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, limitSwitch));
     NamedCommands.registerCommand("StopAllShooters", new StopAllRollersCommand(m_IntakeShooter, m_elevator));
+    NamedCommands.registerCommand("StopIntakePivot", new InstantCommand(() -> m_IntakeShooter.setPivotPower(0)));
   }
 
   /*
@@ -330,18 +332,22 @@ public class RobotContainer {
         );
     }
 
+    public Command meterTestAuto(){
+       return new PathPlannerAuto("MeterTestAuto");
+    }
+
     public Command shootAndPickup(){
         return new SequentialCommandGroup(
-            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(-Math.PI/3)))),
-            new InstantCommand(() -> m_robotDrive.setGyroYawOffset(-60)),
+            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(2*Math.PI/3)))),
+            new InstantCommand(() -> m_robotDrive.setGyroYawOffset(120)),
             new PathPlannerAuto("ShootAndPickupAuton")
         );
     }
 
     public Command shootPickupShoot(){
         return new SequentialCommandGroup(
-            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(-Math.PI/3)))),
-            new InstantCommand(() -> m_robotDrive.setGyroYawOffset(-60)),
+            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(2*Math.PI/3)))),
+            new InstantCommand(() -> m_robotDrive.setGyroYawOffset(120)),
             new PathPlannerAuto("ShootPickupShootAuton")
         );
     }

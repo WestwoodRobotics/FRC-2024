@@ -2,15 +2,21 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.74,
-      "y": 6.68
+      "x": 0.81,
+      "y": 4.68
     },
-    "rotation": 59.12869617143292
+    "rotation": -60.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToShootPosition"
+          }
+        },
         {
           "type": "named",
           "data": {
@@ -69,6 +75,12 @@
           "type": "path",
           "data": {
             "pathName": "AfterPickupShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToShootPosition"
           }
         },
         {

@@ -69,6 +69,16 @@ public class IntakeShooterPosition extends Command{
                 isFinished = true;
             }
         }
+        // else if(targetPosition == IntakeShooterPositions.AUTON_SHOOT){
+        //     if(m_intakeShooter.getPivotLimitReached() && !isAlreadyPressed){
+        //         m_intakeShooter.setPivotPower(0);
+        //         m_intakeShooter.resetEncoder();
+        //         isFinished = true;
+        //     }
+        //     else{
+        //         isFinished = m_intakeShooter.setToPosition(targetPosition);
+        //     }
+        // }
         else{    
             isFinished = m_intakeShooter.setToPosition(targetPosition);
 
@@ -99,7 +109,7 @@ public class IntakeShooterPosition extends Command{
     public void end(boolean interrupted){
         //m_intakeShooter.setRollerPower(0);
         //m_intakeShooter.setStowPower(0);
-        //m_intakeShooter.setPivotPower(0);
+            m_intakeShooter.setPivotPower(0);
         m_intakeShooter.setPositionState( interrupted ? IntakeShooterPositions.MANUAL : targetPosition);
         System.out.println("finished!!");
     }

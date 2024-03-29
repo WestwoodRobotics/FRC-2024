@@ -47,14 +47,10 @@ public class driveCommand extends Command {
     leftY = -MathUtil.applyDeadband(controller.getLeftY(), ControllerConstants.kDriveDeadband);
     rightX = -MathUtil.applyDeadband(controller.getRightX(), ControllerConstants.kDriveDeadband);
 
-    leftX = controller.getLeftX();
-    leftY = controller.getLeftY();
-    rightX = controller.getRightX();
-
     // Apply non-linear input (squaring the input)
-    leftX = Math.copySign(Math.pow(leftX, 2), -1*leftX);
-    leftY = Math.copySign(Math.pow(leftY, 2), -1*leftY);
-    rightX = Math.copySign(Math.pow(rightX, 2), -1*rightX);
+    leftX = Math.copySign(Math.pow(leftX, 2), leftX);
+    leftY = Math.copySign(Math.pow(leftY, 2), leftY);
+    rightX = Math.copySign(Math.pow(rightX, 2), rightX);
 
 
     if (slowMode)
