@@ -2,14 +2,16 @@ package frc.robot.commands.utils;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.intakeShooter.IntakePivot;
+import frc.robot.subsystems.intakeShooter.IntakeRollers;
 import frc.robot.subsystems.intakeShooter.IntakeShooter;
 
 public class StopAllRollersCommand extends Command {
-     private IntakeShooter m_intakeShooter;
+     private IntakeRollers m_intakeShooterRollers;
      private Elevator m_elevator;
 
-    public StopAllRollersCommand(IntakeShooter intakeShooter, Elevator elevator){
-        m_intakeShooter = intakeShooter;
+    public StopAllRollersCommand(IntakeRollers intakeShooter, Elevator elevator){
+        m_intakeShooterRollers = intakeShooter;
         m_elevator = elevator;
         addRequirements(intakeShooter, elevator);
     }
@@ -26,8 +28,8 @@ public class StopAllRollersCommand extends Command {
 
     @Override 
     public void end(boolean interrupted){
-        m_intakeShooter.setRollerPower(0);
-        m_intakeShooter.setStowPower(0);
+        m_intakeShooterRollers.setRollerPower(0);
+        m_intakeShooterRollers.setStowPower(0);
         m_elevator.setRollerPower(0);
     }
 }

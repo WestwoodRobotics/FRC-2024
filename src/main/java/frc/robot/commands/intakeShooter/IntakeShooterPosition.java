@@ -3,14 +3,14 @@ package frc.robot.commands.intakeShooter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.intakeShooter.IntakeShooter;
+import frc.robot.subsystems.intakeShooter.IntakePivot;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 import frc.robot.subsystems.vision.LimitSwitch;
 
 public class IntakeShooterPosition extends Command{
     Timer t = new Timer();
-    private IntakeShooter m_intakeShooter;
+    private IntakePivot m_intakePivot;
     private IntakeShooterPositions targetPosition;
     
     private LimitSwitch l;
@@ -19,19 +19,19 @@ public class IntakeShooterPosition extends Command{
     private boolean isFinished;
     private static boolean isAlreadyPressed;
 
-    public IntakeShooterPosition(IntakeShooter intakeShooter, IntakeShooterPositions position, LimitSwitch limitSwitch
+    public IntakeShooterPosition(IntakePivot intakePivot, IntakeShooterPositions position, LimitSwitch limitSwitch
     ){
-        this.m_intakeShooter = intakeShooter;
+        this.m_intakePivot = intakePivot;
         this.targetPosition = position;
-        addRequirements(m_intakeShooter);
+        addRequirements(m_intakePivot);
         this.l = limitSwitch;
     }
 
-    public IntakeShooterPosition(IntakeShooter intakeShooter, IntakeShooterPositions position, boolean changePower, LimitSwitch limitSwitch){
-        this.m_intakeShooter = intakeShooter;
+    public IntakeShooterPosition(IntakePivot intakePivot, IntakeShooterPositions position, boolean changePower, LimitSwitch limitSwitch){
+        this.m_intakePivot = intakePivot;
         this.targetPosition = position;
         this.changePower = changePower;
-        addRequirements(m_intakeShooter);
+        addRequirements(m_intakePivot);
         this.l = limitSwitch;
     }
 
@@ -42,8 +42,8 @@ public class IntakeShooterPosition extends Command{
      */
     @Override
     public void initialize(){
-        m_intakeShooter.setRollerPower(0);
-        isAlreadyPressed = m_intakeShooter.getPivotLimitReached();
+        // m_intakePivot.setRollerPower(0);
+        isAlreadyPressed = m_intakePivot.getPivotLimitReached();
         t.reset();
         t.start();
         
@@ -59,13 +59,13 @@ public class IntakeShooterPosition extends Command{
         //    m_elevator.setPivotPosition(targetPosition);
 
         if(targetPosition == IntakeShooterPositions.HOME){
-            if(!m_intakeShooter.getPivotLimitReached()){
-                m_intakeShooter.setPivotPower(-0.75);
+            if(!m_intakePivot.getPivotLimitReached()){
+                m_intakePivot.setPivotPower(-0.75);
                 isFinished = false;
             }
             else{
-                m_intakeShooter.setPivotPower(0);
-                m_intakeShooter.resetEncoder();
+                m_intakePivot.setPivotPower(0);
+                m_intakePivot.resetEncoder();
                 isFinished = true;
             }
         }
@@ -80,19 +80,19 @@ public class IntakeShooterPosition extends Command{
         //     }
         // }
         else{    
-            isFinished = m_intakeShooter.setToPosition(targetPosition);
+            isFinished = m_intakePivot.setToPosition(targetPosition);
 
-            if(changePower){
-                if (targetPosition == IntakeShooterPositions.SHOOT_FAR_SPEAKER || targetPosition == IntakeShooterPositions.SHOOT_NEAR_SPEAKER || targetPosition == IntakeShooterPositions.AUTON_SHOOT || targetPosition == IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS){
-                    m_intakeShooter.setRollerPower(-1);
-                    m_intakeShooter.setStowPower(0);
+            // if(changePower){
+            //     if (targetPosition == IntakeShooterPositions.SHOOT_FAR_SPEAKER || targetPosition == IntakeShooterPositions.SHOOT_NEAR_SPEAKER || targetPosition == IntakeShooterPositions.AUTON_SHOOT || targetPosition == IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS){
+            //         m_intakePivot.setRollerPower(-1);
+            //         m_intakePivot.setStowPower(0);
                     
-                }  
-                else{
-                    m_intakeShooter.setRollerPower(0);
-                    m_intakeShooter.setStowPower(0);
-                }
-            }   
+            //     }  
+            //     else{
+            //         m_intakePivot.setRollerPower(0);
+            //         m_intakePivot.setStowPower(0);
+            //     }
+            // }   
         }
     }
 
@@ -109,8 +109,8 @@ public class IntakeShooterPosition extends Command{
     public void end(boolean interrupted){
         //m_intakeShooter.setRollerPower(0);
         //m_intakeShooter.setStowPower(0);
-            m_intakeShooter.setPivotPower(0);
-        m_intakeShooter.setPositionState( interrupted ? IntakeShooterPositions.MANUAL : targetPosition);
+        m_intakePivot.setPivotPower(0);
+        m_intakePivot.setPositionState( interrupted ? IntakeShooterPositions.MANUAL : targetPosition);
         System.out.println("finished!!");
     }
     
