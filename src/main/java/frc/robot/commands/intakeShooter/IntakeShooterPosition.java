@@ -80,6 +80,7 @@ public class IntakeShooterPosition extends Command{
         //     }
         // }
         else{    
+
             isFinished = m_intakeShooter.setToPosition(targetPosition);
 
             if(changePower){
@@ -88,6 +89,10 @@ public class IntakeShooterPosition extends Command{
                     m_intakeShooter.setStowPower(0);
                     
                 }  
+                else if (targetPosition == IntakeShooterPositions.AUTON_INTAKE){
+                    m_intakeShooter.setRollerPower(-1);
+                    m_intakeShooter.setStowPower(-1);
+                }
                 else{
                     m_intakeShooter.setRollerPower(0);
                     m_intakeShooter.setStowPower(0);
@@ -102,14 +107,14 @@ public class IntakeShooterPosition extends Command{
      */
     @Override
     public boolean isFinished(){
-       return (t.get() > 2) || (l.getStatus() && (targetPosition == (IntakeShooterPositions.HOME))) || isFinished;
+       return (t.get() > 3) || (l.getStatus() && (targetPosition == (IntakeShooterPositions.HOME))) || isFinished;
     }
 
     @Override
     public void end(boolean interrupted){
         //m_intakeShooter.setRollerPower(0);
         //m_intakeShooter.setStowPower(0);
-            m_intakeShooter.setPivotPower(0);
+        m_intakeShooter.setPivotPower(0);
         m_intakeShooter.setPositionState( interrupted ? IntakeShooterPositions.MANUAL : targetPosition);
         System.out.println("finished!!");
     }

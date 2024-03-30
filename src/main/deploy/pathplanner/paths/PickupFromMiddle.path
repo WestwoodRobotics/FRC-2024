@@ -16,28 +16,28 @@
     },
     {
       "anchor": {
-        "x": 2.4430398444918664,
-        "y": 2.1121470290324575
+        "x": 3.1105403055876537,
+        "y": 1.0406150389765578
       },
       "prevControl": {
-        "x": 1.504073597434384,
-        "y": 3.064277150742761
+        "x": 2.141714360847822,
+        "y": 1.3058888095600831
       },
       "nextControl": {
-        "x": 4.031113158872224,
-        "y": 0.5018096576473821
+        "x": 5.538642063199624,
+        "y": 0.3757776529637574
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.51,
-        "y": 2.39
+        "x": 8.385880433732698,
+        "y": 2.442554744264419
       },
       "prevControl": {
-        "x": 8.41,
-        "y": 2.39
+        "x": 8.285880433732698,
+        "y": 2.442554744264419
       },
       "nextControl": null,
       "isLocked": false,
@@ -57,10 +57,34 @@
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 1.25,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "GoToIntakePosition"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "Intake"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 6.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },

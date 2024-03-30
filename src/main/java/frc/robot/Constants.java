@@ -150,12 +150,12 @@ public final class Constants {
 
   public static final class AutoConstants {
     //These constants need to tuned when setting up Auton Paths
-    public static final double kMaxModuleSpeedMetersPerSecond = 4.5;
+    public static final double kMaxModuleSpeedMetersPerSecond = 10;
      //Distance from the center of the robot to the farthest SwerveModule
     public static final double kDriveBaseRadius = 0.4; //meters
 
 
-    public static final double kMaxAccelerationMetersPerSecondSquared = 2;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 8;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
@@ -237,21 +237,21 @@ public final class Constants {
     public static double kLowerRollerD = 0; //TODO: Change this value
     public static double kLowerRollerFF = 200; //TODO: Change this value
 
-    public static double kPivotP = 0.15; //TODO: Change this value
+    public static double kPivotP = 6; //TODO: Change this value
     public static double kPivotI = 0; //TODO: Change this value 
     public static double kPivotD = 0; //TODO: Change this value
-    public static double kPivotFF = 10; //TODO: Change this value
+    public static double kPivotFF = 20; //TODO: Change this value
 
 
-
+    public static double kHomeBouncePivotPosition = 1;
     public static double kHomePivotPosition = 0; //TODO: Change this value
     public static double kIntakePivotPosition = 106.597160; //TODO: Change this value
     public static double kAutoIntakePivotPosition = 106.597160; //TODO: Change this value
-    public static double kShootNearSpeakerPivotPosition = 7.071438;
+    public static double kShootNearSpeakerPivotPosition = -1;
     public static double kShootNearSpeakerFacingForwardsPivotPosition = 44.475716;
 
     public static double kShootFarSpeakerPivotPosition = 19.92834;
-    public static double kShootNearSpeakerAutonPivotPosition = 7.071438;
+    public static double kShootNearSpeakerAutonPivotPosition = -1;
     public static double kShootPivotAmp = 22.5712098;
   } 
 }

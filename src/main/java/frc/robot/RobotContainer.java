@@ -180,7 +180,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Shoot", new InstantCommand(()-> m_IntakeShooter.setRollerPower(-1)));
     NamedCommands.registerCommand("IntakeShooterGoHome", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.HOME, limitSwitch));
     NamedCommands.registerCommand("GetElevatorOutOfWay", new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT));
-    NamedCommands.registerCommand("GoToIntakePosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_INTAKE, limitSwitch));
+    NamedCommands.registerCommand("GoToIntakePosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_INTAKE, true, limitSwitch ));
     NamedCommands.registerCommand("ReleasePreRoller", new InstantCommand(() -> m_IntakeShooter.setStowPower(1)));
     NamedCommands.registerCommand("Intake", new InstantCommand(() -> m_IntakeShooter.setRollerPower(1)).andThen(new InstantCommand(() -> m_IntakeShooter.setStowPower(-1))));
     NamedCommands.registerCommand("GoToShootPosition", new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.AUTON_SHOOT, limitSwitch));
@@ -333,7 +333,10 @@ public class RobotContainer {
     }
 
     public Command meterTestAuto(){
-       return new PathPlannerAuto("MeterTestAuto");
+        return new SequentialCommandGroup(
+        new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(1.32,5.57, new Rotation2d(Math.PI)))),
+        new InstantCommand(() -> m_robotDrive.setGyroYawOffset(180)),
+        new PathPlannerAuto("MeterTestAuto"));
     }
 
     public Command shootAndPickup(){
@@ -360,6 +363,14 @@ public class RobotContainer {
         );
     }
 
+    public Command centerSauce(){
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(1.13,5.55, new Rotation2d(0)))),
+            new InstantCommand(() -> m_robotDrive.setGyroYawOffset(0)),
+            new PathPlannerAuto("CenterSauceAuton")
+        );
+    }
+
     // public Command testingOtherSideSubwoofer(){
     //     return new SequentialCommandGroup(
     //         new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.74,6.68, new Rotation2d(Math.PI/3)))),
@@ -377,6 +388,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     SmartDashboard.putData("selected auto", m_chooser.getSelected());
     //return m_chooser.getSelected();
-    return shootPickupShoot();
+    return centerSauce();
   }
 }

@@ -2,21 +2,15 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.81,
-      "y": 4.68
+      "x": 1.1304811342017054,
+      "y": 5.549946874541637
     },
-    "rotation": -60.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
         {
           "type": "named",
           "data": {
@@ -32,16 +26,16 @@
         {
           "type": "named",
           "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "ReleasePreRoller"
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Intake"
@@ -50,19 +44,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "PickupFromMiddle"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
+            "pathName": "CenterSauceOut1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "AfterPickupShoot"
+            "pathName": "CenterSauceIn1"
           }
         },
         {
@@ -74,13 +62,19 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.5
+            "waitTime": 0.5
           }
         },
         {
           "type": "named",
           "data": {
             "name": "ReleasePreRoller"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {

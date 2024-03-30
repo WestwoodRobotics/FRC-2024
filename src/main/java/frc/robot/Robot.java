@@ -36,9 +36,6 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_robotDrive.resetGyro();
 
     CameraServer.startAutomaticCapture();
-    CameraServer.startAutomaticCapture();
-    CameraServer.startAutomaticCapture();
-    
   }
 
   /**
