@@ -368,6 +368,14 @@ public class RobotContainer {
     //     );
     // }
 
+    public Command centerNotesAuto(){
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(1.09,5.56, new Rotation2d(0)))),
+            new InstantCommand(() -> m_robotDrive.setGyroYawOffset(0)),
+            new PathPlannerAuto("CenterNotesAuton")
+        );
+    }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -377,6 +385,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     SmartDashboard.putData("selected auto", m_chooser.getSelected());
     //return m_chooser.getSelected();
-    return shootPickupShoot();
+    return centerNotesAuto();
   }
 }
