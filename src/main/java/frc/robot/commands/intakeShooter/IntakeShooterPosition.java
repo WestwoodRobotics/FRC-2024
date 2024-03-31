@@ -109,7 +109,10 @@ public class IntakeShooterPosition extends Command{
     public void end(boolean interrupted){
         //m_intakeShooter.setRollerPower(0);
         //m_intakeShooter.setStowPower(0);
-        m_intakePivot.setPivotPower(0);
+        if(!interrupted){
+                        m_intakePivot.setPivotPower(0);
+        }
+
         m_intakePivot.setPositionState( interrupted ? IntakeShooterPositions.MANUAL : targetPosition);
         System.out.println("finished!!");
     }

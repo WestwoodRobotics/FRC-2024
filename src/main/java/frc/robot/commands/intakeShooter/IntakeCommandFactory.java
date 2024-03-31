@@ -15,14 +15,14 @@ public class IntakeCommandFactory {
     public Command goToShootPositionAndShoot(IntakePivot intakePivot, IntakeRollers intakeRollers, LimitSwitch l){
         return new ParallelCommandGroup(
             new IntakeShooterPosition(intakePivot, IntakeShooterPositions.AUTON_SHOOT, l),
-            new InstantCommand(() -> intakeRollers.setRollerPower(1), intakeRollers).andThen(new InstantCommand(() -> intakeRollers.setStowPower(-1),intakeRollers))
+            new IntakeRollersCommand(intakeRollers, -1, 0)
         );
     }
 
     public Command goToIntakePositionAndIntake(IntakePivot intakePivot, IntakeRollers intakeRollers, LimitSwitch l){
         return new ParallelCommandGroup(
             new IntakeShooterPosition(intakePivot, IntakeShooterPositions.INTAKE, l),
-            new InstantCommand(() -> intakeRollers.setRollerPower(-1), intakeRollers).andThen(new InstantCommand(() -> intakeRollers.setStowPower(1),intakeRollers))
+            new IntakeRollersCommand(intakeRollers, 1, -1)
         );
     }
 

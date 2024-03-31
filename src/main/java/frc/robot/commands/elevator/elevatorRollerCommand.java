@@ -53,9 +53,6 @@ public class elevatorRollerCommand extends Command{
         }
         if((t.get() - timerStart) >= 0.1){
             elevator.setRollerPower(0);
-            System.out.println("stopped");
-            System.out.println(t.get());
-            System.out.println(timerStart);
             isFinished = true;
         }
         else{

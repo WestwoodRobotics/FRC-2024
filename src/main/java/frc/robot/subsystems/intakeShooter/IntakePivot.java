@@ -67,6 +67,7 @@ public class IntakePivot extends SubsystemBase {
 
 
     public void setPivotPower(double power){
+        isPivotPIDControl = false;
         if (this.getPivotLimitReached() && power < 0){
             pivotMotor.set(0);
             this.resetEncoder();
@@ -92,15 +93,13 @@ public class IntakePivot extends SubsystemBase {
     // }
 
     public boolean setToPosition(IntakeShooterPositions position) {
-
+        isPivotPIDControl = true;
         if (l.getStatus() && ((position == IntakeShooterPositions.HOME))){
             return true;
         }
         double setPoint = pivotPositionValues.get(position);     
         pivotPIDController.setSetpoint(setPoint);
-        calculatedPivotPIDValue = pivotPIDController.calculate(pivotMotor.getEncoder().getPosition());
-        //if (calculatedPivotPIDValue > 0) {
-            pivotMotor.set(calculatedPivotPIDValue);
+
         //}
         //else {
         //    pivotMotor.set(0);
@@ -136,6 +135,12 @@ public class IntakePivot extends SubsystemBase {
         SmartDashboard.putString ("Intake Shooter State" , intakeShooterPosition.toString()); 
         SmartDashboard.putNumber("Pivot Position", pivotMotor.getEncoder().getPosition());
         SmartDashboard.putBoolean("Limit", this.getPivotLimitReached());
+
+        if (isPivotPIDControl = true){
+            calculatedPivotPIDValue = pivotPIDController.calculate(pivotMotor.getEncoder().getPosition());
+            pivotMotor.set(calculatedPivotPIDValue);
+        }
+
     }
 
 }

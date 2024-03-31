@@ -80,6 +80,7 @@ public class IntakeRollers extends SubsystemBase {
     }
     
     public void setStowPower(double power){
+        isRollerPIDControl = false;
         stowMotor.set(power);
     }
 

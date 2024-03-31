@@ -18,4 +18,9 @@ public class LimitSwitch extends GenericDigitalPinObject
         SmartDashboard.putBoolean("Limit Switch " + channel, this.getStatus());
     }
 
+    @Override
+    public boolean getStatus(){
+        return !super.getStatus();
+    }
+
 }

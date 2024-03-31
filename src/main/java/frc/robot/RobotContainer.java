@@ -48,7 +48,7 @@ import frc.robot.Constants.PortConstants;
 import frc.robot.commands.elevator.elevatorPosition;
 import frc.robot.commands.elevator.elevatorRollerCommand;
 import frc.robot.commands.intakeShooter.IntakeBeamBreakCommand;
-import frc.robot.commands.intakeShooter.IntakeCommand;
+import frc.robot.commands.intakeShooter.IntakeRollersCommand;
 import frc.robot.commands.intakeShooter.IntakeCommandFactory;
 import frc.robot.commands.intakeShooter.IntakeShooterPosition;
 import frc.robot.commands.intakeShooter.ShootAtRPM;
@@ -189,7 +189,7 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("GetElevatorOutOfWay", new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT));
 
-    NamedCommands.registerCommand("ReleasePreRoller", new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(1)));
+    NamedCommands.registerCommand("ReleasePreRoller", new IntakeRollersCommand(m_IntakeShooterRollers, -1, 1));
 
     NamedCommands.registerCommand("Intake", intakeCommandFactory.goToIntakePositionAndIntake(m_IntakeShooterPivot, m_IntakeShooterRollers, limitSwitch));
 
@@ -240,33 +240,39 @@ public class RobotContainer {
     .onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.AUTON_SHOOT, limitSwitch));
 
     //DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch)).onTrue(new ShootAtRPM(m_IntakeShooter, 55000, -55000, 1));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
-    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch)).onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT));
+    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 0))).onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT));
 
-    DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch));
-
+    //DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch).alongWith(new InstantCommand(() -> m_IntakeShooterRollers.setRollerPower(1), m_IntakeShooterRollers).andThen(new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(-1),m_IntakeShooterRollers))));
+    DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 0)));
     DriverRightBumper.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME, limitSwitch))
       .onTrue(new elevatorPosition(m_elevator, ElevatorPositions.HOME));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
 
     DriverLeftBumper.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.INTAKE, limitSwitch));
 
-    driverLeftTrigger.whileTrue(new InstantCommand(() -> {
-      m_elevator.setRollerPower(-1);
-      m_IntakeShooterRollers.setStowPower(1);
-      m_IntakeShooterRollers.setRollerPower(-1);
-      //m_IntakeShooter.setRollerRPM(55000, -55000);
-    }, m_elevator, m_IntakeShooterPivot))
-        .onFalse(new StopAllRollersCommand(m_IntakeShooterRollers, m_elevator)).onFalse(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME, limitSwitch)).onFalse(new elevatorPosition(m_elevator, ElevatorPositions.HOME));
+    // driverLeftTrigger.whileTrue(new InstantCommand(() -> {
+    //   m_elevator.setRollerPower(-1);
+    //   m_IntakeShooterRollers.setStowPower(1);
+    //   m_IntakeShooterRollers.setRollerPower(-1);
+    //   //m_IntakeShooter.setRollerRPM(55000, -55000);
+    // }, m_elevator, m_IntakeShooterRollers))
+    //     .onFalse(new StopAllRollersCommand(m_IntakeShooterRollers, m_elevator)).onFalse(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME, limitSwitch)).onFalse(new elevatorPosition(m_elevator, ElevatorPositions.HOME));
 
+
+
+    driverLeftTrigger.whileTrue(new InstantCommand(()-> m_elevator.setRollerPower(-1), m_elevator).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 1)))
+        .onFalse(new StopAllRollersCommand(m_IntakeShooterRollers, m_elevator)).onFalse(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME, limitSwitch)).onFalse(new elevatorPosition(m_elevator, ElevatorPositions.HOME));
     //driverLeftTrigger.onTrue(new ShootAtRPM(m_IntakeShooter, 3500, -3500, 1));
         //.onFalse(new StopAllRollersCommand(m_IntakeShooter, m_elevator));
 // 
-    driverRightTrigger.whileTrue(new elevatorRollerCommand(m_elevator, 1, elevatorPivotBeamBreak)).whileTrue(new InstantCommand(() -> {
-      // Intake
-      m_IntakeShooterRollers.setRollerPower(1);
-      m_IntakeShooterRollers.setStowPower(-1);
-    }, m_elevator, m_IntakeShooterPivot))
-        .onFalse(new StopAllRollersCommand(m_IntakeShooterRollers, m_elevator));
+    // driverRightTrigger.whileTrue(new elevatorRollerCommand(m_elevator, 1, elevatorPivotBeamBreak)).whileTrue(new InstantCommand(() -> {
+    //   // Intake
+    //   m_IntakeShooterRollers.setRollerPower(1);
+    //   m_IntakeShooterRollers.setStowPower(-1);
+    // }, m_elevator, m_IntakeShooterRollers))
+    //     .onFalse(new StopAllRollersCommand(m_IntakeShooterRollers, m_elevator));
 
+    driverRightTrigger.whileTrue(new elevatorRollerCommand(m_elevator, 1, elevatorPivotBeamBreak).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, 1, -1)))
+    .onFalse(new StopAllRollersCommand(m_IntakeShooterRollers, m_elevator));
     /*
      * OPERATOR BUTTON MAPPING
      */
@@ -384,7 +390,15 @@ public class RobotContainer {
             new InstantCommand(() -> m_robotDrive.setGyroYawOffset(0)),
             new PathPlannerAuto("CenterNotesAuton")
            );
-         }
+    }
+
+    public Command messUpNotesAuto(){
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.57,4.56, new Rotation2d(2*Math.PI/3)))),
+            new InstantCommand(() -> m_robotDrive.setGyroYawOffset(120)),
+            new PathPlannerAuto("MoveCenterNotesAwayAuton")
+        );
+    }
 
 
   /**
@@ -395,6 +409,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     SmartDashboard.putData("selected auto", m_chooser.getSelected());
     //return m_chooser.getSelected();
-    return centerNoteAuto();
+    return messUpNotesAuto();
   }
 }
