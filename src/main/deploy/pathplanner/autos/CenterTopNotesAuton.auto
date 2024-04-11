@@ -2,25 +2,38 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.74,
-      "y": 6.68
+      "x": 1.09,
+      "y": 5.56
     },
-    "rotation": 59.12869617143292
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Shoot"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GetElevatorOutOfWay"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "GetElevatorOutOfWay"
+            "waitTime": 0.7
           }
         },
         {
@@ -38,31 +51,19 @@
         {
           "type": "named",
           "data": {
-            "name": "IntakePose"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
+            "name": "IntakeAndPosition"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "AmpSidePickupShort"
+            "pathName": "CenterTopPickShoot"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "AmpSideBack"
+            "waitTime": 0.7
           }
         },
         {
@@ -80,19 +81,37 @@
         {
           "type": "named",
           "data": {
-            "name": "IntakePose"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
+            "name": "IntakeAndPosition"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "AmpSideTaxi"
+            "pathName": "CenterCenterPickShoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.7
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ReleasePreRoller"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopAllShooters"
           }
         }
       ]

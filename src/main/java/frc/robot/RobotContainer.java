@@ -89,8 +89,8 @@ public class RobotContainer {
 
   public final SwerveDrive m_robotDrive = new SwerveDrive();
   private LED led = new LED(9);
-  private BeamBreak intakeShooterBeamBreak = new BeamBreak(9);
-  private BeamBreak elevatorPivotBeamBreak = new BeamBreak(8);
+  private BeamBreak intakeShooterBeamBreak = new BeamBreak(8);
+  private BeamBreak elevatorPivotBeamBreak = new BeamBreak(9);
   public final Elevator m_elevator = new Elevator();
   private LimitSwitch limitSwitch = new LimitSwitch(6);
 
@@ -169,13 +169,14 @@ public class RobotContainer {
     //led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
     led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
     m_chooser.setDefaultOption("just shoot", justShootAuto());
-
     m_chooser.addOption("shoot pickup from middle shoot", shootPickupShoot());
     //m_chooser.addOption("shoot pickup from middle", shootAndPickup());
-    m_chooser.addOption("3 note", centerNoteAuto());
+    m_chooser.addOption("Three Notes (Preload, Amp & Middle)", centerNoteTopAuto());
+    m_chooser.addOption("Three Notes (Preload, Source & Middle)", centerNoteBottomAuto());
+
     //m_chooser.addOption("Shoot and leave", new PathPlannerAuto("GetOutOfTheWay1Auton"));
     //m_chooser.addOption("Test One Meter", new PathPlannerAuto("MeterTestPathAuton"));
-    m_chooser.addOption("Get Middle Notes Out" , new PathPlannerAuto("MoveCenterNotesAwayAuton"));
+    m_chooser.addOption("get middle notes out" , messUpNotesAuto());
     //m_chooser.addOption("Parallel Commands", new PathPlannerAuto("ParallelAuton"));
     m_chooser.addOption("two note", twoNoteAuto());
     //m_chooser.addOption("meterTest" , meterTest());
@@ -200,6 +201,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeAndPosition", intakeCommandFactory.goToIntakePositionAndIntake(m_IntakeShooterPivot, m_IntakeShooterRollers, limitSwitch));
 
     NamedCommands.registerCommand("Intake", new IntakeRollersCommand(m_IntakeShooterRollers, 1, -1));
+
+    NamedCommands.registerCommand("GoToHomePosition", new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME, limitSwitch));
   }
 
   /*
@@ -284,7 +287,7 @@ public class RobotContainer {
     operatorRightYTrigger
         .onTrue(new InstantCommand(
             () -> m_elevator.setPivotPower(
-                (Math.abs(m_operatorController.getRightY()) > 0.1) ? m_operatorController.getRightY()*2 : 0.0),
+                (Math.abs(m_operatorController.getRightY()) > 0.1) ? m_operatorController.getRightY()/2 : 0.0),
             m_elevator))
         .onFalse(new InstantCommand(() -> m_elevator.setPivotPower(0), m_elevator));
 
@@ -297,10 +300,10 @@ public class RobotContainer {
     OperatorDPadRight.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-1), m_elevator))
         .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0), m_elevator));
 
-    operatorLeftTrigger.onTrue(new InstantCommand(() -> m_IntakeShooterRollers.setRollerPower(1)).alongWith(new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(-1))))
+    operatorLeftTrigger.onTrue(new InstantCommand(() -> m_IntakeShooterRollers.setRollerPower(-1)).alongWith(new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(-1))))
         .onFalse(new InstantCommand(() -> m_IntakeShooterRollers.stopAllIntakeShooterRollers(), m_IntakeShooterPivot));
 
-    operatorRightTrigger.onTrue(new InstantCommand(() -> m_IntakeShooterRollers.setRollerPower(-1), m_IntakeShooterPivot))
+    operatorRightTrigger.onTrue(new InstantCommand(() -> m_IntakeShooterRollers.setRollerPower(1), m_IntakeShooterPivot))
         .onFalse(new InstantCommand(() -> m_IntakeShooterRollers.setRollerPower(0), m_IntakeShooterPivot));
 
     OperatorBButton.onTrue(new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(1), m_IntakeShooterPivot))
@@ -310,7 +313,7 @@ public class RobotContainer {
 
     OperatorYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, 1, 0)));
 
-    OperatorAButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.AUTON_SHOOT, false, limitSwitch));
+    OperatorAButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.HANDOFF));
     OperatorStartButton.onTrue(new InstantCommand(() -> m_elevator.resetEncoder()));
 
     OperatorRightBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-0.85), m_elevator))
@@ -323,11 +326,13 @@ public class RobotContainer {
 //------------------------------------------- autonomous modes -------------------------------------------
 
     public Command twoNoteAuto(){
-    return new SequentialCommandGroup(
+        Command toReturn = new SequentialCommandGroup(
             new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(1.35,5.58, new Rotation2d(0)))),
             new InstantCommand(() -> m_robotDrive.setGyroYawOffset(0)),
             new PathPlannerAuto("TwoNoteAuton")
         );
+        toReturn.setName("two note");
+        return toReturn;
     }
 
     // public Command getOutOfTheWay(){
@@ -354,7 +359,9 @@ public class RobotContainer {
     // }
 
     public Command justShootAuto(){
-       return new PathPlannerAuto("JustShootAuton");
+       Command toReturn = new PathPlannerAuto("JustShootAuton");
+       toReturn.setName("just shoot");
+       return toReturn;
     }
 
     // public Command meterTest(){
@@ -370,11 +377,13 @@ public class RobotContainer {
     // }
 
     public Command shootPickupShoot(){
-        return new SequentialCommandGroup(
+        Command toReturn = new SequentialCommandGroup(
             new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(2*Math.PI/3)))),
             new InstantCommand(() -> m_robotDrive.setGyroYawOffset(120)),
             new PathPlannerAuto("ShootPickupShootAuton")
         );
+        toReturn.setName("shoot pickup from middle shoot");
+        return toReturn;
     }
 
     // public Command ampSide(){
@@ -393,20 +402,34 @@ public class RobotContainer {
     //     );
     // }
 
-	public Command centerNoteAuto(){
-          return new SequentialCommandGroup(
+	public Command centerNoteTopAuto(){
+        Command toReturn = new SequentialCommandGroup(
             new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(1.09,5.56, new Rotation2d(0)))),
             new InstantCommand(() -> m_robotDrive.setGyroYawOffset(0)),
-            new PathPlannerAuto("CenterNotesAuton")
+            new PathPlannerAuto("CenterTopNotesAuton")
            );
+        toReturn.setName("Three Notes (Preload, Amp & Middle)");
+        return toReturn;
+    }
+
+    public Command centerNoteBottomAuto(){
+        Command toReturn = new SequentialCommandGroup(
+            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(1.09,5.56, new Rotation2d(0)))),
+            new InstantCommand(() -> m_robotDrive.setGyroYawOffset(0)),
+            new PathPlannerAuto("CenterBottomNotesAuton")
+        );
+        toReturn.setName("Three Notes (Preload, Source & Middle)");
+        return toReturn;
     }
 
     public Command messUpNotesAuto(){
-        return new SequentialCommandGroup(
+        Command toReturn = new SequentialCommandGroup(
             new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.57,4.56, new Rotation2d(2*Math.PI/3)))),
             new InstantCommand(() -> m_robotDrive.setGyroYawOffset(120)),
             new PathPlannerAuto("MoveCenterNotesAwayAuton")
         );
+        toReturn.setName("get middle notes out");
+        return toReturn;
     }
 
 
@@ -415,9 +438,34 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+
   public Command getAutonomousCommand() {
-    SmartDashboard.putData("selected auto", m_chooser.getSelected());
+    SmartDashboard.putString("selected auto", m_chooser.getSelected().getName());
+    System.out.println(m_chooser.getSelected().getName());
+    if(m_chooser.getSelected().getName().equals("two note")){
+        System.out.println("^");
+        return twoNoteAuto();
+    }
+    else if(m_chooser.getSelected().getName().equals("get middle notes out")){
+        System.out.println("^^");
+        return messUpNotesAuto();
+    }
+    else if(m_chooser.getSelected().getName().equals("Three Notes (Preload, Amp & Middle)")){
+        System.out.println("^^^");
+        return centerNoteTopAuto();
+    }
+    else if(m_chooser.getSelected().getName().equals("shoot pickup from middle shoot")){
+        System.out.println("^^^^");
+        return shootPickupShoot();
+    }
+    else if((m_chooser.getSelected().getName().equals("Three Notes (Preload, Source & Middle)"))){
+        System.out.println("^^^^^");
+        return centerNoteBottomAuto();
+    }
+    else{
+        System.out.println("^^^^^^");
+        return justShootAuto();
+    }
     //return m_chooser.getSelected();
-    return centerNoteAuto();
   }
 }

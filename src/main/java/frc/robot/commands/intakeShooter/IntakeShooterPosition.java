@@ -102,7 +102,8 @@ public class IntakeShooterPosition extends Command{
      */
     @Override
     public boolean isFinished(){
-       return (t.get() > 2) || (l.getStatus() && (targetPosition == (IntakeShooterPositions.HOME))) || isFinished;
+       return (t.get() > 2.0) || (l.getStatus() && (targetPosition == (IntakeShooterPositions.HOME))) || isFinished;
+
     }
 
     @Override
@@ -110,7 +111,7 @@ public class IntakeShooterPosition extends Command{
         //m_intakeShooter.setRollerPower(0);
         //m_intakeShooter.setStowPower(0);
         if(!interrupted){
-                        m_intakePivot.setPivotPower(0);
+            m_intakePivot.setPivotPower(0);
         }
 
         m_intakePivot.setPositionState( interrupted ? IntakeShooterPositions.MANUAL : targetPosition);

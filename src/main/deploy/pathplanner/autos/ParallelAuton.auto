@@ -12,12 +12,6 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "GoToShootPosition"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "Shoot"
                 }
               }

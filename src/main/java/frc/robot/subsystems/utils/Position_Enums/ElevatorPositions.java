@@ -8,5 +8,6 @@ public enum ElevatorPositions {
     HOME,
     SOURCE,
     MANUAL,
-    AUTO_SHOOT
+    AUTO_SHOOT,
+    HANDOFF
 }

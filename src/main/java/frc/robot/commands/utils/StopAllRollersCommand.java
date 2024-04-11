@@ -18,7 +18,9 @@ public class StopAllRollersCommand extends Command {
     
     @Override
     public void execute(){
-        
+        m_intakeShooterRollers.setRollerPower(0);
+        m_intakeShooterRollers.setStowPower(0);
+        m_elevator.setRollerPower(0);
     }
 
     @Override

@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.6777587794889373,
-      "y": 4.376333332273105
+      "x": 0.81,
+      "y": 4.68
     },
     "rotation": -60.0
   },
@@ -32,13 +32,13 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 0.6
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "GoToIntakePosition"
+            "name": "IntakePose"
           }
         },
         {
