@@ -168,17 +168,17 @@ public class RobotContainer {
     m_IntakeShooterPivot.setDefaultCommand(new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooterPivot));
     //led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
     led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
-    m_chooser.setDefaultOption("two note", twoNoteAuto());
+    m_chooser.setDefaultOption("just shoot", justShootAuto());
 
     m_chooser.addOption("shoot pickup from middle shoot", shootPickupShoot());
-    m_chooser.addOption("shoot pickup from middle", shootAndPickup());
-    m_chooser.addOption("amp side", ampSide());
+    //m_chooser.addOption("shoot pickup from middle", shootAndPickup());
+    m_chooser.addOption("3 note", centerNoteAuto());
     //m_chooser.addOption("Shoot and leave", new PathPlannerAuto("GetOutOfTheWay1Auton"));
     //m_chooser.addOption("Test One Meter", new PathPlannerAuto("MeterTestPathAuton"));
-    //m_chooser.addOption("Get Middle Notes Out" , new PathPlannerAuto("MoveCenterNotesAwayAuton"));
+    m_chooser.addOption("Get Middle Notes Out" , new PathPlannerAuto("MoveCenterNotesAwayAuton"));
     //m_chooser.addOption("Parallel Commands", new PathPlannerAuto("ParallelAuton"));
     m_chooser.addOption("two note", twoNoteAuto());
-    m_chooser.addOption("meterTest" , meterTestAuto());
+    //m_chooser.addOption("meterTest" , meterTest());
     
     SmartDashboard.putData(m_chooser);
 
@@ -191,16 +191,20 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("ReleasePreRoller", new IntakeRollersCommand(m_IntakeShooterRollers, -1, 1));
 
-    NamedCommands.registerCommand("Intake", intakeCommandFactory.goToIntakePositionAndIntake(m_IntakeShooterPivot, m_IntakeShooterRollers, limitSwitch));
+    NamedCommands.registerCommand("IntakePose", new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.AUTON_INTAKE, limitSwitch));
 
     NamedCommands.registerCommand("StopAllShooters", new StopAllRollersCommand(m_IntakeShooterRollers, m_elevator));
 
     NamedCommands.registerCommand("StopIntakePivot", new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower(0)));
+
+    NamedCommands.registerCommand("IntakeAndPosition", intakeCommandFactory.goToIntakePositionAndIntake(m_IntakeShooterPivot, m_IntakeShooterRollers, limitSwitch));
+
+    NamedCommands.registerCommand("Intake", new IntakeRollersCommand(m_IntakeShooterRollers, 1, -1));
   }
 
   /*
    * Use this method to define your button->command mappings. Buttons can be
-   * created by
+   * created by 
    * instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its
    * subclasses ({@link
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling
@@ -243,9 +247,10 @@ public class RobotContainer {
     DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 0))).onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT));
 
     //DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch).alongWith(new InstantCommand(() -> m_IntakeShooterRollers.setRollerPower(1), m_IntakeShooterRollers).andThen(new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(-1),m_IntakeShooterRollers))));
-    DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 0)));
+    DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.PODIUM_SHOT, limitSwitch).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 0)));
     DriverRightBumper.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME, limitSwitch))
       .onTrue(new elevatorPosition(m_elevator, ElevatorPositions.HOME));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
+
 
     DriverLeftBumper.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.INTAKE, limitSwitch));
 
@@ -303,7 +308,7 @@ public class RobotContainer {
     OperatorXButton.onTrue(new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(-1), m_IntakeShooterPivot))
         .onFalse(new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(0), m_IntakeShooterPivot));
 
-    OperatorYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch));
+    OperatorYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, 1, 0)));
 
     OperatorAButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.AUTON_SHOOT, false, limitSwitch));
     OperatorStartButton.onTrue(new InstantCommand(() -> m_elevator.resetEncoder()));
@@ -325,40 +330,44 @@ public class RobotContainer {
         );
     }
 
-    public Command getOutOfTheWay(){
-        PathPlannerPath getOutOfTheWay = PathPlannerPath.fromPathFile("GetOutOfTheWay1");
-        PathPlannerPath goBackToStart = PathPlannerPath.fromPathFile("GoBackToStart");
-        return new SequentialCommandGroup(
-            NamedCommands.getCommand("Shoot"),
-            NamedCommands.getCommand("GetElevatorOutOfWay"),
-            NamedCommands.getCommand("ReleasePreRoller"),
-            new WaitCommand(0.5),
-            NamedCommands.getCommand("GoToIntakePosition"),
-            NamedCommands.getCommand("Intake"),
-            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(-Math.PI/3)))),
-            new InstantCommand(() -> m_robotDrive.setGyroYawOffset(-60)),
-            AutoBuilder.followPath(getOutOfTheWay)
+    // public Command getOutOfTheWay(){
+    //     PathPlannerPath getOutOfTheWay = PathPlannerPath.fromPathFile("GetOutOfTheWay1");
+    //     PathPlannerPath goBackToStart = PathPlannerPath.fromPathFile("GoBackToStart");
+    //     return new SequentialCommandGroup(
+    //         NamedCommands.getCommand("Shoot"),
+    //         NamedCommands.getCommand("GetElevatorOutOfWay"),
+    //         NamedCommands.getCommand("ReleasePreRoller"),
+    //         new WaitCommand(0.5),
+    //         NamedCommands.getCommand("GoToIntakePosition"),
+    //         NamedCommands.getCommand("Intake"),
+    //         new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(-Math.PI/3)))),
+    //         new InstantCommand(() -> m_robotDrive.setGyroYawOffset(-60)),
+    //         AutoBuilder.followPath(getOutOfTheWay)
             
-            /*NamedCommands.getCommand("GoToShootPosition"),
-            AutoBuilder.followPath(goBackToStart),
-            new WaitCommand(0.5),
-            NamedCommands.getCommand("ReleasePreRoller"),
-            NamedCommands.getCommand("StopAllShooters"),
-            new WaitCommand(100)*/
-        );
+    //         /*NamedCommands.getCommand("GoToShootPosition"),
+    //         AutoBuilder.followPath(goBackToStart),
+    //         new WaitCommand(0.5),
+    //         NamedCommands.getCommand("ReleasePreRoller"),
+    //         NamedCommands.getCommand("StopAllShooters"),
+    //         new WaitCommand(100)*/
+    //     );
+    // }
+
+    public Command justShootAuto(){
+       return new PathPlannerAuto("JustShootAuton");
     }
 
-    public Command meterTestAuto(){
-       return new PathPlannerAuto("MeterTestAuto");
-    }
+    // public Command meterTest(){
+    //    return new PathPlannerAuto("MeterTestPathAuton");
+    // }
 
-    public Command shootAndPickup(){
-        return new SequentialCommandGroup(
-            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(2*Math.PI/3)))),
-            new InstantCommand(() -> m_robotDrive.setGyroYawOffset(120)),
-            new PathPlannerAuto("ShootAndPickupAuton")
-        );
-    }
+    // public Command shootAndPickup(){
+    //     return new SequentialCommandGroup(
+    //         new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(2*Math.PI/3)))),
+    //         new InstantCommand(() -> m_robotDrive.setGyroYawOffset(120)),
+    //         new PathPlannerAuto("ShootAndPickupAuton")
+    //     );
+    // }
 
     public Command shootPickupShoot(){
         return new SequentialCommandGroup(
@@ -368,13 +377,13 @@ public class RobotContainer {
         );
     }
 
-    public Command ampSide(){
-        return new SequentialCommandGroup(
-            new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(-Math.PI/3)))),
-            new InstantCommand(() -> m_robotDrive.setGyroYawOffset(60)),
-            new PathPlannerAuto("AmpSideAuton")
-        );
-    }
+    // public Command ampSide(){
+    //     return new SequentialCommandGroup(
+    //         new InstantCommand(() -> m_robotDrive.resetPose(new Pose2d(0.68,4.38, new Rotation2d(-Math.PI/3)))),
+    //         new InstantCommand(() -> m_robotDrive.setGyroYawOffset(60)),
+    //         new PathPlannerAuto("AmpSideAuton")
+    //     );
+    // }
 
     // public Command testingOtherSideSubwoofer(){
     //     return new SequentialCommandGroup(
@@ -409,6 +418,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     SmartDashboard.putData("selected auto", m_chooser.getSelected());
     //return m_chooser.getSelected();
-    return messUpNotesAuto();
+    return centerNoteAuto();
   }
 }

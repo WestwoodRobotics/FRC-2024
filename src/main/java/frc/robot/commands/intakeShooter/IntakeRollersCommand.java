@@ -30,7 +30,7 @@ public class IntakeRollersCommand extends Command{
      */
     @Override
     public void initialize(){
-        m_intakeRollers.setRollerPower(rollerPower);
+        m_intakeRollers.setRollerPower(-1*rollerPower);
         m_intakeRollers.setStowPower(stowPower);
     }
 

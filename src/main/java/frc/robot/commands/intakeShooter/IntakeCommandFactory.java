@@ -21,7 +21,7 @@ public class IntakeCommandFactory {
 
     public Command goToIntakePositionAndIntake(IntakePivot intakePivot, IntakeRollers intakeRollers, LimitSwitch l){
         return new ParallelCommandGroup(
-            new IntakeShooterPosition(intakePivot, IntakeShooterPositions.INTAKE, l),
+            new IntakeShooterPosition(intakePivot, IntakeShooterPositions.AUTON_INTAKE, l),
             new IntakeRollersCommand(intakeRollers, 1, -1)
         );
     }

@@ -6,15 +6,28 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Shoot"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "GetElevatorOutOfWay"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "GetElevatorOutOfWay"
+            "waitTime": 0.5
           }
         },
         {
