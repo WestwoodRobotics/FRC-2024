@@ -24,14 +24,21 @@ public class driveAlignVisionCommand extends Command {
     
     @Override
     public void execute(){
-    
+        isAprilTagFound = vision.found();
+        horizontalDifference = vision.getHorizontalDiff();
         if ((isAprilTagFound)){
-            p = new PIDController(1, 0, 0);
-            scaledRotateValue = p.calculate(horizontalDifference);
-            scaledRotateValue = Math.max(-1.0, scaledRotateValue);
-            scaledRotateValue = Math.min(1.0, scaledRotateValue);
+            p = new PIDController(10, 0, 0);
+            scaledRotateValue = p.calculate(-1*horizontalDifference);
+            // scaledRotateValue = Math.min(-1.0, scaledRotateValue);
+            // scaledRotateValue = Math.max(1.0, scaledRotateValue);
+            System.out.println(scaledRotateValue);
             m_SwerveDrive.drive(0,0, scaledRotateValue, false, false);
         }
+        else{
+            m_SwerveDrive.drive(0,0,0,false,false);
+        }
+        //System.out.println(isAprilTagFound);
+
     }
 
     @Override
