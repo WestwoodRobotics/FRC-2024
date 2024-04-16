@@ -53,6 +53,7 @@ import frc.robot.commands.intakeShooter.IntakeCommandFactory;
 import frc.robot.commands.intakeShooter.IntakeShooterPosition;
 import frc.robot.commands.intakeShooter.ShootAtRPM;
 import frc.robot.commands.intakeShooter.ShootForTimeCommand;
+import frc.robot.commands.swerve.driveAlignVisionCommand;
 //import frc.robot.commands.Intake.IntakeCommand;
 //import frc.robot.commands.elevator.ElevatorCommand;
 //import frc.robot.commands.elevator.ElevatorPosSet;
@@ -74,6 +75,7 @@ import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 import frc.robot.subsystems.vision.LED;
 import frc.robot.subsystems.vision.LimitSwitch;
+import frc.robot.subsystems.vision.Vision;
 import pabeles.concurrency.ConcurrencyOps.NewInstance;
 
 
@@ -93,6 +95,7 @@ public class RobotContainer {
   private BeamBreak elevatorPivotBeamBreak = new BeamBreak(9);
   public final Elevator m_elevator = new Elevator();
   private LimitSwitch limitSwitch = new LimitSwitch(6);
+  private Vision vision = new Vision();
 
   private final IntakePivot m_IntakeShooterPivot = new IntakePivot(limitSwitch);
   private final IntakeRollers m_IntakeShooterRollers = new IntakeRollers();
@@ -164,7 +167,9 @@ public class RobotContainer {
     DriverStation.silenceJoystickConnectionWarning(true);
     
     // Configure default commands 
-    m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
+    // m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
+    
+    m_robotDrive.setDefaultCommand(new driveAlignVisionCommand (vision, m_robotDrive));
     m_IntakeShooterPivot.setDefaultCommand(new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooterPivot));
     //led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
     led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));

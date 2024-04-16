@@ -12,6 +12,7 @@ public class Vision extends SubsystemBase
     private NetworkTableEntry targetHorizontalDiffAngle;
     private NetworkTableEntry targetVerticalDiffAngle;
     private NetworkTableEntry targetArea;
+    private NetworkTableEntry hardwareMetrics;
 
     public Vision()
     {
@@ -21,19 +22,28 @@ public class Vision extends SubsystemBase
         targetHorizontalDiffAngle = networkTable.getEntry("tx");
         targetVerticalDiffAngle = networkTable.getEntry("ty");
         targetArea = networkTable.getEntry("ta");
+        hardwareMetrics = networkTable.getEntry("hw");
     }
 
+    /*
+     * Returns true if the limelight has detected a target
+     * 
+     */
     public boolean found(){
         return(detected.getDouble(0.0) == 1);
     }
     
+    /*
+     * Returns the horizontal difference angle between 
+     * The target April Tag and the crosshair
+     */
     public double getHorizontalDiff()
     {
-        return targetHorizontalDiffAngle.getDouble(0.0);
+        return targetHorizontalDiffAngle.getDouble(-1.0);
     }
 
     public double getVerticalDiff() {
-        return targetVerticalDiffAngle.getDouble(0.0);
+        return targetVerticalDiffAngle.getDouble(-1.0);
     }
 
     public double getTargetArea() {
@@ -44,4 +54,22 @@ public class Vision extends SubsystemBase
             return -1;
         }
     }
+
+    public double[] getHardwareMetrics() {
+        return hardwareMetrics.getDoubleArray(new double[0]);
+    }
+    
+    public double getFPS(){
+        double[] array = this.getHardwareMetrics();
+        return array[0];
+    }
+
+    public void setPipeline(int pipeline) {
+        networkTable.getEntry("pipeline").setNumber(pipeline);
+    }
+
+
+    
+
+
 }
