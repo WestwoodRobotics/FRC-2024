@@ -17,6 +17,9 @@ public class driveAlignVisionCommand extends Command {
     public driveAlignVisionCommand(Vision vision, SwerveDrive swerveDrive){
         this.vision = vision;
         horizontalDifference = vision.getHorizontalDiff();
+        this.m_SwerveDrive = swerveDrive;
+        this.vision = vision;
+        addRequirements(vision, swerveDrive);
     }
     
     @Override
@@ -25,12 +28,13 @@ public class driveAlignVisionCommand extends Command {
         if ((Math.abs(horizontalDifference) > 1) && (isAprilTagFound)){
             p = new PIDController(1, 0, 0);
             scaledRotateValue = p.calculate(horizontalDifference);
+            
             m_SwerveDrive.drive(0,0, scaledRotateValue, false, false);
         }
     }
 
     @Override
     public boolean isFinished(){
-        return (isAprilTagFound ? (horizontalDifference < 1) : (true));
+        return false;
     }
 }
