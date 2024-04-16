@@ -25,10 +25,11 @@ public class driveAlignVisionCommand extends Command {
     @Override
     public void execute(){
     
-        if ((Math.abs(horizontalDifference) > 1) && (isAprilTagFound)){
+        if ((isAprilTagFound)){
             p = new PIDController(1, 0, 0);
             scaledRotateValue = p.calculate(horizontalDifference);
-            
+            scaledRotateValue = Math.max(-1.0, scaledRotateValue);
+            scaledRotateValue = Math.min(1.0, scaledRotateValue);
             m_SwerveDrive.drive(0,0, scaledRotateValue, false, false);
         }
     }
