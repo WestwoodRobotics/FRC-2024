@@ -173,7 +173,10 @@ public class RobotContainer {
     m_IntakeShooterPivot.setDefaultCommand(new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooterPivot));
     //led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
     led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
-    m_chooser.setDefaultOption("just shoot", justShootAuto());
+
+    
+    m_chooser.setDefaultOption("April Tag Vision Tracking", visionTracking());
+    m_chooser.addOption("just shoot", justShootAuto());
     m_chooser.addOption("shoot pickup from middle shoot", shootPickupShoot());
     //m_chooser.addOption("shoot pickup from middle", shootAndPickup());
     m_chooser.addOption("Three Notes (Preload, Amp & Middle)", centerNoteTopAuto());
@@ -184,6 +187,8 @@ public class RobotContainer {
     m_chooser.addOption("get middle notes out" , messUpNotesAuto());
     //m_chooser.addOption("Parallel Commands", new PathPlannerAuto("ParallelAuton"));
     m_chooser.addOption("two note", twoNoteAuto());
+
+    m_chooser.addOption("April Tag Vision Tracking", visionTracking());
     //m_chooser.addOption("meterTest" , meterTest());
     
     SmartDashboard.putData(m_chooser);
@@ -437,6 +442,10 @@ public class RobotContainer {
         return toReturn;
     }
 
+    public Command visionTracking(){
+        return new driveAlignVisionCommand(vision, m_robotDrive);
+    }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -467,8 +476,12 @@ public class RobotContainer {
         System.out.println("^^^^^");
         return centerNoteBottomAuto();
     }
+    else if (m_chooser.getSelected().getName().equals("April Tag Vision Tracking")){
+        System.out.println("^^^^^^^");
+        return visionTracking();
+    }
     else{
-        System.out.println("^^^^^^");
+        System.out.println("^^^^^^^");
         return justShootAuto();
     }
     //return m_chooser.getSelected();
