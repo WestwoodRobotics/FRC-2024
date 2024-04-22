@@ -13,6 +13,7 @@ public class Vision extends SubsystemBase
     private NetworkTableEntry targetVerticalDiffAngle;
     private NetworkTableEntry targetArea;
     private NetworkTableEntry hardwareMetrics;
+    private NetworkTableEntry aprilTagTargetTransformArray;
 
     public Vision()
     {
@@ -23,6 +24,7 @@ public class Vision extends SubsystemBase
         targetVerticalDiffAngle = networkTable.getEntry("ty");
         targetArea = networkTable.getEntry("ta");
         hardwareMetrics = networkTable.getEntry("hw");
+        aprilTagTargetTransformArray = networkTable.getEntry("botpose_targetspace");
     }
 
     /*
@@ -62,6 +64,16 @@ public class Vision extends SubsystemBase
     public double getFPS(){
         double[] array = this.getHardwareMetrics();
         return array[0];
+    }
+
+
+    /*
+     * Returns the transform of the target April Tag
+     *  [tx, ty, tz, pitch, yaw, roll]
+     *  [hoirzontalDiff, verticalDiff, distance, pitch, yaw, roll]
+     */
+    public double[] getAprilTagTransform(){
+        return aprilTagTargetTransformArray.getDoubleArray(new double[0]);
     }
 
     public void setPipeline(int pipeline) {
