@@ -28,14 +28,14 @@ public class driveAlignVisionCommand extends Command {
         isAprilTagFound = vision.found();
         horizontalDifference = vision.getHorizontalDiff();
         if (isAprilTagFound){
-            p = new PIDController(10, 0, 0);
+            p = new PIDController(0.0325, 0, 0);
             double pidOutput = p.calculate(horizontalDifference);
             scaledRotateValue = MathUtil.clamp(pidOutput, -1, 1); // clamp the value between -1 and 1
             System.out.println(scaledRotateValue);
             m_SwerveDrive.drive(0,0, scaledRotateValue, false, false);
         }
         else{
-            m_SwerveDrive.drive(0,0,0,false,false);
+            m_SwerveDrive.drive(0,0,Math.copySign(0.2, scaledRotateValue),false,false);
         }
     }
 

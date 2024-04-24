@@ -80,6 +80,8 @@ public class Vision extends SubsystemBase
         networkTable.getEntry("pipeline").setNumber(pipeline);
     }
 
+    
+
 
     
 

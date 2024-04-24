@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import javax.naming.OperationNotSupportedException;
 
+import com.fasterxml.jackson.databind.ser.std.ToEmptyObjectSerializer;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -53,6 +54,7 @@ import frc.robot.commands.intakeShooter.IntakeCommandFactory;
 import frc.robot.commands.intakeShooter.IntakeShooterPosition;
 import frc.robot.commands.intakeShooter.ShootAtRPM;
 import frc.robot.commands.intakeShooter.ShootForTimeCommand;
+import frc.robot.commands.swerve.DriveAlignAndRangeVisionCommand;
 import frc.robot.commands.swerve.driveAlignVisionCommand;
 //import frc.robot.commands.Intake.IntakeCommand;
 //import frc.robot.commands.elevator.ElevatorCommand;
@@ -169,13 +171,13 @@ public class RobotContainer {
     // Configure default commands 
     // m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
     
-    m_robotDrive.setDefaultCommand(new driveAlignVisionCommand (vision, m_robotDrive));
+    m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
     m_IntakeShooterPivot.setDefaultCommand(new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooterPivot));
     //led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
     led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
 
     
-    m_chooser.setDefaultOption("April Tag Vision Tracking", visionTracking());
+
     m_chooser.addOption("just shoot", justShootAuto());
     m_chooser.addOption("shoot pickup from middle shoot", shootPickupShoot());
     //m_chooser.addOption("shoot pickup from middle", shootAndPickup());
@@ -189,6 +191,9 @@ public class RobotContainer {
     m_chooser.addOption("two note", twoNoteAuto());
 
     m_chooser.addOption("April Tag Vision Tracking", visionTracking());
+    m_chooser.addOption("April Tag Vision With Swerve Translation", visionTrackingWithMovement() );
+    m_chooser.setDefaultOption("April Tag Vision Tracking", visionTracking());
+
     //m_chooser.addOption("meterTest" , meterTest());
     
     SmartDashboard.putData(m_chooser);
@@ -225,7 +230,9 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   
-   private void configureButtonBindings() {
+
+
+private void configureButtonBindings() {
     /*
      * DRIVER BUTTON MAPPINGS
      */
@@ -443,7 +450,16 @@ public class RobotContainer {
     }
 
     public Command visionTracking(){
-        return new driveAlignVisionCommand(vision, m_robotDrive);
+        Command toReturn = new driveAlignVisionCommand(vision, m_robotDrive);
+        toReturn.setName("April Tag Vision Tracking");
+        return toReturn;
+    }
+
+    private Command visionTrackingWithMovement() {
+        // TODO Auto-generated method stub
+        Command toReturn = new DriveAlignAndRangeVisionCommand(vision, m_robotDrive);
+        toReturn.setName("April Tag Vision Tracking With Movement");
+        return toReturn;
     }
 
 
@@ -479,6 +495,10 @@ public class RobotContainer {
     else if (m_chooser.getSelected().getName().equals("April Tag Vision Tracking")){
         System.out.println("^^^^^^^");
         return visionTracking();
+    }
+    else if(m_chooser.getSelected().getName().equals("April Tag Vision Tracking With Movement")){
+        System.out.println("^^^^^^^");
+        return visionTrackingWithMovement();
     }
     else{
         System.out.println("^^^^^^^");

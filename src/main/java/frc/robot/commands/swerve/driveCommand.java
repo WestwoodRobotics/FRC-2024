@@ -55,6 +55,7 @@ public class driveCommand extends Command {
 
     if (slowMode)
     {
+
       leftX *= Constants.DriveConstants.slowModeMultiplier;
       leftY *= Constants.DriveConstants.slowModeMultiplier;
       rightX *= Constants.DriveConstants.slowModeMultiplier;

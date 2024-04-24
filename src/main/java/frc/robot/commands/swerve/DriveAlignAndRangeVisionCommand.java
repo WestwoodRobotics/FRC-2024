@@ -1,7 +1,10 @@
 package frc.robot.commands.swerve;
 
+import java.util.Arrays;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.vision.Vision;
@@ -20,7 +23,7 @@ public class DriveAlignAndRangeVisionCommand extends Command {
     private double scaledStrafeValue;
     private double rotateDistance;
     private double kP = .035; // constant of proportionality for aiming
-    private double kP_range = .1; // constant of proportionality for ranging
+    private double kP_range = .05; // constant of proportionality for ranging
     private double kP_strafe = .1; // constant of proportionality for strafing
     private double desiredDistance = 1.0; // desired distance from the April tag
 
@@ -54,15 +57,16 @@ public class DriveAlignAndRangeVisionCommand extends Command {
             scaledForwardValue = MathUtil.clamp(pidOutput, -1, 1); // clamp the value between -1 and 1
 
             // Strafing
-            p = new PIDController(kP_strafe, 0, 0);
-            pidOutput = p.calculate(horizontalDifference);
-            scaledStrafeValue = MathUtil.clamp(pidOutput, -1, 1); // clamp the value between -1 and 1
+            // p = new PIDController(kP_strafe, 0, 0);
+            // pidOutput = p.calculate(horizontalDifference);
+            // scaledStrafeValue = MathUtil.clamp(pidOutput, -1, 1); // clamp the value between -1 and 1
 
-            m_SwerveDrive.drive(scaledForwardValue, scaledStrafeValue, scaledRotateValue, true, false);
+            //m_SwerveDrive.drive(scaledForwardValue, 0, scaledRotateValue, true, false);
         }
         else{
             m_SwerveDrive.drive(0,0,0,false,false);
         }
+        double[] x = vision.getAprilTagTransform();
     }
 
     @Override
