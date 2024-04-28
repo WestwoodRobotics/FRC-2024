@@ -37,14 +37,12 @@ public class DriveAlignAndRangeVisionCommand extends Command {
     /*
      * From a top-down perspective
      */
-    public void execute(){
+    public void execute() {
+        // Get the current state of the AprilTag
         isAprilTagFound = vision.found();
-        if (isAprilTagFound){
-            double[] aprilTagTransform = vision.getAprilTagTransform();
+        if (isAprilTagFound) {
             rotateDistance = vision.getHorizontalDiff();
-
-            horizontalDifference = aprilTagTransform[1];
-            verticalDifference = aprilTagTransform[0];
+            verticalDifference = vision.getVerticalDiff();
 
             // Aiming
             p = new PIDController(kP, 0, 0);
@@ -56,17 +54,11 @@ public class DriveAlignAndRangeVisionCommand extends Command {
             pidOutput = p.calculate(distance - desiredDistance);
             scaledForwardValue = MathUtil.clamp(pidOutput, -1, 1); // clamp the value between -1 and 1
 
-            // Strafing
-            // p = new PIDController(kP_strafe, 0, 0);
-            // pidOutput = p.calculate(horizontalDifference);
-            // scaledStrafeValue = MathUtil.clamp(pidOutput, -1, 1); // clamp the value between -1 and 1
-
-            //m_SwerveDrive.drive(scaledForwardValue, 0, scaledRotateValue, true, false);
+            // Drive the robot
+            m_SwerveDrive.drive(scaledForwardValue, 0, scaledRotateValue, true, false);
+        } else {
+            m_SwerveDrive.drive(0, 0, 0, false, false);
         }
-        else{
-            m_SwerveDrive.drive(0,0,0,false,false);
-        }
-        double[] x = vision.getAprilTagTransform();
     }
 
     @Override
