@@ -2,40 +2,47 @@ package frc.robot.commands.swerve;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.vision.Vision;
 
-public class driveAlignVisionCommand extends Command {
+/**
+ * Command to align the robot with a vision target using PID control.
+ */
+public class driveAlignVisionCommand extends CommandBase {
 
-    private Vision vision;
-    private SwerveDrive m_SwerveDrive;
-    private boolean isAprilTagFound;
-    private double horizontalDifference;
-    private PIDController p;
-    private double scaledRotateValue;
+    private final Vision vision;
+    private final SwerveDrive swerveDriveSubsystem;
+    private boolean aprilTagDetected;
+    private double horizontalOffset;
+    private final PIDController pidController;
+    private double scaledRotation;
 
-    public driveAlignVisionCommand(Vision vision, SwerveDrive swerveDrive){
+    /**
+     * Constructs a new driveAlignVisionCommand.
+     * 
+     * @param vision The vision subsystem used to detect targets.
+     * @param swerveDriveSubsystem The swerve drive subsystem used to control the robot's movement.
+     */
+    public driveAlignVisionCommand(Vision vision, SwerveDrive swerveDriveSubsystem){
         this.vision = vision;
-        horizontalDifference = vision.getHorizontalDiff();
-        this.m_SwerveDrive = swerveDrive;
-        this.vision = vision;
-        addRequirements(vision, swerveDrive);
+        this.swerveDriveSubsystem = swerveDriveSubsystem;
+        addRequirements(vision, swerveDriveSubsystem);
+        pidController = new PIDController(0.0325, 0, 0);
     }
     
     @Override
     public void execute(){
-        isAprilTagFound = vision.found();
-        horizontalDifference = vision.getHorizontalDiff();
-        if (isAprilTagFound){
-            p = new PIDController(0.0325, 0, 0);
-            double pidOutput = p.calculate(horizontalDifference);
-            scaledRotateValue = MathUtil.clamp(pidOutput, -1, 1); // clamp the value between -1 and 1
-            System.out.println(scaledRotateValue);
-            m_SwerveDrive.drive(0,0, scaledRotateValue, false, false);
+        aprilTagDetected = vision.found();
+        horizontalOffset = vision.getHorizontalDiff();
+        if (aprilTagDetected){
+            double pidOutput = pidController.calculate(horizontalOffset);
+            scaledRotation = MathUtil.clamp(pidOutput, -1, 1); // clamp the value between -1 and 1
+            System.out.println(scaledRotation);
+            swerveDriveSubsystem.drive(0,0, scaledRotation, false, false);
         }
         else{
-            m_SwerveDrive.drive(0,0,Math.copySign(0.2, scaledRotateValue),false,false);
+            swerveDriveSubsystem.drive(0,0,Math.copySign(0.2, scaledRotation),false,false);
         }
     }
 

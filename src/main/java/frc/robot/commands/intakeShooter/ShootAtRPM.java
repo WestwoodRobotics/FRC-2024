@@ -5,43 +5,47 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intakeShooter.IntakeShooter;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 
+/**
+ * Command to shoot balls at a specified RPM using the intake shooter subsystem.
+ * This command will attempt to reach and maintain the desired RPM for both upper and lower rollers of the intake shooter.
+ */
 public class ShootAtRPM extends Command{
     private Timer timer;
-    private double timerTolerance;
-    private IntakeShooter m_intakeShooter;
-    private double targetUpperRPM;
-    private double targetLowerRPM;
+    private double rpmToleranceDuration; // Renamed for clarity
+    private IntakeShooter intakeShooterSubsystem; // Renamed for clarity
+    private double desiredUpperRPM; // Renamed for clarity
+    private double desiredLowerRPM; // Renamed for clarity
     private boolean isFinished;
 
     /**
      * Constructor with default timer tolerance of 1 second.
-     * @param intakeShooter The IntakeShooter subsystem this command will run on.
-     * @param targetUpperRPM The target RPM for the upper motor.
-     * @param targetLowerRPM The target RPM for the lower motor.
+     * @param intakeShooterSubsystem The IntakeShooter subsystem this command will run on.
+     * @param desiredUpperRPM The target RPM for the upper motor.
+     * @param desiredLowerRPM The target RPM for the lower motor.
      */
-    public ShootAtRPM(IntakeShooter intakeShooter, double targetUpperRPM, double targetLowerRPM){
+    public ShootAtRPM(IntakeShooter intakeShooterSubsystem, double desiredUpperRPM, double desiredLowerRPM){
         timer = new Timer();
         timer.start();
-        m_intakeShooter = intakeShooter;
-        this.targetUpperRPM = targetUpperRPM;
-        this.targetLowerRPM = targetLowerRPM;
-        this.timerTolerance = 1; //Default timer tolerance of 1 second.
+        this.intakeShooterSubsystem = intakeShooterSubsystem;
+        this.desiredUpperRPM = desiredUpperRPM;
+        this.desiredLowerRPM = desiredLowerRPM;
+        this.rpmToleranceDuration = 1; //Default timer tolerance of 1 second.
     }
 
     /**
      * Constructor with custom timer tolerance.
-     * @param intakeShooter The IntakeShooter subsystem this command will run on.
-     * @param targetUpperRPM The target RPM for the upper motor.
-     * @param targetLowerRPM The target RPM for the lower motor.
-     * @param timerTolerance The time in seconds the motors need to be at their target RPM before the command finishes.
+     * @param intakeShooterSubsystem The IntakeShooter subsystem this command will run on.
+     * @param desiredUpperRPM The target RPM for the upper motor.
+     * @param desiredLowerRPM The target RPM for the lower motor.
+     * @param rpmToleranceDuration The time in seconds the motors need to be at their target RPM before the command finishes.
      */
-    public ShootAtRPM(IntakeShooter intakeShooter, double targetUpperRPM, double targetLowerRPM, double timerTolerance){
+    public ShootAtRPM(IntakeShooter intakeShooterSubsystem, double desiredUpperRPM, double desiredLowerRPM, double rpmToleranceDuration){
         timer = new Timer();
         timer.start();
-        m_intakeShooter = intakeShooter;
-        this.targetUpperRPM =  targetUpperRPM;
-        this.targetLowerRPM = targetLowerRPM;
-        this.timerTolerance = timerTolerance;
+        this.intakeShooterSubsystem = intakeShooterSubsystem;
+        this.desiredUpperRPM =  desiredUpperRPM;
+        this.desiredLowerRPM = desiredLowerRPM;
+        this.rpmToleranceDuration = rpmToleranceDuration;
     }
 
     /**
@@ -50,17 +54,9 @@ public class ShootAtRPM extends Command{
      */
     @Override
     public void initialize(){
-        // if (m_intakeShooter.getState() == IntakeShooterPositions.SHOOT_FAR_SPEAKER || m_intakeShooter.getState() == IntakeShooterPositions.SHOOT_NEAR_SPEAKER){
-        //     m_intakeShooter.setRollerRPM(targetUpperRPM, targetLowerRPM);
-        // }
-        // else{
-        //     System.out.println("Intake Shooter State is not SHOOT_FAR_SPEAKER or SHOOT_NEAR_SPEAKER (Current State: " + m_intakeShooter.getState().toString() + ")");
-        //     isFinished = true;
-        // }
-        m_intakeShooter.setRollerRPM(targetUpperRPM, targetLowerRPM);
+        intakeShooterSubsystem.setRollerRPM(desiredUpperRPM, desiredLowerRPM);
         timer.reset();
         timer.start();
-
     }
 
     /**
@@ -69,9 +65,9 @@ public class ShootAtRPM extends Command{
      */
     @Override
     public void execute(){
-        if (((Math.abs(m_intakeShooter.getUpperRPM()) - Math.abs(targetUpperRPM) < 100.0) 
-        && (Math.abs(m_intakeShooter.getLowerRPM()) - Math.abs(targetLowerRPM) < 100.0 )) 
-        || (timer.get() > timerTolerance)) {
+        if (((Math.abs(intakeShooterSubsystem.getUpperRPM()) - Math.abs(desiredUpperRPM) < 100.0) 
+        && (Math.abs(intakeShooterSubsystem.getLowerRPM()) - Math.abs(desiredLowerRPM) < 100.0 )) 
+        || (timer.get() > rpmToleranceDuration)) {
             {
                 isFinished = true;
             }
@@ -87,7 +83,7 @@ public class ShootAtRPM extends Command{
      */
     @Override
     public boolean isFinished(){
-        return true;
+        return isFinished;
     }
 
     public void end (boolean interrupted){

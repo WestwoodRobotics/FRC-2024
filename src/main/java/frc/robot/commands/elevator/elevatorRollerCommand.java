@@ -3,81 +3,84 @@ package frc.robot.commands.elevator;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.intakeShooter.IntakeShooter;
-import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
-import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 import frc.robot.subsystems.vision.BeamBreak;
 
+/**
+ * Command to control the elevator roller based on beam break sensor input.
+ * This command controls the roller of the elevator subsystem, activating it based on the status of a beam break sensor.
+ */
 public class elevatorRollerCommand extends Command{
     Timer t = new Timer();
-    private Elevator elevator;
-    private double rollerPower;
-    private BeamBreak elevatorBeamBreak;
-    private Boolean alreadyBeamBreak;
+    private Elevator elevatorSubsystem; // Renamed for clarity
+    private double desiredRollerPower; // Renamed for clarity
+    private BeamBreak beamBreakSensor; // Renamed for clarity
+    private Boolean beamBreakTriggered; // Renamed for clarity
     private double timerStart;
-
 
     private boolean isFinished;
 
-    public elevatorRollerCommand(Elevator elevator, double rollerPower, BeamBreak elevatorBeamBreak){
-        this.elevator = elevator;
-        this.rollerPower = rollerPower;
-        this.elevatorBeamBreak = elevatorBeamBreak;
-        //addRequirements(intakeShooter);
+    /**
+     * Constructs an elevatorRollerCommand.
+     * @param elevatorSubsystem The elevator subsystem to be controlled
+     * @param desiredRollerPower The power to set for the roller
+     * @param beamBreakSensor The beam break sensor to monitor
+     */
+    public elevatorRollerCommand(Elevator elevatorSubsystem, double desiredRollerPower, BeamBreak beamBreakSensor){
+        this.elevatorSubsystem = elevatorSubsystem;
+        this.desiredRollerPower = desiredRollerPower;
+        this.beamBreakSensor = beamBreakSensor;
     }
 
     /**
-     * Called when the command is initially scheduled.
-     * Sets the RPM of the motors if the IntakeShooter is in the correct state.
+     * Initializes the command with a timer reset.
      */
     @Override
     public void initialize(){
         t.reset(); 
         t.start();
         isFinished = false;
-        alreadyBeamBreak = elevatorBeamBreak.getStatus();
-        // if(alreadyBeamBreak){
-        //     timerStart = t.get();
-        //     System.out.println("broken");
-        // }
+        beamBreakTriggered = beamBreakSensor.getStatus();
     }
 
     /**
-     * Called every time the scheduler runs while the command is scheduled.
-     * Checks if the motors are at their target RPM and either finishes the command or resets the timer.
+     * Executes the command, controlling the roller based on the beam break sensor.
      */
     @Override
     public void execute(){
-        if(alreadyBeamBreak){
+        if(beamBreakTriggered){
             timerStart = t.get();
         }
         if((t.get() - timerStart) >= 0.1){
-            elevator.setRollerPower(0);
+            elevatorSubsystem.setRollerPower(0);
             isFinished = true;
         }
         else{
-            elevator.setRollerPower(rollerPower);
+            elevatorSubsystem.setRollerPower(desiredRollerPower);
         }
 
-        if(elevatorBeamBreak.getStatus() && !alreadyBeamBreak){
-            alreadyBeamBreak = true;
+        if(beamBreakSensor.getStatus() && !beamBreakTriggered){
+            beamBreakTriggered = true;
         }
         else{
-            alreadyBeamBreak = false;
+            beamBreakTriggered = false;
         }
     }
 
+    /**
+     * Determines if the command has finished.
+     * @return true if the command has finished, false otherwise.
+     */
     @Override
     public boolean isFinished(){
         return isFinished;
     }
 
+    /**
+     * Ends the command, stopping the roller.
+     * @param interrupted Whether the command was interrupted or not
+     */
     @Override
     public void end(boolean interrupted){
-        elevator.setRollerPower(0);
+        elevatorSubsystem.setRollerPower(0);
     }
-
-
-
-    
 }

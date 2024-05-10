@@ -1,63 +1,62 @@
 package frc.robot.commands.swerve;
 
-import java.util.Arrays;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.vision.Vision;
 
-public class DriveAlignAndRangeVisionCommand extends Command {
+/**
+ * Command to align and range the robot to a vision target using PID control.
+ * This command utilizes vision data to align the robot's orientation and position
+ * with respect to a detected target, typically an AprilTag.
+ */
+public class DriveAlignAndRangeVisionCommand extends CommandBase {
 
     private Vision vision;
-    private SwerveDrive m_SwerveDrive;
-    private boolean isAprilTagFound;
-    private double horizontalDifference;
-    private double verticalDifference;
-    private double distance;
-    private PIDController p;
-    private double scaledRotateValue;
-    private double scaledForwardValue;
-    private double scaledStrafeValue;
-    private double rotateDistance;
-    private double kP = .035; // constant of proportionality for aiming
-    private double kP_range = .05; // constant of proportionality for ranging
-    private double kP_strafe = .1; // constant of proportionality for strafing
-    private double desiredDistance = 1.0; // desired distance from the April tag
+    private SwerveDrive swerveDriveSubsystem;
+    private boolean aprilTagDetected;
+    private double horizontalOffset;
+    private double verticalOffset;
+    private double targetDistance;
+    private PIDController pidController;
+    private double scaledRotation;
+    private double scaledForwardSpeed;
+    private double scaledStrafeSpeed;
+    private double rotationOffset;
+    private double proportionalGain = .035; // Proportional gain for aiming
+    private double rangeProportionalGain = .05; // Proportional gain for ranging
+    private double strafeProportionalGain = .1; // Proportional gain for strafing
+    private double desiredTargetDistance = 1.0; // Desired distance from the April tag
 
-    public DriveAlignAndRangeVisionCommand(Vision vision, SwerveDrive swerveDrive){
+    public DriveAlignAndRangeVisionCommand(Vision vision, SwerveDrive swerveDriveSubsystem){
         this.vision = vision;
-        this.m_SwerveDrive = swerveDrive;
-        addRequirements(vision, swerveDrive);
+        this.swerveDriveSubsystem = swerveDriveSubsystem;
+        addRequirements(vision, swerveDriveSubsystem);
     }
     
     @Override
-    /*
-     * From a top-down perspective
-     */
     public void execute() {
         // Get the current state of the AprilTag
-        isAprilTagFound = vision.found();
-        if (isAprilTagFound) {
-            rotateDistance = vision.getHorizontalDiff();
-            verticalDifference = vision.getVerticalDiff();
+        aprilTagDetected = vision.found();
+        if (aprilTagDetected) {
+            rotationOffset = vision.getHorizontalDiff();
+            verticalOffset = vision.getVerticalDiff();
 
             // Aiming
-            p = new PIDController(kP, 0, 0);
-            double pidOutput = p.calculate(rotateDistance);
-            scaledRotateValue = MathUtil.clamp(pidOutput, -1, 1); // clamp the value between -1 and 1
+            pidController = new PIDController(proportionalGain, 0, 0);
+            double pidOutput = pidController.calculate(rotationOffset);
+            scaledRotation = MathUtil.clamp(pidOutput, -1, 1); // Clamp the value between -1 and 1
 
             // Ranging
-            p = new PIDController(kP_range, 0, 0);
-            pidOutput = p.calculate(distance - desiredDistance);
-            scaledForwardValue = MathUtil.clamp(pidOutput, -1, 1); // clamp the value between -1 and 1
+            pidController = new PIDController(rangeProportionalGain, 0, 0);
+            pidOutput = pidController.calculate(targetDistance - desiredTargetDistance);
+            scaledForwardSpeed = MathUtil.clamp(pidOutput, -1, 1); // Clamp the value between -1 and 1
 
             // Drive the robot
-            m_SwerveDrive.drive(scaledForwardValue, 0, scaledRotateValue, true, false);
+            swerveDriveSubsystem.drive(scaledForwardSpeed, 0, scaledRotation, true, false);
         } else {
-            m_SwerveDrive.drive(0, 0, 0, false, false);
+            swerveDriveSubsystem.drive(0, 0, 0, false, false);
         }
     }
 

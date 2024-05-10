@@ -1,71 +1,70 @@
 package frc.robot.commands.intakeShooter;
 
-import java.util.concurrent.SynchronousQueue;
-
-import com.revrobotics.CANSparkBase.IdleMode;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intakeShooter.IntakeShooter;
-import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
-import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 
+/**
+ * Command to shoot for a specified duration.
+ * This command activates the intake shooter subsystem to shoot for a specified ramp-up duration and power level.
+ */
 public class ShootForTimeCommand extends Command{
-    Timer t = new Timer();
-    private IntakeShooter m_intakeShooter;
-    private double rampUpTime;
-    private double power;
-
+    Timer timer = new Timer();
+    private IntakeShooter intakeShooterSubsystem; // Renamed for clarity
+    private double rampUpDuration; // Renamed for clarity
+    private double shootingPower; // Renamed for clarity
 
     private boolean isFinished;
 
-    public ShootForTimeCommand(IntakeShooter intakeShooter, double rampUpTime, double power){
-        m_intakeShooter = intakeShooter;
-        m_intakeShooter.pivotMotor.setIdleMode(IdleMode.kBrake);
-        this.rampUpTime = rampUpTime;
-        this.power = power;
-
+    /**
+     * Constructs a ShootForTimeCommand.
+     * @param intakeShooterSubsystem The intake shooter subsystem to be controlled
+     * @param rampUpDuration The duration to ramp up the shooting mechanism
+     * @param shootingPower The power level for shooting
+     */
+    public ShootForTimeCommand(IntakeShooter intakeShooterSubsystem, double rampUpDuration, double shootingPower){
+        this.intakeShooterSubsystem = intakeShooterSubsystem;
+        this.rampUpDuration = rampUpDuration;
+        this.shootingPower = shootingPower;
     }
 
     /**
-     * Called when the command is initially scheduled.
-     * Sets the RPM of the motors if the IntakeShooter is in the correct state.
+     * Initializes the command with a timer reset.
      */
     @Override
     public void initialize(){
-        t.reset(); 
-        t.start();
+        timer.reset(); 
+        timer.start();
     }
 
     /**
-     * Called every time the scheduler runs while the command is scheduled.
-     * Checks if the motors are at their target RPM and either finishes the command or resets the timer.
+     * Executes the command, activating the intake shooter for the specified duration and power.
      */
     @Override
     public void execute(){
-        // m_intakeShooter.setToPosition(IntakeShooterPositions.SHOOT_NEAR_SPEAKER);
-        // Timer.delay(0.7);
-        System.out.println("geot here");
-        m_intakeShooter.setRollerPower(-power);
-        Timer.delay(rampUpTime);
-        m_intakeShooter.setStowPower(power);
+        intakeShooterSubsystem.setRollerPower(-shootingPower);
+        Timer.delay(rampUpDuration);
+        intakeShooterSubsystem.setStowPower(shootingPower);
         Timer.delay(2);
         isFinished = true;
     }
 
+    /**
+     * Determines if the command has finished.
+     * @return true if the command has finished, false otherwise.
+     */
     @Override
     public boolean isFinished(){
         return isFinished;
     }
 
+    /**
+     * Ends the command, stopping the intake shooter.
+     * @param interrupted Whether the command was interrupted or not
+     */
     @Override
     public void end(boolean interrupted){
-        m_intakeShooter.setRollerPower(0);
-        m_intakeShooter.setStowPower(0);
+        intakeShooterSubsystem.setRollerPower(0);
+        intakeShooterSubsystem.setStowPower(0);
     }
-
-
-
-    
 }

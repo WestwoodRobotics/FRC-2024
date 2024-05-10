@@ -2,58 +2,64 @@ package frc.robot.commands.intakeShooter;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intakeShooter.IntakeRollers;
-import frc.robot.subsystems.intakeShooter.IntakeShooter;
-import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
-import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 
+/**
+ * Command to control the power of intake rollers and stow motor.
+ * This command sets the power for the intake rollers and stow motor in the IntakeRollers subsystem.
+ */
 public class IntakeRollersCommand extends Command{
     Timer t = new Timer();
-    private IntakeRollers m_intakeRollers;
-    private double rollerPower;
-    private double stowPower;
+    private IntakeRollers intakeRollersSubsystem; // Renamed for clarity
+    private double desiredRollerPower; // Renamed for clarity
+    private double desiredStowPower; // Renamed for clarity
     
 
-    public IntakeRollersCommand(IntakeRollers intakeRollers, double rollerPower, double stowPower){
-        m_intakeRollers = intakeRollers;
-        this.rollerPower = rollerPower;
-        this.stowPower = stowPower;
-        addRequirements(intakeRollers);
-
-        //addRequirements(intakeShooter);
+    /**
+     * Constructs an IntakeRollersCommand.
+     * @param intakeRollersSubsystem The intake rollers subsystem to be controlled
+     * @param desiredRollerPower The power to set for the rollers
+     * @param desiredStowPower The power to set for the stow motor
+     */
+    public IntakeRollersCommand(IntakeRollers intakeRollersSubsystem, double desiredRollerPower, double desiredStowPower){
+        this.intakeRollersSubsystem = intakeRollersSubsystem;
+        this.desiredRollerPower = desiredRollerPower;
+        this.desiredStowPower = desiredStowPower;
+        addRequirements(intakeRollersSubsystem);
     }
 
     /**
-     * Called when the command is initially scheduled.
-     * Sets the RPM of the motors if the IntakeShooter is in the correct state.
+     * Initializes the command by setting the roller and stow motor power.
      */
     @Override
     public void initialize(){
-        m_intakeRollers.setRollerPower(-1*rollerPower);
-        m_intakeRollers.setStowPower(stowPower);
+        intakeRollersSubsystem.setRollerPower(-1*desiredRollerPower);
+        intakeRollersSubsystem.setStowPower(desiredStowPower);
     }
 
     /**
-     * Called every time the scheduler runs while the command is scheduled.
-     * Checks if the motors are at their target RPM and either finishes the command or resets the timer.
+     * Executes the command. This method is called repeatedly until the command finishes.
      */
     @Override
     public void execute(){
 
     }
 
+    /**
+     * Determines if the command has finished. This command is instantaneous and finishes immediately after initialization.
+     * @return true to indicate the command has finished.
+     */
     @Override
     public boolean isFinished(){
         return true;
     }
 
+    /**
+     * Called after the command ends or is interrupted.
+     * @param interrupted indicates if the command was interrupted.
+     */
     @Override
     public void end(boolean interrupted){
 
     }
-
-
-
-    
 }

@@ -6,74 +6,57 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.swerve.SwerveDrive;
-// import frc.robot.subsystems.swerve.DriveSpeed;
 
-// import static frc.robot.Constants.DriveConstants.kMaxAngularSpeed;
-// import static frc.robot.Constants.DriveConstants.kMaxSpeedMetersPerSecond;
-
+/**
+ * Command for driving the robot using the swerve drive subsystem.
+ * This command utilizes the XboxController inputs to control the robot's movement.
+ */
 public class driveCommand extends Command {
 
-  private final SwerveDrive m_swerveDrive;
+  private final SwerveDrive swerveDriveSubsystem;
 
-  private XboxController controller;
-  private boolean slowMode;
+  private XboxController driverController;
+  private boolean isSlowModeEnabled;
 
-
-
-
-  public driveCommand(SwerveDrive swerveDrive, XboxController controller) {
-    m_swerveDrive = swerveDrive;
-    this.controller = controller;
-    addRequirements(swerveDrive);
+  public driveCommand(SwerveDrive swerveDriveSubsystem, XboxController driverController) {
+    this.swerveDriveSubsystem = swerveDriveSubsystem;
+    this.driverController = driverController;
+    addRequirements(swerveDriveSubsystem);
   }
-
 
   @Override
-  public void initialize() 
-  {
-    slowMode = false;
+  public void initialize() {
+    isSlowModeEnabled = false;
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double leftX, leftY, rightX;
-    if (controller.getBackButtonPressed())
-    {
-      slowMode = !slowMode;
+    double leftJoystickX, leftJoystickY, rightJoystickRotation;
+    if (driverController.getBackButtonPressed()) {
+      isSlowModeEnabled = !isSlowModeEnabled;
     }
 
-    leftX = -MathUtil.applyDeadband(controller.getLeftX(), ControllerConstants.kDriveDeadband);
-    leftY = -MathUtil.applyDeadband(controller.getLeftY(), ControllerConstants.kDriveDeadband);
-    rightX = -MathUtil.applyDeadband(controller.getRightX(), ControllerConstants.kDriveDeadband);
+    leftJoystickX = -MathUtil.applyDeadband(driverController.getLeftX(), ControllerConstants.kDriveDeadband);
+    leftJoystickY = -MathUtil.applyDeadband(driverController.getLeftY(), ControllerConstants.kDriveDeadband);
+    rightJoystickRotation = -MathUtil.applyDeadband(driverController.getRightX(), ControllerConstants.kDriveDeadband);
 
-    // Apply non-linear input (squaring the input)
-    leftX = Math.copySign(Math.pow(leftX, 2), leftX);
-    leftY = Math.copySign(Math.pow(leftY, 2), leftY);
-    rightX = Math.copySign(Math.pow(rightX, 2), rightX);
+    leftJoystickX = Math.copySign(Math.pow(leftJoystickX, 2), leftJoystickX);
+    leftJoystickY = Math.copySign(Math.pow(leftJoystickY, 2), leftJoystickY);
+    rightJoystickRotation = Math.copySign(Math.pow(rightJoystickRotation, 2), rightJoystickRotation);
 
-
-    if (slowMode)
-    {
-
-      leftX *= Constants.DriveConstants.slowModeMultiplier;
-      leftY *= Constants.DriveConstants.slowModeMultiplier;
-      rightX *= Constants.DriveConstants.slowModeMultiplier;
+    if (isSlowModeEnabled) {
+      leftJoystickX *= Constants.DriveConstants.slowModeMultiplier;
+      leftJoystickY *= Constants.DriveConstants.slowModeMultiplier;
+      rightJoystickRotation *= Constants.DriveConstants.slowModeMultiplier;
     }
-    m_swerveDrive.drive(leftY, leftX, rightX, true, false);
-
+    swerveDriveSubsystem.drive(leftJoystickY, leftJoystickX, rightJoystickRotation, true, false);
   }
 
-
-  
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {}
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // should never end in teleop
     return false;
   }
 }
