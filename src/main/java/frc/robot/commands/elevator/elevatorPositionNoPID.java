@@ -3,18 +3,24 @@ package frc.robot.commands.elevator;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.intakeShooter.IntakeShooter;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
-import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 
+/**
+ * Command to move the elevator to a specified position without using PID control.
+ */
 public class elevatorPositionNoPID extends Command{
-    Timer t = new Timer();
-    Timer l = new Timer();
+    Timer timerOne = new Timer();
+    Timer timerTwo = new Timer();
     private Elevator m_elevator;
     private ElevatorPositions targetPosition;
     private boolean isFinished;
 
-
+    /**
+     * Constructs an instance of the elevatorPositionNoPID command.
+     * 
+     * @param elevator The Elevator subsystem this command will run on.
+     * @param position The target position for the elevator.
+     */
     public elevatorPositionNoPID(Elevator elevator, ElevatorPositions position){
         m_elevator = elevator;
         this.targetPosition = position;
@@ -23,38 +29,33 @@ public class elevatorPositionNoPID extends Command{
 
     /**
      * Called when the command is initially scheduled.
-     * Sets the RPM of the motors if the IntakeShooter is in the correct state.
+     * Resets and starts the timers.
      */
     @Override
     public void initialize(){
-        t.reset();
-        t.start();
-        l.reset();
-        l.start();
-        
-        
+        timerOne.reset();
+        timerOne.start();
+        timerTwo.reset();
+        timerTwo.start();
     }
 
     /**
      * Called every time the scheduler runs while the command is scheduled.
-     * Checks if the motors are at their target RPM and either finishes the command or resets the timer.
+     * Moves the elevator to the target position without PID control.
      */
     @Override
     public void execute(){
- 
-        //    m_elevator.setPivotPosition(targetPosition);
         m_elevator.setPivotPositionNOPID(targetPosition);
         isFinished = m_elevator.setElevatorPosition(targetPosition);
-
-        
     }
 
     /**
      * Returns whether the command has finished.
+     * 
      * @return true if the command has finished, false otherwise.
      */
     @Override
     public boolean isFinished(){
-       return (t.get() > 0.7) && ((l.get() > 2) || isFinished);
+       return (timerOne.get() > 0.7) && ((timerTwo.get() > 2) || isFinished);
     }
 }

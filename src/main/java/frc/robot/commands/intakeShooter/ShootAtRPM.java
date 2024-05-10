@@ -5,6 +5,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intakeShooter.IntakeShooter;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 
+/**
+ * Command to shoot balls at a specified RPM using the IntakeShooter subsystem.
+ */
 public class ShootAtRPM extends Command{
     private Timer timer;
     private double timerTolerance;

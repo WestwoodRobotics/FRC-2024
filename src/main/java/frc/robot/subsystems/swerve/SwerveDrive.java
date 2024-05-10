@@ -1,7 +1,4 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
+// SwerveDrive subsystem manages the robot's swerve drive mechanism.
 package frc.robot.subsystems.swerve;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -12,9 +9,6 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 
-//import com.kauailabs.navx.frc.AHRS;
-//import com.revrobotics.CANSparkMax.IdleMode;
-
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,8 +18,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
-// import edu.wpi.first.wpilibj.ADIS16470_IMU;
-// import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
@@ -35,20 +27,15 @@ import frc.robot.Constants.PortConstants;
 import frc.robot.subsystems.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DriverStation;
-//Import auto builder
 
-
-
-
-
+/**
+ * The SwerveDrive class is responsible for handling the robot's swerve drive mechanism.
+ * It manages the swerve modules and integrates with the gyro for orientation control.
+ */
 public class SwerveDrive extends SubsystemBase {
 
-  //private final PIDController m_headingController = new PIDController(
-   // DriveConstants.kSwerveP, DriveConstants.kSwerveI, DriveConstants.kSwerveD
- // );
-
   private Gyro gyro;
-  // Create MAXSwerveModules
+  // Swerve modules
   private final SwerveModule m_frontLeft = new SwerveModule(
       PortConstants.kFrontLeftDrivingCanId,
       PortConstants.kFrontLeftTurningCanId,
@@ -69,21 +56,12 @@ public class SwerveDrive extends SubsystemBase {
       PortConstants.kRearRightTurningCanId,
       DriveConstants.kRearRightChassisAngularOffset);
 
-  // The gyro sensor
-
-  // public static final AHRS gyro = new AHRS(SPI.Port.kMXP); //NAVXMP v1 Initialization
-
-  //Instangiate a CTRE Pigeon Gyro
-
-
   private double m_currentRotation = 0.0;
   private double m_currentTranslationDir = 0.0;
   private double m_currentTranslationMag = 0.0;
 
-  // Slew rate limiters for controlling lateral acceleration
+  // Slew rate limiters for controlling acceleration
   private SlewRateLimiter m_magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate);
-
-  // Slew rate limiter for controlling rotational acceleration
   private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
 
   private double m_prevTime = WPIUtilJNI.now() * 1e-6; //convert from microseconds to seconds
@@ -101,7 +79,9 @@ public class SwerveDrive extends SubsystemBase {
 
   Field2d m_field;
 
- /** Creates a new SwerveDrive */
+  /**
+   * Constructs a new SwerveDrive object.
+   */
   public SwerveDrive() {
     try {
       gyro = new Gyro();
@@ -110,7 +90,6 @@ public class SwerveDrive extends SubsystemBase {
       gyro = null;
     }      
 
-    //reset the gyro if it isn't null
     if (gyro != null) {
       gyro.reset();
     }
@@ -173,6 +152,9 @@ public class SwerveDrive extends SubsystemBase {
     return m_odometry.getPoseMeters();
   }
 
+  /**
+   * Resets the gyro sensor.
+   */
   public void resetGyro(){
     if (gyro != null) {
       gyro.reset();
@@ -278,6 +260,11 @@ public class SwerveDrive extends SubsystemBase {
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
+  /**
+   * Drives the robot with the given ChassisSpeeds.
+   *
+   * @param s The ChassisSpeeds to drive the robot.
+   */
   public void driveChassisSpeeds(ChassisSpeeds s){
     SwerveModuleState[] swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(s);
     SwerveDriveKinematics.desaturateWheelSpeeds(
@@ -288,7 +275,16 @@ public class SwerveDrive extends SubsystemBase {
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
-
+  /**
+   * Drives the robot using trigger values for speed control.
+   *
+   * @param triggerValue The value of the trigger for speed control.
+   * @param leftJoystickX The X value of the left joystick for lateral movement.
+   * @param leftJoystickY The Y value of the left joystick for forward/backward movement.
+   * @param rightJoystickRotation The value of the right joystick for rotation.
+   * @param fieldRelative Whether the movement is relative to the field.
+   * @param rateLimit Whether to apply rate limiting for smoother control.
+   */
   public void TriggerDrive(double triggerValue, double leftJoystickX, double leftJoystickY, double rightJoystickRotation, boolean fieldRelative, boolean rateLimit) {
     // Normalize the trigger value to be between 0 and 1
     double normalizedTriggerValue = MathUtil.clamp(triggerValue, 0, 1);
@@ -335,9 +331,6 @@ public class SwerveDrive extends SubsystemBase {
     m_rearRight.resetEncoders();
   }
 
-  /** Zeroes the heading of the robot. */
-
-
   /**
    * Returns the heading of the robot.
    *
@@ -353,6 +346,11 @@ public class SwerveDrive extends SubsystemBase {
 
   }
 
+  /**
+   * Returns the heading of the robot as a Rotation2d object.
+   *
+   * @return the robot's heading as a Rotation2d object.
+   */
   public Rotation2d getHeadingObject() {
     if (gyro != null) {
       return (Rotation2d.fromDegrees(gyro.getZAngle()));
@@ -362,7 +360,6 @@ public class SwerveDrive extends SubsystemBase {
     }
 
   }
-
 
   /**
    * Returns the turn rate of the robot.
@@ -379,7 +376,11 @@ public class SwerveDrive extends SubsystemBase {
 
   }
 
-  //make a method that will get robot relative speeds. Returns the current robot-relative ChassisSpeeds. This can be calculated using one of WPILib's drive kinematics classes. No parms as input
+  /**
+   * Returns the current robot-relative ChassisSpeeds.
+   *
+   * @return The current robot-relative ChassisSpeeds.
+   */
   public ChassisSpeeds getRobotRelativeSpeeds() {
     return DriveConstants.kDriveKinematics.toChassisSpeeds(
       new SwerveModuleState[] {
@@ -391,6 +392,9 @@ public class SwerveDrive extends SubsystemBase {
     );
   }
   
+  /**
+   * Recalibrates the gyro sensor.
+   */
   public void recalibrateGyro() {
     if (gyro != null) {
       gyro.reset();
@@ -399,6 +403,11 @@ public class SwerveDrive extends SubsystemBase {
     }
   }
 
+  /**
+   * Resets the odometry to a specific pose.
+   *
+   * @param Pose The pose to reset the odometry to.
+   */
   public void resetPose(Pose2d Pose){
     m_odometry.resetPosition(
       this.getHeadingObject(),
@@ -410,8 +419,4 @@ public class SwerveDrive extends SubsystemBase {
       },
       Pose);
   }
-
-
-
-  
 }

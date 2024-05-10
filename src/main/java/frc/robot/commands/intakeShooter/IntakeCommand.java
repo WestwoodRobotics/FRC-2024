@@ -7,6 +7,10 @@ import frc.robot.subsystems.intakeShooter.IntakeShooter;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 
+/**
+ * Command to control the intake shooter subsystem.
+ * This command sets the power for the roller and stow motors of the intake shooter.
+ */
 public class IntakeCommand extends Command{
     private IntakeShooter m_intakeShooter;
     private double rollerPower;
@@ -15,6 +19,13 @@ public class IntakeCommand extends Command{
 
     private boolean isFinished;
 
+    /**
+     * Constructs an IntakeCommand.
+     * 
+     * @param intakeShooter The IntakeShooter subsystem this command will run on.
+     * @param rollerPower The power to set for the roller motor.
+     * @param stowPower The power to set for the stow motor.
+     */
     public IntakeCommand(IntakeShooter intakeShooter, double rollerPower, double stowPower){
         m_intakeShooter = intakeShooter;
         this.rollerPower = rollerPower;
@@ -34,7 +45,7 @@ public class IntakeCommand extends Command{
 
     /**
      * Called every time the scheduler runs while the command is scheduled.
-     * Checks if the motors are at their target RPM and either finishes the command or resets the timer.
+     * Sets the power for the roller and stow motors.
      */
     @Override
     public void execute(){
