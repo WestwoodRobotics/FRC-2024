@@ -35,8 +35,8 @@ public class Robot extends TimedRobot {
     // Instantiate the RobotContainer. This will perform all our button bindings and put our
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
-    robotContainer.elevator.resetEncoder();
-    robotContainer.robotDrive.resetGyro();
+    robotContainer.m_elevator.resetEncoder();
+    robotContainer.m_robotDrive.resetGyro();
 
     // Initialize the camera server for vision processing
     //CameraServer.startAutomaticCapture();
@@ -70,7 +70,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     autonomousCommand = robotContainer.getAutonomousCommand();
-    robotContainer.robotDrive.resetGyro();
+    robotContainer.m_robotDrive.resetGyro();
 
     // Schedule the autonomous command if it is present
     if (autonomousCommand != null) {

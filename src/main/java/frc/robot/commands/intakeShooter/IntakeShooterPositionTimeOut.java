@@ -1,10 +1,7 @@
 package frc.robot.commands.intakeShooter;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intakeShooter.IntakePivot;
-import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 import frc.robot.subsystems.vision.LimitSwitch;
 
@@ -14,7 +11,6 @@ public class IntakeShooterPositionTimeOut extends Command{
     private IntakeShooterPositions targetPosition;
     private double timeOutPeriod;
     private LimitSwitch l;
-    private boolean isFinished;
 
 
     /*
@@ -58,12 +54,10 @@ public class IntakeShooterPositionTimeOut extends Command{
         if(targetPosition == IntakeShooterPositions.HOME){
             if(!m_intakePivot.getPivotLimitReached()){
                 m_intakePivot.setPivotPower(-0.75);
-                isFinished = false;
             }
             else{
                 m_intakePivot.setPivotPower(0);
                 m_intakePivot.resetEncoder();
-                isFinished = true;
             }
         }
         // else if(targetPosition == IntakeShooterPositions.AUTON_SHOOT){
@@ -77,7 +71,7 @@ public class IntakeShooterPositionTimeOut extends Command{
         //     }
         // }
         else{    
-            isFinished = m_intakePivot.setToPosition(targetPosition);
+            m_intakePivot.setToPosition(targetPosition);
 
             // if(changePower){
             //     if (targetPosition == IntakeShooterPositions.SHOOT_FAR_SPEAKER || targetPosition == IntakeShooterPositions.SHOOT_NEAR_SPEAKER || targetPosition == IntakeShooterPositions.AUTON_SHOOT || targetPosition == IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS){

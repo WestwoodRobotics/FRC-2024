@@ -1,18 +1,15 @@
 package frc.robot.commands.elevator;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.intakeShooter.IntakeShooter;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
-import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
+
 
 public class elevatorPosition extends Command{
 
     Timer timer = new Timer();
     private Elevator m_elevator;
     private ElevatorPositions targetPosition;
-    private boolean isFinished;
 
 
     public elevatorPosition(Elevator elevator, ElevatorPositions position){

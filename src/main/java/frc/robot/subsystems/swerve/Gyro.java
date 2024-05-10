@@ -140,6 +140,9 @@ public class Gyro extends SubsystemBase {
     return gyroscope.getYAngularRate();
   }
 
+  public NeoADIS16470 getRawGyroObject() {
+    return gyroscope;
+  }
   /**
    * Resets all gyro angles and offsets to zero.
    */

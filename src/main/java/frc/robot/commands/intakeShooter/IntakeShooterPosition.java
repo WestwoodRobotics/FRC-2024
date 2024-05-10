@@ -2,9 +2,8 @@ package frc.robot.commands.intakeShooter;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.elevator.Elevator;
+
 import frc.robot.subsystems.intakeShooter.IntakePivot;
-import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 import frc.robot.subsystems.vision.LimitSwitch;
 
@@ -15,9 +14,9 @@ public class IntakeShooterPosition extends Command{
     
     private LimitSwitch l;
 
-    private boolean changePower = true;
+
     private boolean isFinished;
-    private static boolean isAlreadyPressed;
+
 
     public IntakeShooterPosition(IntakePivot intakePivot, IntakeShooterPositions position, LimitSwitch limitSwitch
     ){
@@ -30,7 +29,7 @@ public class IntakeShooterPosition extends Command{
     public IntakeShooterPosition(IntakePivot intakePivot, IntakeShooterPositions position, boolean changePower, LimitSwitch limitSwitch){
         this.m_intakePivot = intakePivot;
         this.targetPosition = position;
-        this.changePower = changePower;
+
         addRequirements(m_intakePivot);
         this.l = limitSwitch;
     }
@@ -43,7 +42,6 @@ public class IntakeShooterPosition extends Command{
     @Override
     public void initialize(){
         // m_intakePivot.setRollerPower(0);
-        isAlreadyPressed = m_intakePivot.getPivotLimitReached();
         t.reset();
         t.start();
         

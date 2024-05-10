@@ -119,7 +119,7 @@ public class SwerveDrive extends SubsystemBase {
   @Override
   public void periodic() {
     odometry.update(
-        Rotation2d.fromDegrees(gyro.getZAngle()),
+        Rotation2d.fromDegrees(gyro.getRawGyroObject().getZAngle()),
         new SwerveModulePosition[] {
             frontLeftModule.getPosition(),
             frontRightModule.getPosition(),
@@ -128,9 +128,9 @@ public class SwerveDrive extends SubsystemBase {
         }
     );
 
-    SmartDashboard.putNumber("Z Gyro Angle", gyro.getZAngle());
-    SmartDashboard.putNumber("X Gyro Angle", gyro.getXAngle());
-    SmartDashboard.putNumber("Y Gyro Angle", gyro.getYAngle());
+    SmartDashboard.putNumber("Z Gyro Angle", gyro.getRawGyroObject().getZAngle());
+    SmartDashboard.putNumber("X Gyro Angle", gyro.getRawGyroObject().getXAngle());
+    SmartDashboard.putNumber("Y Gyro Angle", gyro.getRawGyroObject().getYAngle());
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("Module Velocity", frontLeftModule.getDriveEncoder().getVelocity());
   }
@@ -166,7 +166,7 @@ public class SwerveDrive extends SubsystemBase {
 
     SwerveModuleState[] swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedCommanded, ySpeedCommanded, rotCommanded, Rotation2d.fromDegrees(gyro.getZAngle()))
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedCommanded, ySpeedCommanded, rotCommanded, Rotation2d.fromDegrees(gyro.getRawGyroObject().getZAngle()))
             : new ChassisSpeeds(xSpeedCommanded, ySpeedCommanded, rotCommanded));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
@@ -210,7 +210,7 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public double getHeading() {
-    return gyro != null ? Rotation2d.fromDegrees(gyro.getZAngle()).getDegrees() : 0.0;
+    return gyro != null ? Rotation2d.fromDegrees(gyro.getRawGyroObject().getZAngle()).getDegrees() : 0.0;
   }
 
   public void setGyroYawOffset(double offset){
