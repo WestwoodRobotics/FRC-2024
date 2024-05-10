@@ -21,18 +21,22 @@ import frc.robot.subsystems.vision.LimitSwitch;
 
 import com.revrobotics.jni.CANSparkMaxJNI;
 
+/**
+ * The IntakeShooter subsystem controls the intake and shooting mechanisms for balls.
+ * It includes methods to control the motors for the rollers, stow, and pivot mechanisms,
+ * as well as methods to set the position of the pivot mechanism.
+ */
 public class IntakeShooter extends SubsystemBase {
 
-    private CANSparkMax upperRollerMotor;
+    private CANSparkMax upperIntakeRollerMotor; // Renamed for clarity
     private CANSparkMax lowerRollerMotor;
 
     private PIDController upperRollerPIDController;
     private PIDController lowerRollerPIDController;
 
-
     private CANSparkMax stowMotor;
 
-    public CANSparkMax pivotMotor;
+    public CANSparkMax intakePivotMotor; // Renamed for clarity
     private PIDController pivotPIDController;
 
     private IntakeShooterPositions intakeShooterPosition;
@@ -41,16 +45,20 @@ public class IntakeShooter extends SubsystemBase {
     private boolean isPivotPIDControl;
     private double calculatedPivotPIDValue;
 
+    private LimitSwitch limitSwitch; // Renamed for clarity
 
-
-    private LimitSwitch l;
-    public IntakeShooter(LimitSwitch l){
-        this.l = l;
-        upperRollerMotor = new CANSparkMax(IntakeShooterConstants.kUpperMotorPort, MotorType.kBrushless);
+    /**
+     * Constructs an IntakeShooter subsystem with a limit switch for pivot position detection.
+     * 
+     * @param limitSwitch The limit switch used to detect the home position of the pivot.
+     */
+    public IntakeShooter(LimitSwitch limitSwitch){
+        this.limitSwitch = limitSwitch;
+        upperIntakeRollerMotor = new CANSparkMax(IntakeShooterConstants.kUpperMotorPort, MotorType.kBrushless);
         lowerRollerMotor = new CANSparkMax(IntakeShooterConstants.kLowerMotorPort, MotorType.kBrushless);
         stowMotor = new CANSparkMax(IntakeShooterConstants.kStowMotorPort, MotorType.kBrushless);
-        pivotMotor = new CANSparkMax(IntakeShooterConstants.kPivotMotorPort, MotorType.kBrushless);
-        pivotMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        intakePivotMotor = new CANSparkMax(IntakeShooterConstants.kPivotMotorPort, MotorType.kBrushless);
+        intakePivotMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         
         upperRollerPIDController = new PIDController(IntakeShooterConstants.kUpperRollerP, 
         IntakeShooterConstants.kUpperRollerI, IntakeShooterConstants.kUpperRollerD);
@@ -74,161 +82,151 @@ public class IntakeShooter extends SubsystemBase {
 
     }
 
+    /**
+     * Sets the power for both the upper and lower intake roller motors.
+     * @param power The power to set, where 1 is full forward and -1 is full reverse.
+     */
     public void setRollerPower(double power)
     {
         isRollerPIDControl = false;
-        upperRollerMotor.set(power);
+        upperIntakeRollerMotor.set(power);
         lowerRollerMotor.set(-power);
     }
 
+    /**
+     * Checks if the pivot has reached its limit switch indicating the home position.
+     * 
+     * @return True if the limit switch is activated, false otherwise.
+     */
     public boolean getPivotLimitReached()
     {
-        return l.getStatus();
+        return limitSwitch.getStatus();
     }
 
+    /**
+     * Sets the RPM for both the upper and lower intake roller motors using PID control.
+     * @param upperRollerRPM The target RPM for the upper roller motor.
+     * @param lowerRollerRPM The target RPM for the lower roller motor.
+     */
     public void setRollerRPM (double upperRollerRPM, double lowerRollerRPM)
     {
         isRollerPIDControl = true;
         upperRollerPIDController.setSetpoint(upperRollerRPM);
         lowerRollerPIDController.setSetpoint(lowerRollerRPM);
-        // upperRollerMotor.set(upperRollerPIDController.calculate(upperRollerMotor.getEncoder().getVelocity() + IntakeShooterConstants.kUpperRollerFF));
-        // lowerRollerMotor.set(lowerRollerPIDController.calculate(lowerRollerMotor.getEncoder().getVelocity() + IntakeShooterConstants.kLowerRollerFF));
     }
 
     public double getUpperRPM(){
-        return upperRollerMotor.getEncoder().getVelocity();
+        return upperIntakeRollerMotor.getEncoder().getVelocity();
     }
 
     public double getLowerRPM(){
         return lowerRollerMotor.getEncoder().getVelocity();
     }
     
+    /**
+     * Sets the power for the stow motor.
+     * @param power The power to set, where 1 is full forward and -1 is full reverse.
+     */
     public void setStowPower(double power){
         stowMotor.set(power);
     }
 
+    /**
+     * Sets the power for the pivot motor.
+     * 
+     * @param power The power to set for the pivot motor, ranging from -1.0 to 1.0.
+     */
     public void setPivotPower(double power){
         if (this.getPivotLimitReached() && power < 0){
-            pivotMotor.set(0);
+            intakePivotMotor.set(0);
             this.resetEncoder();
         }
         else{
-            pivotMotor.set(power);
+            intakePivotMotor.set(power);
             intakeShooterPosition = IntakeShooterPositions.MANUAL;
         }
     }
 
-
-    // public boolean setToPosition(IntakeShooterPositions position) {
-    //     if (l.getStatus() && ((position == IntakeShooterPositions.HOME))){
-    //         return true;
-    //     }
-        
-    //     double setPoint = pivotPositionValues.get(position);     
-    //     pivotPIDController.setSetpoint(setPoint);
-    //     pivotMotor.set(pivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
-    //     intakeShooterPosition = position;
-    //     //return Math.abs(pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition() - setPoint) <= 0.05;
-    //     return Math.abs(pivotMotor.getEncoder().getPosition() - setPoint) <= 1;
-    // }
-
     public boolean setToPosition(IntakeShooterPositions position) {
 
-        if (l.getStatus() && ((position == IntakeShooterPositions.HOME))){
+        if (limitSwitch.getStatus() && ((position == IntakeShooterPositions.HOME))){
             return true;
         }
         double setPoint = pivotPositionValues.get(position);     
         pivotPIDController.setSetpoint(setPoint);
-        calculatedPivotPIDValue = pivotPIDController.calculate(pivotMotor.getEncoder().getPosition());
-        //if (calculatedPivotPIDValue > 0) {
-            pivotMotor.set(calculatedPivotPIDValue);
-        //}
-        //else {
-        //    pivotMotor.set(0);
-        //} 
+        calculatedPivotPIDValue = pivotPIDController.calculate(intakePivotMotor.getEncoder().getPosition());
+        intakePivotMotor.set(calculatedPivotPIDValue);
         intakeShooterPosition = position;
-        //return Math.abs(pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition() - setPoint) <= 0.05;
-        return (Math.abs(pivotMotor.getEncoder().getPosition() - setPoint) <= 1);
+        return (Math.abs(intakePivotMotor.getEncoder().getPosition() - setPoint) <= 1);
     }   
 
-
-
+    /**
+     * Stops all motors in the IntakeShooter subsystem.
+     */
     public void stopAllMotors(){
         stopPivotMotor();
         stopRollerMotor();
         stopStowMotor();
     }
 
+    /**
+     * Stops all intake and shooter roller motors.
+     */
     public void stopAllIntakeShooterRollers(){
-        upperRollerMotor.set(0);
+        upperIntakeRollerMotor.set(0);
         lowerRollerMotor.set(0);
         stowMotor.set(0);
     }
+
+    /**
+     * Stops the pivot motor.
+     */
     public void stopPivotMotor(){
-        pivotMotor.set(0);
+        intakePivotMotor.set(0);
     }
 
+    /**
+     * Stops the roller motors.
+     */
     public void stopRollerMotor(){
-        upperRollerMotor.set(0);
+        upperIntakeRollerMotor.set(0);
         lowerRollerMotor.set(0);
     }
 
+    /**
+     * Stops the stow motor.
+     */
     public void stopStowMotor(){
         stowMotor.set(0);
     }
 
+    /**
+     * Gets the current state of the IntakeShooter subsystem.
+     * 
+     * @return The current state of the IntakeShooter subsystem.
+     */
     public IntakeShooterPositions getState() {
         return intakeShooterPosition;
     }
 
+    /**
+     * Resets the encoder for the pivot motor.
+     */
     public void resetEncoder(){
-        pivotMotor.getEncoder().setPosition(0);
-    }
-
-    public boolean setPivotPosition (IntakeShooterPositions positions){
-        double positionValue = pivotPositionValues.get(positions);
-        double currentPosition = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition();
-        if (Math.abs(positionValue - currentPosition) <= 0.05){
-            pivotMotor.set(0);
-            //elevatorPivotPosition = positions;
-            System.out.println("Pivot Reached Setpoint");
-            return true;
-        }
-        else if (positionValue < currentPosition){
-            pivotPIDController.setSetpoint(positionValue);
-            pivotMotor.set(pivotPIDController.calculate(currentPosition)/4);
-            System.out.println("Pivot Below Setpoint");
-            return false;
-        } 
-        else if(positionValue > currentPosition){
-            pivotPIDController.setSetpoint(positionValue);
-            pivotMotor.set(pivotPIDController.calculate(currentPosition)/4);
-            System.out.println("Pivot Above Setpoint");
-        }
-        return false;
-    }
-
-    public void setPositionState(IntakeShooterPositions position){
-        intakeShooterPosition = position;
+        intakePivotMotor.getEncoder().setPosition(0);
     }
 
     @Override
     public void periodic(){
         SmartDashboard.putString ("Intake Shooter State" , intakeShooterPosition.toString()); 
-        SmartDashboard.putNumber("Pivot Position", pivotMotor.getEncoder().getPosition());
-        SmartDashboard.putNumber("Upper Roller RPM", upperRollerMotor.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Pivot Position", intakePivotMotor.getEncoder().getPosition());
+        SmartDashboard.putNumber("Upper Roller RPM", upperIntakeRollerMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("Lower Roller RPM", lowerRollerMotor.getEncoder().getVelocity());
         SmartDashboard.putBoolean("Limit", this.getPivotLimitReached());
 
         if (isRollerPIDControl){
-            upperRollerMotor.set(-1*lowerRollerPIDController.calculate(upperRollerMotor.getEncoder().getVelocity())+IntakeShooterConstants.kUpperRollerFF);
+            upperIntakeRollerMotor.set(-1*lowerRollerPIDController.calculate(upperIntakeRollerMotor.getEncoder().getVelocity())+IntakeShooterConstants.kUpperRollerFF);
             lowerRollerMotor.set(lowerRollerPIDController.calculate(lowerRollerMotor.getEncoder().getVelocity())+IntakeShooterConstants.kLowerRollerFF);
         }
-
-
-
-
     }
-
 }
-

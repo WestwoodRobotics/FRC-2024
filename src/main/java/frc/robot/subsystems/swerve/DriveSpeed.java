@@ -1,19 +1,33 @@
 package frc.robot.subsystems.swerve;
 
+/**
+ * The DriveSpeed class is responsible for calculating the drive speeds based on joystick inputs.
+ * It computes the speed and direction for the robot's movement, including a braking mechanism.
+ */
 public class DriveSpeed {
-  public double xSpeed;
-  public double ySpeed;
+  public double xControlInput; // Renamed from xSpeed for clarity
+  public double yControlInput; // Renamed from ySpeed for clarity
   private double brakeSpeed;
   private double lastDistance;
   private double lastAngle;
 
+  /**
+   * Constructor for DriveSpeed.
+   * @param brakeSpeed The speed at which the robot should brake.
+   */
   public DriveSpeed(double brakeSpeed) {
     this.brakeSpeed = brakeSpeed;
   }
 
-  public double[] compute(double controlX, double controlY) {
-    double distance = Math.sqrt(Math.pow(controlX, 2) + Math.pow(controlY, 2)); //Pyhthagorean Theorem
-    double angle = Math.atan2(controlY, controlX);
+  /**
+   * Computes the drive speeds based on joystick inputs.
+   * @param xControlInput The x-axis input from the joystick.
+   * @param yControlInput The y-axis input from the joystick.
+   * @return An array containing the computed x and y speeds.
+   */
+  public double[] compute(double xControlInput, double yControlInput) {
+    double distance = Math.sqrt(Math.pow(xControlInput, 2) + Math.pow(yControlInput, 2)); //Pythagorean Theorem
+    double angle = Math.atan2(yControlInput, xControlInput);
 
     // if distance is 0, start decreasing the speed by the brake speed
     if (distance == 0) {
@@ -27,11 +41,16 @@ public class DriveSpeed {
       updateSpeeds(distance, angle);
     }
 
-    return new double[]{xSpeed, ySpeed};
+    return new double[]{xControlInput, yControlInput};
   }
 
+  /**
+   * Updates the speeds based on the computed distance and angle.
+   * @param distance The computed distance.
+   * @param lastAngle The computed angle.
+   */
   private void updateSpeeds(double distance, double lastAngle) {
-    xSpeed = distance * Math.cos(lastAngle);
-    ySpeed = distance * Math.sin(lastAngle);
+    xControlInput = distance * Math.cos(lastAngle);
+    yControlInput = distance * Math.sin(lastAngle);
   }
 }
