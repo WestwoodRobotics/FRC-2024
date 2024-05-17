@@ -19,6 +19,9 @@ public class Vision extends SubsystemBase
     private NetworkTableEntry hardwareMetrics;
     private NetworkTableEntry aprilTagTargetTransformArray;
 
+    /**
+     * Constructs the Vision subsystem and initializes network table entries for target detection and metrics.
+     */
     public Vision()
     {
         // Initialize the network table for Limelight and retrieve entries for target detection and metrics

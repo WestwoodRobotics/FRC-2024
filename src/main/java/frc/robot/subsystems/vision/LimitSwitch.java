@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /**
  * The LimitSwitch class represents a digital limit switch sensor subsystem.
  * It uses a DigitalInput to detect whether the limit switch is pressed or not.
+ * 
+ * This class extends GenericDigitalPinObject, providing methods to check the beam break status.
  */
 public class LimitSwitch extends GenericDigitalPinObject
 {
@@ -25,6 +27,7 @@ public class LimitSwitch extends GenericDigitalPinObject
 
     /**
      * Periodically updates the SmartDashboard with the status of the limit switch.
+     * This method is called automatically to update sensor status on the dashboard.
      */
     @Override
     public void periodic(){

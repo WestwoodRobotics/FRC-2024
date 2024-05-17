@@ -11,8 +11,8 @@ import com.revrobotics.SparkPIDController.ArbFFUnits;
 import edu.wpi.first.math.controller.PIDController;
 
 /**
- * The MotorControlGroup class is designed to manage a group of motors, allowing for synchronized control over their power, position, and other settings.
- * This class is particularly useful for managing multiple motors that drive a single mechanism, ensuring they operate in unison.
+ * Manages a group of motors, allowing synchronized control over their power, position, and settings.
+ * This class is useful for managing multiple motors that drive a single mechanism in unison.
  */
 public class MotorControlGroup {
 

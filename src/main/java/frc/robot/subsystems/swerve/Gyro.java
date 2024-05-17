@@ -140,6 +140,10 @@ public class Gyro extends SubsystemBase {
     return gyroscope.getYAngularRate();
   }
 
+  /**
+   * Provides direct access to the raw gyroscope object.
+   * @return The raw NeoADIS16470 gyroscope object.
+   */
   public NeoADIS16470 getRawGyroObject() {
     return gyroscope;
   }

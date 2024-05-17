@@ -32,9 +32,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**
- * The SwerveDrive subsystem incorporates the control system for a swerve drive chassis.
- * It includes methods to drive the robot using joystick inputs, control individual swerve modules,
- * and update the robot's odometry based on the swerve module states.
+ * Represents the swerve drive system. This subsystem includes methods to drive the robot using joystick inputs,
+ * control individual swerve modules, and update the robot's odometry based on the swerve module states.
  */
 public class SwerveDrive extends SubsystemBase {
 
@@ -78,6 +77,9 @@ public class SwerveDrive extends SubsystemBase {
 
   Field2d field;
 
+  /**
+   * Initializes a new instance of the SwerveDrive class.
+   */
   public SwerveDrive() {
     try {
       gyro = new Gyro();
@@ -116,6 +118,9 @@ public class SwerveDrive extends SubsystemBase {
     );
   }
 
+  /**
+   * Updates the odometry of the swerve drive system.
+   */
   @Override
   public void periodic() {
     odometry.update(
@@ -135,10 +140,18 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putNumber("Module Velocity", frontLeftModule.getDriveEncoder().getVelocity());
   }
 
+  /**
+   * Gets the current pose of the robot.
+   * 
+   * @return The current pose of the robot.
+   */
   public Pose2d getPose() {
     return odometry.getPoseMeters();
   }
 
+  /**
+   * Resets the gyro sensor to zero.
+   */
   public void resetGyro(){
     if (gyro != null) {
       gyro.reset();
@@ -147,6 +160,11 @@ public class SwerveDrive extends SubsystemBase {
     }
   }
 
+  /**
+   * Resets the odometry to the specified pose.
+   * 
+   * @param pose The pose to reset the odometry to.
+   */
   public void resetOdometry(Pose2d pose) {
     odometry.resetPosition(
         this.getHeadingObject(),
@@ -159,6 +177,15 @@ public class SwerveDrive extends SubsystemBase {
         pose);
   }
 
+  /**
+   * Drives the robot at given speeds.
+   * 
+   * @param xSpeed Speed of the robot in the x direction (forward).
+   * @param ySpeed Speed of the robot in the y direction (sideways).
+   * @param rot Angular rate of the robot.
+   * @param fieldRelative Whether the speeds are relative to the field.
+   * @param rateLimit Whether to limit the rate of change of speed.
+   */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit) {
     double xSpeedCommanded = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedCommanded = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
@@ -176,6 +203,11 @@ public class SwerveDrive extends SubsystemBase {
     rearRightModule.setDesiredState(swerveModuleStates[3]);
   }
 
+  /**
+   * Drives the robot using chassis speeds.
+   * 
+   * @param s The chassis speeds to drive the robot.
+   */
   public void driveChassisSpeeds(ChassisSpeeds s){
     SwerveModuleState[] swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(s);
     SwerveDriveKinematics.desaturateWheelSpeeds(
@@ -186,6 +218,9 @@ public class SwerveDrive extends SubsystemBase {
     rearRightModule.setDesiredState(swerveModuleStates[3]);
   }
 
+  /**
+   * Sets the modules to an X configuration.
+   */
   public void setX() {
     frontLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
     frontRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
@@ -193,6 +228,11 @@ public class SwerveDrive extends SubsystemBase {
     rearRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
 
+  /**
+   * Sets the desired state for each swerve module.
+   * 
+   * @param desiredStates The desired states for the swerve modules.
+   */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(
         desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
@@ -202,6 +242,9 @@ public class SwerveDrive extends SubsystemBase {
     rearRightModule.setDesiredState(desiredStates[3]);
   }
 
+  /**
+   * Resets the encoders of all swerve modules.
+   */
   public void resetEncoders() {
     frontLeftModule.resetEncoders();
     rearLeftModule.resetEncoders();
@@ -209,24 +252,49 @@ public class SwerveDrive extends SubsystemBase {
     rearRightModule.resetEncoders();
   }
 
+  /**
+   * Gets the heading of the robot.
+   * 
+   * @return The heading of the robot in degrees.
+   */
   public double getHeading() {
     return gyro != null ? Rotation2d.fromDegrees(gyro.getRawGyroObject().getZAngle()).getDegrees() : 0.0;
   }
 
+  /**
+   * Sets the yaw offset of the gyro.
+   * 
+   * @param offset The offset to set.
+   */
   public void setGyroYawOffset(double offset){
     if (gyro != null) {
       gyro.setGyroYawOffset(offset);
     }
   } 
 
+  /**
+   * Gets the heading of the robot as a Rotation2d object.
+   * 
+   * @return The heading of the robot.
+   */
   public Rotation2d getHeadingObject() {
     return gyro != null ? gyro.getRawRot2dYaw() : Rotation2d.fromDegrees(0);
   }
 
+  /**
+   * Gets the turn rate of the robot.
+   * 
+   * @return The turn rate of the robot in degrees per second.
+   */
   public double getTurnRate() {
     return gyro != null ? gyro.getZRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0) : 0.0;
   }
 
+  /**
+   * Gets the chassis speeds relative to the robot.
+   * 
+   * @return The chassis speeds relative to the robot.
+   */
   public ChassisSpeeds getRobotRelativeSpeeds() {
     return DriveConstants.kDriveKinematics.toChassisSpeeds(
       new SwerveModuleState[] {
@@ -238,6 +306,9 @@ public class SwerveDrive extends SubsystemBase {
     );
   }
   
+  /**
+   * Recalibrates the gyro sensor.
+   */
   public void recalibrateGyro() {
     if (gyro != null) {
       gyro.reset();
@@ -246,6 +317,11 @@ public class SwerveDrive extends SubsystemBase {
     }
   }
 
+  /**
+   * Resets the pose of the robot.
+   * 
+   * @param Pose The new pose of the robot.
+   */
   public void resetPose(Pose2d Pose){
     odometry.resetPosition(
       this.getHeadingObject(),
