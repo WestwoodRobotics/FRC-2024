@@ -82,6 +82,10 @@ public class Elevator extends SubsystemBase{
 
     }
 
+    /**
+     * Sets the power for the elevator motors.
+     * @param power The power level to set for the elevator motors.
+     */
     public void setElevatorPower(double power){
         isElevatorPIDControl = false;
 
@@ -90,6 +94,10 @@ public class Elevator extends SubsystemBase{
         elevatorPosition = ElevatorPositions.MANUAL;
     }
 
+    /**
+     * Sets the elevator to a specified position.
+     * @param position The target position for the elevator.
+     */
     public void setElevatorPosition(ElevatorPositions position){
         double positionValue = ElevatorPositionValues.get(position);
         elevatorPIDController.setSetpoint(positionValue);
@@ -97,17 +105,30 @@ public class Elevator extends SubsystemBase{
         isElevatorPIDControl = true;
     }
 
+    /**
+     * Gets the encoder value for a target elevator position.
+     * @param position The elevator position to get the encoder value for.
+     * @return The encoder value for the specified elevator position.
+     */
     public double getTargetElevatorPositionEncoderValue(ElevatorPositions position)
     {
         return ElevatorPositionValues.get(position);
     }
 
+    /**
+     * Sets the power for the pivot motor.
+     * @param power The power level to set for the pivot motor.
+     */
     public void setPivotPower(double power){
         isPivotPIDCOntrol = false;
         pivotMotor.set(power);
         elevatorPivotPosition = ElevatorPositions.MANUAL;
     }
 
+    /**
+     * Sets the pivot to a specified position.
+     * @param positions The target position for the pivot.
+     */
     public void setPivotPosition (ElevatorPositions positions){
         double positionValue = pivotPositionValues.get(positions);
         elevatorPivotPIDController.setSetpoint(positionValue);
@@ -115,10 +136,18 @@ public class Elevator extends SubsystemBase{
         isPivotPIDCOntrol = true;
     }
 
+    /**
+     * Resets the encoder for the pivot motor.
+     */
     public void resetEncoder(){
         pivotMotor.getEncoder().setPosition(0);
     }
 
+    /**
+     * Sets the elevator to a specified position without using PID control.
+     * @param positions The target position for the elevator.
+     * @return True if the elevator has reached the target position, false otherwise.
+     */
     public boolean setElevatorPositionNOPID (ElevatorPositions positions){
         double positionValue = ElevatorPositionValues.get(positions);
         double currentPosition = primaryElevatorMotor.getEncoder().getPosition();
@@ -146,35 +175,67 @@ public class Elevator extends SubsystemBase{
     }
 
 
+    /**
+     * Sets the power for the roller motor.
+     * @param power The power level to set for the roller motor.
+     */
     public void setRollerPower(double power){
             rollerMotor.set(power);
     }
 
+    /**
+     * Sets the brake mode for the elevator motors.
+     * @param brakeMode True to enable brake mode, false for coast mode.
+     */
     public void setElevatorBrakeMode(boolean brakeMode){
         //elevatorMotor.setDefaultBrakeMode(brakeMode);
     }
 
+    /**
+     * Sets the brake mode for the pivot motor.
+     * @param brakeMode True to enable brake mode, false for coast mode.
+     */
     public void setPivotBrakeMode(boolean brakeMode){
         pivotMotor.setIdleMode(brakeMode ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast);
     }
 
+    /**
+     * Sets the brake mode for the roller motor.
+     * @param brakeMode True to enable brake mode, false for coast mode.
+     */
     public void setRollerBrakeMode(boolean brakeMode){
         rollerMotor.setIdleMode(brakeMode ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast);
     }
 
+    /**
+     * Sets the position of the elevator.
+     * @param position The target position for the elevator.
+     */
     public void setPosition(ElevatorPositions position){
         this.setPivotPosition(position);
         elevatorPosition = position;
     }
 
+    /**
+     * Gets the current position of the elevator.
+     * @return The current position of the elevator.
+     */
     public ElevatorPositions getElevatorPosition(){
         return elevatorPosition;
     }
 
+    /**
+     * Gets the current encoder position of the elevator.
+     * @return The current encoder position of the elevator.
+     */
     public double getElevatorEncoderPosition(){
         return primaryElevatorMotor.getEncoder().getPosition();
         }
 
+    /**
+     * Gets the current position of the pivot.
+     * @return The current position of the pivot.
+     */
     public ElevatorPositions getPivotPosition(){
         return elevatorPivotPosition;
     }

@@ -13,6 +13,7 @@ public class DriveSpeed {
 
   /**
    * Constructor for DriveSpeed.
+   * Initializes the drive speed calculation with a specified brake speed.
    * @param brakeSpeed The speed at which the robot should brake.
    */
   public DriveSpeed(double brakeSpeed) {
@@ -21,6 +22,7 @@ public class DriveSpeed {
 
   /**
    * Computes the drive speeds based on joystick inputs.
+   * This method calculates the x and y speeds based on the provided joystick inputs.
    * @param xControlInput The x-axis input from the joystick.
    * @param yControlInput The y-axis input from the joystick.
    * @return An array containing the computed x and y speeds.
@@ -46,6 +48,7 @@ public class DriveSpeed {
 
   /**
    * Updates the speeds based on the computed distance and angle.
+   * This method updates the internal x and y control inputs based on the provided distance and angle.
    * @param distance The computed distance.
    * @param lastAngle The computed angle.
    */

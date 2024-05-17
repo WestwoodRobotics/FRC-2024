@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /**
  * The GenericDigitalPinObject class serves as a base class for subsystems that utilize a digital input pin.
  * It provides a common structure for managing a digital input, including reading its status.
+ * 
+ * This abstract class is extended by specific sensor classes to implement periodic updates and additional functionalities.
  */
 public abstract class GenericDigitalPinObject extends SubsystemBase{
     private DigitalInput input;
@@ -29,6 +31,10 @@ public abstract class GenericDigitalPinObject extends SubsystemBase{
         return (input.get());
     }
 
+    /**
+     * This method is called periodically to update the subsystem's state and perform tasks.
+     * Specific implementations should override this method to provide custom functionality.
+     */
     @Override
     public void periodic(){
     }

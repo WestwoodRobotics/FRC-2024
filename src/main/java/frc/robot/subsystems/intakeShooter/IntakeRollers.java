@@ -27,6 +27,10 @@ public class IntakeRollers extends SubsystemBase {
     @SuppressWarnings("unused")
     private boolean isRollerPIDControl;
 
+    /**
+     * Constructs the IntakeRollers subsystem with specific motor ports.
+     * Initializes the motors, PID controllers, and sets the initial shooter position.
+     */
     public IntakeRollers() {
         upperIntakeRollerMotor = new CANSparkMax(IntakeShooterConstants.kUpperMotorPort, MotorType.kBrushless);
         lowerRollerMotor = new CANSparkMax(IntakeShooterConstants.kLowerMotorPort, MotorType.kBrushless);
@@ -60,10 +64,18 @@ public class IntakeRollers extends SubsystemBase {
         lowerRollerPIDController.setSetpoint(lowerRollerRPM);
     }
 
+    /**
+     * Gets the current RPM of the upper intake roller motor.
+     * @return The current RPM of the upper intake roller motor.
+     */
     public double getUpperRPM() {
         return upperIntakeRollerMotor.getEncoder().getVelocity();
     }
 
+    /**
+     * Gets the current RPM of the lower roller motor.
+     * @return The current RPM of the lower roller motor.
+     */
     public double getLowerRPM() {
         return lowerRollerMotor.getEncoder().getVelocity();
     }
@@ -85,29 +97,49 @@ public class IntakeRollers extends SubsystemBase {
         stopStowMotor();
     }
 
+    /**
+     * Stops all intake and shooter roller motors.
+     */
     public void stopAllIntakeShooterRollers() {
         upperIntakeRollerMotor.set(0);
         lowerRollerMotor.set(0);
         stowMotor.set(0);
     }
 
+    /**
+     * Stops the roller motors.
+     */
     public void stopRollerMotor() {
         upperIntakeRollerMotor.set(0);
         lowerRollerMotor.set(0);
     }
 
+    /**
+     * Stops the stow motor.
+     */
     public void stopStowMotor() {
         stowMotor.set(0);
     }
 
+    /**
+     * Gets the current state of the IntakeRollers subsystem.
+     * @return The current state of the IntakeRollers subsystem.
+     */
     public IntakeShooterPositions getState() {
         return intakeShooterPosition;
     }
 
+    /**
+     * Sets the state of the IntakeRollers subsystem.
+     * @param position The new state for the IntakeRollers subsystem.
+     */
     public void setPositionState(IntakeShooterPositions position) {
         intakeShooterPosition = position;
     }
 
+    /**
+     * Periodically updates the subsystem's state and displays it on the SmartDashboard.
+     */
     @Override
     public void periodic() {
         SmartDashboard.putString("Intake Shooter State", intakeShooterPosition.toString()); 
