@@ -14,10 +14,14 @@ import frc.robot.subsystems.utils.MotorControlGroup;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.vision.BeamBreak;
 
+/**
+ * The Elevator subsystem controls the elevator mechanism used for lifting the robot or game pieces.
+ * It includes methods to control the elevator's motors, set its position, and read its sensors.
+ */
 public class Elevator extends SubsystemBase{
 
-    private CANSparkMax elevatorMotor1;
-    private CANSparkMax elevatorMotor2;
+    private CANSparkMax primaryElevatorMotor;
+    private CANSparkMax secondaryElevatorMotor;
 
     private PIDController elevatorPIDController;
     private PIDController elevatorPivotPIDController;
@@ -53,10 +57,10 @@ public class Elevator extends SubsystemBase{
         pivotPositionValues.put(ElevatorPositions.AUTO_SHOOT, ElevatorConstants.kElevatorAutoShootPivotPosition);
         pivotPositionValues.put(ElevatorPositions.HANDOFF, ElevatorConstants.kElevatorHandoffPivotPosition);
 
-        this.elevatorMotor1 = new CANSparkMax(ElevatorConstants.kElevatorMotor1Port, CANSparkMax.MotorType.kBrushless);
-        this.elevatorMotor2 = new CANSparkMax(ElevatorConstants.kElevatorMotor2Port, CANSparkMax.MotorType.kBrushless);
-        this.elevatorMotor1.setInverted(true);
-        this.elevatorMotor2.setInverted(false );
+        this.primaryElevatorMotor = new CANSparkMax(ElevatorConstants.kElevatorMotor1Port, CANSparkMax.MotorType.kBrushless);
+        this.secondaryElevatorMotor = new CANSparkMax(ElevatorConstants.kElevatorMotor2Port, CANSparkMax.MotorType.kBrushless);
+        this.primaryElevatorMotor.setInverted(true);
+        this.secondaryElevatorMotor.setInverted(false );
 
 
         this.pivotMotor = new CANSparkMax(ElevatorConstants.kElevatorPivotMotorPort, CANSparkMax.MotorType.kBrushless);
@@ -81,8 +85,8 @@ public class Elevator extends SubsystemBase{
     public void setElevatorPower(double power){
         isElevatorPIDControl = false;
 
-        elevatorMotor1.set(power);
-        elevatorMotor2.set(power);
+        primaryElevatorMotor.set(power);
+        secondaryElevatorMotor.set(power);
         elevatorPosition = ElevatorPositions.MANUAL;
     }
 
@@ -109,28 +113,6 @@ public class Elevator extends SubsystemBase{
         elevatorPivotPIDController.setSetpoint(positionValue);
         System.out.println(positionValue);
         isPivotPIDCOntrol = true;
-        // if (Math.abs(positionValue - currentPosition) <= 0.05){
-        //     pivotMotor.set(0);
-        //     //elevatorPivotPosition = positions;
-        //     System.out.println("Pivot Reached");
-        //     return true;
-        // }
-        // else if (positionValue < currentPosition){
-            
-        // } 
-        // else if(positionValue > currentPosition){
-        //     elevatorPivotPIDController.setSetpoint(positionValue);
-        //     double power = elevatorPivotPIDController.calculate(currentPosition);
-        //     if(power > 0.5) {
-        //         power = 0.5;
-        //     }
-        //     else if (power < -0.5) {
-        //         power = -0.5;
-        //     }
-        //     pivotMotor.set(-1*power);
-        //     return false;
-        // }
-        // return false;
     }
 
     public void resetEncoder(){
@@ -139,23 +121,23 @@ public class Elevator extends SubsystemBase{
 
     public boolean setElevatorPositionNOPID (ElevatorPositions positions){
         double positionValue = ElevatorPositionValues.get(positions);
-        double currentPosition = elevatorMotor1.getEncoder().getPosition();
+        double currentPosition = primaryElevatorMotor.getEncoder().getPosition();
         if (positionValue < currentPosition){
-            elevatorMotor1.set(-0.5);
-            elevatorMotor2.set(-0.5);
+            primaryElevatorMotor.set(-0.5);
+            secondaryElevatorMotor.set(-0.5);
             System.out.println("Elevator Going");
             return false;
         } 
         else if (positionValue > currentPosition){
-            elevatorMotor1.set(+0.5);
-            elevatorMotor2.set(+0.5);
+            primaryElevatorMotor.set(+0.5);
+            secondaryElevatorMotor.set(+0.5);
             elevatorPosition = positions;
             System.out.println("Elevator Going");
             return false;
         }
         else if (positionValue == currentPosition){
-            elevatorMotor1.set(0);
-            elevatorMotor2.set(0);
+            primaryElevatorMotor.set(0);
+            secondaryElevatorMotor.set(0);
             elevatorPosition = positions;
             System.out.println("Elevator Reached");
             return true;
@@ -190,7 +172,7 @@ public class Elevator extends SubsystemBase{
     }
 
     public double getElevatorEncoderPosition(){
-        return elevatorMotor1.getEncoder().getPosition();
+        return primaryElevatorMotor.getEncoder().getPosition();
         }
 
     public ElevatorPositions getPivotPosition(){
@@ -199,12 +181,12 @@ public class Elevator extends SubsystemBase{
     @Override
     public void periodic(){
         
-        SmartDashboard.putNumber("Elevator Position", elevatorMotor1.getEncoder().getPosition());
+        SmartDashboard.putNumber("Elevator Position", primaryElevatorMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("Elevating Pivot Position", pivotMotor.getEncoder().getPosition());
         
         if (isElevatorPIDControl){
-            elevatorMotor1.set(elevatorPIDController.calculate(elevatorMotor1.getEncoder().getPosition()));
-            elevatorMotor2.set(elevatorPIDController.calculate(elevatorMotor2.getEncoder().getPosition()));
+            primaryElevatorMotor.set(elevatorPIDController.calculate(primaryElevatorMotor.getEncoder().getPosition()));
+            secondaryElevatorMotor.set(elevatorPIDController.calculate(secondaryElevatorMotor.getEncoder().getPosition()));
         }
 
         if (isPivotPIDCOntrol){

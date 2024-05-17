@@ -1,25 +1,13 @@
 package frc.robot.subsystems.intakeShooter;
-
-import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
-
 import java.util.HashMap;
-
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
-import com.revrobotics.SparkMaxAbsoluteEncoder;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeShooterConstants;
-import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
-import frc.robot.subsystems.vision.BeamBreak;
 import frc.robot.subsystems.vision.LimitSwitch;
-
-import com.revrobotics.jni.CANSparkMaxJNI;
 
 public class IntakePivot extends SubsystemBase {
     public CANSparkMax pivotMotor;
@@ -28,15 +16,23 @@ public class IntakePivot extends SubsystemBase {
     private IntakeShooterPositions intakeShooterPosition;
     private HashMap<IntakeShooterPositions, Double> pivotPositionValues = new HashMap<>();
 
+    @SuppressWarnings("unused")
     private boolean isPivotPIDControl;
+    
     private double calculatedPivotPIDValue;
 
 
 
-    private LimitSwitch l;
+    private LimitSwitch limitSwitch;
 
-    public IntakePivot(LimitSwitch l){
-        this.l = l;
+
+    /*
+     * Constructor for the IntakePivot subsystem.
+     * 
+     * @param limitSwitch The limit switch used to determine if the pivot is at the home position. (LimitSwitch)
+     */
+    public IntakePivot(LimitSwitch limitSwitch){
+        this.limitSwitch = limitSwitch;
         pivotMotor = new CANSparkMax(IntakeShooterConstants.kPivotMotorPort, MotorType.kBrushless);
         pivotMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         
@@ -63,7 +59,7 @@ public class IntakePivot extends SubsystemBase {
 
     public boolean getPivotLimitReached()
     {
-        return l.getStatus();
+        return limitSwitch.getStatus();
     }
 
 
@@ -95,7 +91,7 @@ public class IntakePivot extends SubsystemBase {
 
     public boolean setToPosition(IntakeShooterPositions position) {
         isPivotPIDControl = true;
-        if (l.getStatus() && ((position == IntakeShooterPositions.HOME))){
+        if (limitSwitch.getStatus() && ((position == IntakeShooterPositions.HOME))){
             return true;
         }
         double setPoint = pivotPositionValues.get(position);     
@@ -145,4 +141,3 @@ public class IntakePivot extends SubsystemBase {
     }
 
 }
-

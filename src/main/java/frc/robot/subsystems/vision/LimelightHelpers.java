@@ -27,8 +27,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * The LimelightHelpers class provides a collection of nested classes and methods to interact with the Limelight vision system.
+ * It includes functionalities for parsing JSON results, managing Limelight settings, and calculating poses based on vision data.
+ */
 public class LimelightHelpers {
 
+    /**
+     * Represents a target detected by the Limelight in retro-reflective mode.
+     * It includes properties for various poses and angles related to the target.
+     */
     public static class LimelightTarget_Retro {
 
         @JsonProperty("t6c_ts")
@@ -116,6 +124,10 @@ public class LimelightHelpers {
 
     }
 
+    /**
+     * Represents a fiducial target detected by the Limelight.
+     * It includes properties for the fiducial ID, family, and various poses related to the target.
+     */
     public static class LimelightTarget_Fiducial {
 
         @JsonProperty("fID")
@@ -208,10 +220,18 @@ public class LimelightHelpers {
         }
     }
 
+    /**
+     * Represents a barcode target detected by the Limelight.
+     * This class is currently a placeholder for future barcode detection features.
+     */
     public static class LimelightTarget_Barcode {
 
     }
 
+    /**
+     * Represents a classified object detected by the Limelight.
+     * It includes properties for the class name, ID, confidence, and position.
+     */
     public static class LimelightTarget_Classifier {
 
         @JsonProperty("class")
@@ -242,6 +262,10 @@ public class LimelightHelpers {
         }
     }
 
+    /**
+     * Represents a detected object by the Limelight.
+     * It includes properties for the class name, ID, confidence, and position.
+     */
     public static class LimelightTarget_Detector {
 
         @JsonProperty("class")
@@ -272,6 +296,10 @@ public class LimelightHelpers {
         }
     }
 
+    /**
+     * Represents the results of a vision processing operation by the Limelight.
+     * It includes properties for latency, timestamp, validity, and detected targets.
+     */
     public static class Results {
 
         @JsonProperty("pID")
@@ -372,6 +400,9 @@ public class LimelightHelpers {
         }
     }
 
+    /**
+     * Represents the results of a vision processing operation by the Limelight, including targeting results and any errors.
+     */
     public static class LimelightResults {
         @JsonProperty("Results")
         public Results targetingResults;
@@ -386,6 +417,10 @@ public class LimelightHelpers {
 
     }
 
+    /**
+     * Represents a raw fiducial target detected by the Limelight.
+     * It includes properties for the fiducial ID, position, area, distance to camera, distance to robot, and ambiguity.
+     */
     public static class RawFiducial {
         public int id = 0;
         public double txnc = 0;
@@ -407,6 +442,10 @@ public class LimelightHelpers {
         }
     }
 
+    /**
+     * Represents a raw detection of an object by the Limelight.
+     * It includes properties for the class ID, position, area, and corners of the detected object.
+     */
     public static class RawDetection {
         public int classId = 0;
         public double txnc = 0;
@@ -442,6 +481,10 @@ public class LimelightHelpers {
         }
     }
 
+    /**
+     * Represents an estimate of the robot's pose based on vision data.
+     * It includes properties for the pose, timestamp, latency, tag count, tag span, average tag distance, and average tag area.
+     */
     public static class PoseEstimate {
         public Pose2d pose;
         public double timestampSeconds;
@@ -606,41 +649,6 @@ public class LimelightHelpers {
         }
     
         return rawDetections;
-    }
-
-    private static void printPoseEstimate(PoseEstimate pose) {
-        if (pose == null) {
-            System.out.println("No PoseEstimate available.");
-            return;
-        }
-    
-        System.out.printf("Pose Estimate Information:%n");
-        System.out.printf("Timestamp (Seconds): %.3f%n", pose.timestampSeconds);
-        System.out.printf("Latency: %.3f ms%n", pose.latency);
-        System.out.printf("Tag Count: %d%n", pose.tagCount);
-        System.out.printf("Tag Span: %.2f meters%n", pose.tagSpan);
-        System.out.printf("Average Tag Distance: %.2f meters%n", pose.avgTagDist);
-        System.out.printf("Average Tag Area: %.2f%% of image%n", pose.avgTagArea);
-        System.out.println();
-    
-        if (pose.rawFiducials == null || pose.rawFiducials.length == 0) {
-            System.out.println("No RawFiducials data available.");
-            return;
-        }
-    
-        System.out.println("Raw Fiducials Details:");
-        for (int i = 0; i < pose.rawFiducials.length; i++) {
-            RawFiducial fiducial = pose.rawFiducials[i];
-            System.out.printf(" Fiducial #%d:%n", i + 1);
-            System.out.printf("  ID: %d%n", fiducial.id);
-            System.out.printf("  TXNC: %.2f%n", fiducial.txnc);
-            System.out.printf("  TYNC: %.2f%n", fiducial.tync);
-            System.out.printf("  TA: %.2f%n", fiducial.ta);
-            System.out.printf("  Distance to Camera: %.2f meters%n", fiducial.distToCamera);
-            System.out.printf("  Distance to Robot: %.2f meters%n", fiducial.distToRobot);
-            System.out.printf("  Ambiguity: %.2f%n", fiducial.ambiguity);
-            System.out.println();
-        }
     }
 
     public static NetworkTable getLimelightNTTable(String tableName) {

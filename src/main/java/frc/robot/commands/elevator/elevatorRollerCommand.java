@@ -1,11 +1,7 @@
 package frc.robot.commands.elevator;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.intakeShooter.IntakeShooter;
-import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
-import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 import frc.robot.subsystems.vision.BeamBreak;
 
 public class elevatorRollerCommand extends Command{

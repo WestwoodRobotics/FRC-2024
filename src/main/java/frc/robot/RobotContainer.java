@@ -4,61 +4,28 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import javax.naming.OperationNotSupportedException;
-
-import com.fasterxml.jackson.databind.ser.std.ToEmptyObjectSerializer;
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-//import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PortConstants;
 import frc.robot.commands.elevator.elevatorPosition;
 import frc.robot.commands.elevator.elevatorRollerCommand;
-import frc.robot.commands.intakeShooter.IntakeBeamBreakCommand;
 import frc.robot.commands.intakeShooter.IntakeRollersCommand;
 import frc.robot.commands.intakeShooter.IntakeCommandFactory;
 import frc.robot.commands.intakeShooter.IntakeShooterPosition;
-import frc.robot.commands.intakeShooter.ShootAtRPM;
-import frc.robot.commands.intakeShooter.ShootForTimeCommand;
 import frc.robot.commands.swerve.DriveAlignAndRangeVisionCommand;
 import frc.robot.commands.swerve.driveAlignVisionCommand;
-//import frc.robot.commands.Intake.IntakeCommand;
-//import frc.robot.commands.elevator.ElevatorCommand;
-//import frc.robot.commands.elevator.ElevatorPosSet;
 import frc.robot.commands.swerve.driveCommand;
 import frc.robot.commands.utils.StopAllRollersCommand;
 import frc.robot.commands.vision.LEDCommand;
@@ -66,19 +33,12 @@ import frc.robot.subsystems.vision.BeamBreak;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intakeShooter.IntakePivot;
 import frc.robot.subsystems.intakeShooter.IntakeRollers;
-import frc.robot.subsystems.intakeShooter.IntakeShooter;
-//import frc.robot.commands.wrist.WristCommand;
-//import frc.robot.commands.wrist.WristPosSet;
-//import frc.robot.subsystems.elevator.ElevatorModule;
-//import frc.robot.subsystems.intake.IntakeModule;
 import frc.robot.subsystems.swerve.SwerveDrive;
-//import frc.robot.subsystems.wrist.WristModule;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 import frc.robot.subsystems.vision.LED;
 import frc.robot.subsystems.vision.LimitSwitch;
 import frc.robot.subsystems.vision.Vision;
-import pabeles.concurrency.ConcurrencyOps.NewInstance;
 
 
 
@@ -158,7 +118,6 @@ public class RobotContainer {
       XboxController.Button.kLeftBumper.value);
 
   private SendableChooser<Command> m_chooser = new SendableChooser<>();
-  private Optional<Alliance> ally = DriverStation.getAlliance();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.

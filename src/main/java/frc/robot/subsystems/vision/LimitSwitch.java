@@ -4,20 +4,38 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * The LimitSwitch class represents a digital limit switch sensor subsystem.
+ * It uses a DigitalInput to detect whether the limit switch is pressed or not.
+ */
 public class LimitSwitch extends GenericDigitalPinObject
 {
-    private double channel;
+    // Digital input channel the limit switch is connected to
+    private double limitSwitchChannel;
 
+    /**
+     * Constructs a LimitSwitch object with a specified channel.
+     * 
+     * @param channel The digital input channel the limit switch is connected to.
+     */
     public LimitSwitch(int channel){
        super(channel);
-       this.channel = channel;
+       this.limitSwitchChannel = channel;
     }
 
+    /**
+     * Periodically updates the SmartDashboard with the status of the limit switch.
+     */
     @Override
     public void periodic(){
-        SmartDashboard.putBoolean("Limit Switch " + channel, this.getStatus());
+        SmartDashboard.putBoolean("Limit Switch " + limitSwitchChannel, this.getStatus());
     }
 
+    /**
+     * Overrides the getStatus method to invert the status of the limit switch.
+     * 
+     * @return True if the limit switch is not pressed, false if it is pressed.
+     */
     @Override
     public boolean getStatus(){
         return !super.getStatus();

@@ -1,13 +1,15 @@
 package frc.robot.subsystems.utils.Position_Enums;
 
-import frc.robot.Constants.ElevatorConstants;
-
+/**
+ * Enum representing various positions for the elevator mechanism.
+ * These positions correspond to specific target heights or states the elevator can be in.
+ */
 public enum ElevatorPositions {
-    PODIUM,
-    AMP,
-    HOME,
-    SOURCE,
-    MANUAL,
-    AUTO_SHOOT,
-    HANDOFF
+    PODIUM, // Position for reaching the podium height
+    AMP, // Position for reaching the amplifier height
+    HOME, // Default position, usually the lowest point
+    SOURCE, // Position for reaching the source height
+    MANUAL, // Position for manual control, not a preset height
+    AUTO_SHOOT, // Position for automatically shooting
+    HANDOFF // Position for handing off game pieces
 }
