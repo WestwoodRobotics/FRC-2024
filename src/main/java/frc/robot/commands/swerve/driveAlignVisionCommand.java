@@ -6,6 +6,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.vision.Vision;
 
+/**
+ * Command for aligning the robot with a vision target using a PID controller.
+ * This command uses vision data to rotate the robot to align with a target.
+ */
 public class driveAlignVisionCommand extends Command {
 
     private Vision vision;
@@ -15,6 +19,12 @@ public class driveAlignVisionCommand extends Command {
     private PIDController p;
     private double scaledRotateValue;
 
+    /**
+     * Constructs a new driveAlignVisionCommand.
+     * 
+     * @param vision The vision subsystem used to detect targets.
+     * @param swerveDrive The swerve drive subsystem used to control the robot's movement.
+     */
     public driveAlignVisionCommand(Vision vision, SwerveDrive swerveDrive){
         this.vision = vision;
         horizontalDifference = vision.getHorizontalDiff();
@@ -23,6 +33,9 @@ public class driveAlignVisionCommand extends Command {
         addRequirements(vision, swerveDrive);
     }
     
+    /**
+     * Executes the command to align the robot with the vision target.
+     */
     @Override
     public void execute(){
         isAprilTagFound = vision.found();
@@ -39,6 +52,11 @@ public class driveAlignVisionCommand extends Command {
         }
     }
 
+    /**
+     * Determines if the command is finished.
+     * 
+     * @return false to keep the command running.
+     */
     @Override
     public boolean isFinished(){
         return false;

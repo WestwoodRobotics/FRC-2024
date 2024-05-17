@@ -9,6 +9,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.vision.Vision;
 
+/**
+ * Command for aligning and ranging the robot using vision.
+ * This command uses vision data to align the robot with a target and maintain a specific distance from it.
+ */
 public class DriveAlignAndRangeVisionCommand extends Command {
 
     private Vision vision;
@@ -27,6 +31,12 @@ public class DriveAlignAndRangeVisionCommand extends Command {
     private double kP_strafe = .1; // constant of proportionality for strafing
     private double desiredDistance = 1.0; // desired distance from the April tag
 
+    /**
+     * Constructs a DriveAlignAndRangeVisionCommand.
+     * 
+     * @param vision The vision subsystem used to detect targets.
+     * @param swerveDrive The swerve drive subsystem used to control the robot's movement.
+     */
     public DriveAlignAndRangeVisionCommand(Vision vision, SwerveDrive swerveDrive){
         this.vision = vision;
         this.m_SwerveDrive = swerveDrive;
