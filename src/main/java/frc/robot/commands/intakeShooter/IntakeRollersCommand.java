@@ -9,10 +9,10 @@ import frc.robot.subsystems.intakeShooter.IntakeRollers;
  * This command sets the power for the intake rollers and stow motors.
  */
 public class IntakeRollersCommand extends Command{
-    Timer t = new Timer();
-    private IntakeRollers m_intakeRollers;
-    private double rollerPower;
-    private double stowPower;
+    Timer timer = new Timer();
+    private IntakeRollers intakeRollersSubsystem;
+    private double intakeRollerPower;
+    private double intakeStowPower;
     
     /**
      * Constructs an IntakeRollersCommand.
@@ -22,9 +22,9 @@ public class IntakeRollersCommand extends Command{
      * @param stowPower The power to set for the stow motor.
      */
     public IntakeRollersCommand(IntakeRollers intakeRollers, double rollerPower, double stowPower){
-        m_intakeRollers = intakeRollers;
-        this.rollerPower = rollerPower;
-        this.stowPower = stowPower;
+        intakeRollersSubsystem = intakeRollers;
+        this.intakeRollerPower = rollerPower;
+        this.intakeStowPower = stowPower;
         addRequirements(intakeRollers);
     }
 
@@ -34,8 +34,8 @@ public class IntakeRollersCommand extends Command{
      */
     @Override
     public void initialize(){
-        m_intakeRollers.setRollerPower(-1*rollerPower);
-        m_intakeRollers.setStowPower(stowPower);
+        intakeRollersSubsystem.setRollerPower(-1*intakeRollerPower);
+        intakeRollersSubsystem.setStowPower(intakeStowPower);
     }
 
     /**

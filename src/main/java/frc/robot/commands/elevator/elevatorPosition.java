@@ -7,14 +7,14 @@ import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 
 public class elevatorPosition extends Command{
 
-    Timer timer = new Timer();
-    private Elevator m_elevator;
-    private ElevatorPositions targetPosition;
+    Timer elevatorTimer = new Timer();
+    private Elevator elevatorSubsystem;
+    private ElevatorPositions elevatorTargetPosition;
 
 
     public elevatorPosition(Elevator elevator, ElevatorPositions position){
-        m_elevator = elevator;
-        this.targetPosition = position;
+        elevatorSubsystem = elevator;
+        this.elevatorTargetPosition = position;
         // addRequirements(m_elevator);
     }
 
@@ -24,11 +24,11 @@ public class elevatorPosition extends Command{
      */
     @Override
     public void initialize(){
-        timer.reset();
-        timer.start();
-        System.out.println(targetPosition);
-        m_elevator.setElevatorPosition(targetPosition);
-        m_elevator.setPivotPosition(targetPosition);
+        elevatorTimer.reset();
+        elevatorTimer.start();
+        System.out.println(elevatorTargetPosition);
+        elevatorSubsystem.setElevatorPosition(elevatorTargetPosition);
+        elevatorSubsystem.setPivotPosition(elevatorTargetPosition);
         
     }
 
@@ -48,6 +48,6 @@ public class elevatorPosition extends Command{
      */
     @Override
     public boolean isFinished(){
-       return timer.get()>2;
+       return elevatorTimer.get()>2;
     }
 }

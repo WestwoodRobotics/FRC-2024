@@ -20,17 +20,17 @@ import frc.robot.Constants.ModuleConstants;
  * including motor control, encoder feedback, and state management.
  */
 public class SwerveModule {
-  private final CANSparkFlex m_drivingSparkFlex;
-  private final CANSparkMax m_turningSparkMax;
+  private final CANSparkFlex drivingMotorController;
+  private final CANSparkMax turningMotorController;
 
-  private final RelativeEncoder m_drivingEncoder;
-  private final AbsoluteEncoder m_turningEncoder;
+  private final RelativeEncoder drivingMotorEncoder;
+  private final AbsoluteEncoder turningMotorEncoder;
 
-  private final SparkPIDController m_drivingPIDController;
-  private final SparkPIDController m_turningPIDController;
+  private final SparkPIDController drivingMotorPIDController;
+  private final SparkPIDController turningMotorPIDController;
 
-  private double m_chassisAngularOffset = 0;
-  private SwerveModuleState m_desiredState = new SwerveModuleState(0.0, new Rotation2d());
+  private double moduleChassisAngularOffset = 0;
+  private SwerveModuleState moduleDesiredState = new SwerveModuleState(0.0, new Rotation2d());
 
   /**
    * Constructs a SwerveModule with specified CAN IDs for driving and turning motors.
@@ -40,57 +40,57 @@ public class SwerveModule {
    * @param chassisAngularOffset The angular offset of the module relative to the robot chassis.
    */
   public SwerveModule(int drivingCANId, int turningCANId, double chassisAngularOffset) {
-    m_drivingSparkFlex = new CANSparkFlex(drivingCANId, CANSparkFlex.MotorType.kBrushless);
-    m_turningSparkMax = new CANSparkMax(turningCANId, CANSparkMax.MotorType.kBrushless);
+    drivingMotorController = new CANSparkFlex(drivingCANId, CANSparkFlex.MotorType.kBrushless);
+    turningMotorController = new CANSparkMax(turningCANId, CANSparkMax.MotorType.kBrushless);
 
-    m_drivingSparkFlex.restoreFactoryDefaults();
-    m_turningSparkMax.restoreFactoryDefaults();
+    drivingMotorController.restoreFactoryDefaults();
+    turningMotorController.restoreFactoryDefaults();
 
-    m_drivingEncoder = m_drivingSparkFlex.getEncoder();
-    m_turningEncoder = m_turningSparkMax.getAbsoluteEncoder(Type.kDutyCycle);
+    drivingMotorEncoder = drivingMotorController.getEncoder();
+    turningMotorEncoder = turningMotorController.getAbsoluteEncoder(Type.kDutyCycle);
     
-    m_drivingPIDController = m_drivingSparkFlex.getPIDController();
-    m_turningPIDController = m_turningSparkMax.getPIDController();
-    m_drivingPIDController.setFeedbackDevice(m_drivingEncoder);
-    m_turningPIDController.setFeedbackDevice(m_turningEncoder);
+    drivingMotorPIDController = drivingMotorController.getPIDController();
+    turningMotorPIDController = turningMotorController.getPIDController();
+    drivingMotorPIDController.setFeedbackDevice(drivingMotorEncoder);
+    turningMotorPIDController.setFeedbackDevice(turningMotorEncoder);
 
-    m_drivingEncoder.setPositionConversionFactor(ModuleConstants.kDrivingEncoderPositionFactor);
-    m_drivingEncoder.setVelocityConversionFactor(ModuleConstants.kDrivingEncoderVelocityFactor);
+    drivingMotorEncoder.setPositionConversionFactor(ModuleConstants.kDrivingEncoderPositionFactor);
+    drivingMotorEncoder.setVelocityConversionFactor(ModuleConstants.kDrivingEncoderVelocityFactor);
 
-    m_turningEncoder.setPositionConversionFactor(ModuleConstants.kTurningEncoderPositionFactor);
-    m_turningEncoder.setVelocityConversionFactor(ModuleConstants.kTurningEncoderVelocityFactor);
+    turningMotorEncoder.setPositionConversionFactor(ModuleConstants.kTurningEncoderPositionFactor);
+    turningMotorEncoder.setVelocityConversionFactor(ModuleConstants.kTurningEncoderVelocityFactor);
 
-    m_turningEncoder.setInverted(ModuleConstants.kTurningEncoderInverted);
+    turningMotorEncoder.setInverted(ModuleConstants.kTurningEncoderInverted);
 
-    m_turningPIDController.setPositionPIDWrappingEnabled(true);
-    m_turningPIDController.setPositionPIDWrappingMinInput(ModuleConstants.kTurningEncoderPositionPIDMinInput);
-    m_turningPIDController.setPositionPIDWrappingMaxInput(ModuleConstants.kTurningEncoderPositionPIDMaxInput);
+    turningMotorPIDController.setPositionPIDWrappingEnabled(true);
+    turningMotorPIDController.setPositionPIDWrappingMinInput(ModuleConstants.kTurningEncoderPositionPIDMinInput);
+    turningMotorPIDController.setPositionPIDWrappingMaxInput(ModuleConstants.kTurningEncoderPositionPIDMaxInput);
 
-    m_drivingPIDController.setP(ModuleConstants.kDrivingP);
-    m_drivingPIDController.setI(ModuleConstants.kDrivingI);
-    m_drivingPIDController.setD(ModuleConstants.kDrivingD);
-    m_drivingPIDController.setFF(ModuleConstants.kDrivingFF);
-    m_drivingPIDController.setOutputRange(ModuleConstants.kDrivingMinOutput,
+    drivingMotorPIDController.setP(ModuleConstants.kDrivingP);
+    drivingMotorPIDController.setI(ModuleConstants.kDrivingI);
+    drivingMotorPIDController.setD(ModuleConstants.kDrivingD);
+    drivingMotorPIDController.setFF(ModuleConstants.kDrivingFF);
+    drivingMotorPIDController.setOutputRange(ModuleConstants.kDrivingMinOutput,
         ModuleConstants.kDrivingMaxOutput);
 
-    m_turningPIDController.setP(ModuleConstants.kTurningP);
-    m_turningPIDController.setI(ModuleConstants.kTurningI);
-    m_turningPIDController.setD(ModuleConstants.kTurningD);
-    m_turningPIDController.setFF(ModuleConstants.kTurningFF);
-    m_turningPIDController.setOutputRange(ModuleConstants.kTurningMinOutput,
+    turningMotorPIDController.setP(ModuleConstants.kTurningP);
+    turningMotorPIDController.setI(ModuleConstants.kTurningI);
+    turningMotorPIDController.setD(ModuleConstants.kTurningD);
+    turningMotorPIDController.setFF(ModuleConstants.kTurningFF);
+    turningMotorPIDController.setOutputRange(ModuleConstants.kTurningMinOutput,
         ModuleConstants.kTurningMaxOutput);
 
-    m_drivingSparkFlex.setIdleMode(ModuleConstants.kDrivingMotorIdleMode);
-    m_turningSparkMax.setIdleMode(ModuleConstants.kTurningMotorIdleMode);
-    m_drivingSparkFlex.setSmartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit);
-    m_turningSparkMax.setSmartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit);
+    drivingMotorController.setIdleMode(ModuleConstants.kDrivingMotorIdleMode);
+    turningMotorController.setIdleMode(ModuleConstants.kTurningMotorIdleMode);
+    drivingMotorController.setSmartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit);
+    turningMotorController.setSmartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit);
 
-    m_drivingSparkFlex.burnFlash();
-    m_turningSparkMax.burnFlash();
+    drivingMotorController.burnFlash();
+    turningMotorController.burnFlash();
 
-    m_chassisAngularOffset = chassisAngularOffset;
-    m_desiredState.angle = new Rotation2d(m_turningEncoder.getPosition());
-    m_drivingEncoder.setPosition(0);
+    moduleChassisAngularOffset = chassisAngularOffset;
+    moduleDesiredState.angle = new Rotation2d(turningMotorEncoder.getPosition());
+    drivingMotorEncoder.setPosition(0);
   }
 
   /**
@@ -99,8 +99,8 @@ public class SwerveModule {
    * @return The current state of the module.
    */
   public SwerveModuleState getState() {
-    return new SwerveModuleState(m_drivingEncoder.getVelocity(),
-        new Rotation2d(m_turningEncoder.getPosition() - m_chassisAngularOffset));
+    return new SwerveModuleState(drivingMotorEncoder.getVelocity(),
+        new Rotation2d(turningMotorEncoder.getPosition() - moduleChassisAngularOffset));
   }
 
   /**
@@ -110,8 +110,8 @@ public class SwerveModule {
    */
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        m_drivingEncoder.getPosition(),
-        new Rotation2d(m_turningEncoder.getPosition() - m_chassisAngularOffset));
+        drivingMotorEncoder.getPosition(),
+        new Rotation2d(turningMotorEncoder.getPosition() - moduleChassisAngularOffset));
   }
 
   /**
@@ -122,20 +122,20 @@ public class SwerveModule {
   public void setDesiredState(SwerveModuleState desiredState) {
     SwerveModuleState correctedDesiredState = new SwerveModuleState();
     correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-    correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(m_chassisAngularOffset));
+    correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(moduleChassisAngularOffset));
 
     SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(correctedDesiredState,
-        new Rotation2d(m_turningEncoder.getPosition()));
+        new Rotation2d(turningMotorEncoder.getPosition()));
 
-    m_drivingPIDController.setReference(optimizedDesiredState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
-    m_turningPIDController.setReference(optimizedDesiredState.angle.getRadians(), CANSparkMax.ControlType.kPosition);
+    drivingMotorPIDController.setReference(optimizedDesiredState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
+    turningMotorPIDController.setReference(optimizedDesiredState.angle.getRadians(), CANSparkMax.ControlType.kPosition);
 
-    m_desiredState = desiredState;
+    moduleDesiredState = desiredState;
   }
 
   /** Zeroes all the SwerveModule encoders. */
   public void resetEncoders() {
-    m_drivingEncoder.setPosition(0);
+    drivingMotorEncoder.setPosition(0);
   }
 
   /**
@@ -148,13 +148,13 @@ public class SwerveModule {
   }
 
   public RelativeEncoder getDriveEncoder(){
-    return m_drivingSparkFlex.getEncoder();
+    return drivingMotorController.getEncoder();
   }
   public double getDriveEncoderPosition() {
-    return m_drivingEncoder.getPosition();
+    return drivingMotorEncoder.getPosition();
   }
   
   public double getTurningEncoderPosition() {
-    return m_turningEncoder.getPosition();
+    return turningMotorEncoder.getPosition();
   }
 }

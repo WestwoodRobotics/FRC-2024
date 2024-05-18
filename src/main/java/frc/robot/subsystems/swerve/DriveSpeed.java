@@ -5,55 +5,55 @@ package frc.robot.subsystems.swerve;
  * It computes the speed and direction for the robot's movement, including a braking mechanism.
  */
 public class DriveSpeed {
-  public double xControlInput; // Renamed from xSpeed for clarity
-  public double yControlInput; // Renamed from ySpeed for clarity
-  private double brakeSpeed;
-  private double lastDistance;
-  private double lastAngle;
+  public double xSpeedControlInput; // Renamed from xControlInput for clarity
+  public double ySpeedControlInput; // Renamed from yControlInput for clarity
+  private double brakeSpeedRate; // Renamed from brakeSpeed for clarity
+  private double lastSpeedDistance; // Renamed from lastDistance for clarity
+  private double lastSpeedAngle; // Renamed from lastAngle for clarity
 
   /**
    * Constructor for DriveSpeed.
    * Initializes the drive speed calculation with a specified brake speed.
-   * @param brakeSpeed The speed at which the robot should brake.
+   * @param brakeSpeedRate The speed at which the robot should brake.
    */
-  public DriveSpeed(double brakeSpeed) {
-    this.brakeSpeed = brakeSpeed;
+  public DriveSpeed(double brakeSpeedRate) {
+    this.brakeSpeedRate = brakeSpeedRate;
   }
 
   /**
    * Computes the drive speeds based on joystick inputs.
    * This method calculates the x and y speeds based on the provided joystick inputs.
-   * @param xControlInput The x-axis input from the joystick.
-   * @param yControlInput The y-axis input from the joystick.
+   * @param xSpeedControlInput The x-axis input from the joystick.
+   * @param ySpeedControlInput The y-axis input from the joystick.
    * @return An array containing the computed x and y speeds.
    */
-  public double[] compute(double xControlInput, double yControlInput) {
-    double distance = Math.sqrt(Math.pow(xControlInput, 2) + Math.pow(yControlInput, 2)); //Pythagorean Theorem
-    double angle = Math.atan2(yControlInput, xControlInput);
+  public double[] compute(double xSpeedControlInput, double ySpeedControlInput) {
+    double distance = Math.sqrt(Math.pow(xSpeedControlInput, 2) + Math.pow(ySpeedControlInput, 2)); //Pythagorean Theorem
+    double angle = Math.atan2(ySpeedControlInput, xSpeedControlInput);
 
     // if distance is 0, start decreasing the speed by the brake speed
     if (distance == 0) {
-      lastDistance = Math.max(lastDistance - brakeSpeed, 0);
+      lastSpeedDistance = Math.max(lastSpeedDistance - brakeSpeedRate, 0);
 
-      updateSpeeds(lastDistance, lastAngle);
+      updateSpeeds(lastSpeedDistance, lastSpeedAngle);
     } else {
-      lastDistance = distance;
-      lastAngle = angle;
+      lastSpeedDistance = distance;
+      lastSpeedAngle = angle;
 
       updateSpeeds(distance, angle);
     }
 
-    return new double[]{xControlInput, yControlInput};
+    return new double[]{xSpeedControlInput, ySpeedControlInput};
   }
 
   /**
    * Updates the speeds based on the computed distance and angle.
    * This method updates the internal x and y control inputs based on the provided distance and angle.
    * @param distance The computed distance.
-   * @param lastAngle The computed angle.
+   * @param lastSpeedAngle The computed angle.
    */
-  private void updateSpeeds(double distance, double lastAngle) {
-    xControlInput = distance * Math.cos(lastAngle);
-    yControlInput = distance * Math.sin(lastAngle);
+  private void updateSpeeds(double distance, double lastSpeedAngle) {
+    xSpeedControlInput = distance * Math.cos(lastSpeedAngle);
+    ySpeedControlInput = distance * Math.sin(lastSpeedAngle);
   }
 }

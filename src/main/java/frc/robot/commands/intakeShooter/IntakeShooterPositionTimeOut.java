@@ -11,11 +11,11 @@ import frc.robot.subsystems.vision.LimitSwitch;
  * This command uses a timer to limit the duration of the command execution.
  */
 public class IntakeShooterPositionTimeOut extends Command{
-    Timer t = new Timer();
-    private IntakePivot m_intakePivot;
-    private IntakeShooterPositions targetPosition;
-    private double timeOutPeriod;
-    private LimitSwitch l;
+    Timer timer = new Timer();
+    private IntakePivot intakePivotSubsystem;
+    private IntakeShooterPositions intakeTargetPosition;
+    private double commandTimeOutPeriod;
+    private LimitSwitch limitSwitchSensor;
 
     /**
      * Constructor for the IntakeShooterPositionTimeOut command.
@@ -26,11 +26,11 @@ public class IntakeShooterPositionTimeOut extends Command{
      * @param timeOutPeriod The maximum duration for the command.
      */
     public IntakeShooterPositionTimeOut(IntakePivot intakePivot, IntakeShooterPositions position, LimitSwitch limitSwitch, double timeOutPeriod){
-        this.m_intakePivot = intakePivot;
-        this.targetPosition = position;
-        this.timeOutPeriod = timeOutPeriod;
-        addRequirements(m_intakePivot);
-        this.l = limitSwitch;
+        this.intakePivotSubsystem = intakePivot;
+        this.intakeTargetPosition = position;
+        this.commandTimeOutPeriod = timeOutPeriod;
+        addRequirements(intakePivotSubsystem);
+        this.limitSwitchSensor = limitSwitch;
     }
 
     /**
@@ -38,8 +38,8 @@ public class IntakeShooterPositionTimeOut extends Command{
      */
     @Override
     public void initialize(){
-        t.reset();
-        t.start();
+        timer.reset();
+        timer.start();
     }
 
     /**
@@ -47,17 +47,17 @@ public class IntakeShooterPositionTimeOut extends Command{
      */
     @Override
     public void execute(){
-        if(targetPosition == IntakeShooterPositions.HOME){
-            if(!m_intakePivot.getPivotLimitReached()){
-                m_intakePivot.setPivotPower(-0.75);
+        if(intakeTargetPosition == IntakeShooterPositions.HOME){
+            if(!intakePivotSubsystem.getPivotLimitReached()){
+                intakePivotSubsystem.setPivotPower(-0.75);
             }
             else{
-                m_intakePivot.setPivotPower(0);
-                m_intakePivot.resetEncoder();
+                intakePivotSubsystem.setPivotPower(0);
+                intakePivotSubsystem.resetEncoder();
             }
         }
         else{    
-            m_intakePivot.setToPosition(targetPosition);
+            intakePivotSubsystem.setToPosition(intakeTargetPosition);
         }
     }
 
@@ -68,7 +68,7 @@ public class IntakeShooterPositionTimeOut extends Command{
      */
     @Override
     public boolean isFinished(){
-       return (t.get() > timeOutPeriod) || (l.getStatus() && (targetPosition == (IntakeShooterPositions.HOME)));
+       return (timer.get() > commandTimeOutPeriod) || (limitSwitchSensor.getStatus() && (intakeTargetPosition == (IntakeShooterPositions.HOME)));
     }
 
     /**
@@ -79,8 +79,8 @@ public class IntakeShooterPositionTimeOut extends Command{
     @Override
     public void end(boolean interrupted){
         if(!interrupted){
-            m_intakePivot.setPivotPower(0);
+            intakePivotSubsystem.setPivotPower(0);
         }
-        m_intakePivot.setPositionState(interrupted ? IntakeShooterPositions.MANUAL : targetPosition);
+        intakePivotSubsystem.setPositionState(interrupted ? IntakeShooterPositions.MANUAL : intakeTargetPosition);
     }
 }

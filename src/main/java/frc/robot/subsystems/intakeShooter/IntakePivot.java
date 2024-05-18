@@ -15,17 +15,17 @@ import frc.robot.subsystems.vision.LimitSwitch;
  * A LimitSwitch is used to detect the home position.
  */
 public class IntakePivot extends SubsystemBase {
-    public CANSparkMax pivotMotor;
-    private PIDController pivotPIDController;
+    public CANSparkMax intakePivotMotorController;
+    private PIDController intakePivotPositionPIDController;
 
-    private IntakeShooterPositions intakeShooterPosition;
-    private HashMap<IntakeShooterPositions, Double> pivotPositionValues = new HashMap<>();
+    private IntakeShooterPositions intakePivotPosition;
+    private HashMap<IntakeShooterPositions, Double> intakePivotPositionTargetValues = new HashMap<>();
 
-    private boolean isPivotPIDControl;
+    private boolean isIntakePivotPIDControlEnabled;
     
-    private double calculatedPivotPIDValue;
+    private double calculatedIntakePivotPIDValue;
 
-    private LimitSwitch limitSwitch;
+    private LimitSwitch intakePivotLimitSwitch;
 
     /**
      * Constructor for the IntakePivot subsystem.
@@ -33,26 +33,26 @@ public class IntakePivot extends SubsystemBase {
      * @param limitSwitch The limit switch used to determine if the pivot is at the home position.
      */
     public IntakePivot(LimitSwitch limitSwitch){
-        this.limitSwitch = limitSwitch;
-        pivotMotor = new CANSparkMax(IntakeShooterConstants.kPivotMotorPort, MotorType.kBrushless);
-        pivotMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        this.intakePivotLimitSwitch = limitSwitch;
+        intakePivotMotorController = new CANSparkMax(IntakeShooterConstants.kPivotMotorPort, MotorType.kBrushless);
+        intakePivotMotorController.setIdleMode(CANSparkMax.IdleMode.kBrake);
         
 
-        pivotPIDController = new PIDController(IntakeShooterConstants.kPivotP, 
+        intakePivotPositionPIDController = new PIDController(IntakeShooterConstants.kPivotP, 
         IntakeShooterConstants.kPivotI, IntakeShooterConstants.kPivotD);
 
-        intakeShooterPosition = IntakeShooterPositions.HOME;
+        intakePivotPosition = IntakeShooterPositions.HOME;
 
         
-        pivotPositionValues.put(IntakeShooterPositions.INTAKE, IntakeShooterConstants.kIntakePivotPosition);
-        pivotPositionValues.put(IntakeShooterPositions.HOME, IntakeShooterConstants.kHomePivotPosition);
-        pivotPositionValues.put(IntakeShooterPositions.SHOOT_NEAR_SPEAKER, IntakeShooterConstants.kShootNearSpeakerPivotPosition);
-        pivotPositionValues.put(IntakeShooterPositions.SHOOT_FAR_SPEAKER, IntakeShooterConstants.kShootFarSpeakerPivotPosition);
-        pivotPositionValues.put(IntakeShooterPositions.AUTON_SHOOT, IntakeShooterConstants.kShootNearSpeakerAutonPivotPosition);
-        pivotPositionValues.put(IntakeShooterPositions.AUTON_INTAKE, IntakeShooterConstants.kAutoIntakePivotPosition);
-        pivotPositionValues.put(IntakeShooterPositions.AMP, IntakeShooterConstants.kShootPivotAmp);
-        pivotPositionValues.put(IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, IntakeShooterConstants.kShootNearSpeakerFacingForwardsPivotPosition);
-        pivotPositionValues.put(IntakeShooterPositions.PODIUM_SHOT, IntakeShooterConstants.kShootPodiumShot);
+        intakePivotPositionTargetValues.put(IntakeShooterPositions.INTAKE, IntakeShooterConstants.kIntakePivotPosition);
+        intakePivotPositionTargetValues.put(IntakeShooterPositions.HOME, IntakeShooterConstants.kHomePivotPosition);
+        intakePivotPositionTargetValues.put(IntakeShooterPositions.SHOOT_NEAR_SPEAKER, IntakeShooterConstants.kShootNearSpeakerPivotPosition);
+        intakePivotPositionTargetValues.put(IntakeShooterPositions.SHOOT_FAR_SPEAKER, IntakeShooterConstants.kShootFarSpeakerPivotPosition);
+        intakePivotPositionTargetValues.put(IntakeShooterPositions.AUTON_SHOOT, IntakeShooterConstants.kShootNearSpeakerAutonPivotPosition);
+        intakePivotPositionTargetValues.put(IntakeShooterPositions.AUTON_INTAKE, IntakeShooterConstants.kAutoIntakePivotPosition);
+        intakePivotPositionTargetValues.put(IntakeShooterPositions.AMP, IntakeShooterConstants.kShootPivotAmp);
+        intakePivotPositionTargetValues.put(IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, IntakeShooterConstants.kShootNearSpeakerFacingForwardsPivotPosition);
+        intakePivotPositionTargetValues.put(IntakeShooterPositions.PODIUM_SHOT, IntakeShooterConstants.kShootPodiumShot);
     }
 
     /**
@@ -62,7 +62,7 @@ public class IntakePivot extends SubsystemBase {
      */
     public boolean getPivotLimitReached()
     {
-        return limitSwitch.getStatus();
+        return intakePivotLimitSwitch.getStatus();
     }
 
     /**
@@ -71,14 +71,14 @@ public class IntakePivot extends SubsystemBase {
      * @param power The power level to set for the pivot motor.
      */
     public void setPivotPower(double power){
-        isPivotPIDControl = false;
+        isIntakePivotPIDControlEnabled = false;
         if (this.getPivotLimitReached() && power < 0){
-            pivotMotor.set(0);
+            intakePivotMotorController.set(0);
             this.resetEncoder();
         }
         else{
-            pivotMotor.set(power);
-            intakeShooterPosition = IntakeShooterPositions.MANUAL;
+            intakePivotMotorController.set(power);
+            intakePivotPosition = IntakeShooterPositions.MANUAL;
         }
     }
 
@@ -89,15 +89,15 @@ public class IntakePivot extends SubsystemBase {
      * @return True if the pivot has reached the target position, false otherwise.
      */
     public boolean setToPosition(IntakeShooterPositions position) {
-        isPivotPIDControl = true;
-        if (limitSwitch.getStatus() && ((position == IntakeShooterPositions.HOME))){
+        isIntakePivotPIDControlEnabled = true;
+        if (intakePivotLimitSwitch.getStatus() && ((position == IntakeShooterPositions.HOME))){
             return true;
         }
-        double setPoint = pivotPositionValues.get(position);     
-        pivotPIDController.setSetpoint(setPoint);
+        double setPoint = intakePivotPositionTargetValues.get(position);     
+        intakePivotPositionPIDController.setSetpoint(setPoint);
 
-        intakeShooterPosition = position;
-        return (Math.abs(pivotMotor.getEncoder().getPosition() - setPoint) <= 1);
+        intakePivotPosition = position;
+        return (Math.abs(intakePivotMotorController.getEncoder().getPosition() - setPoint) <= 1);
     }   
 
     /**
@@ -111,7 +111,7 @@ public class IntakePivot extends SubsystemBase {
      * Stops the pivot motor.
      */
     public void stopPivotMotor(){
-        pivotMotor.set(0);
+        intakePivotMotorController.set(0);
     }
 
     /**
@@ -120,14 +120,14 @@ public class IntakePivot extends SubsystemBase {
      * @return The current state of the IntakePivot subsystem.
      */
     public IntakeShooterPositions getState() {
-        return intakeShooterPosition;
+        return intakePivotPosition;
     }
 
     /**
      * Resets the encoder for the pivot motor.
      */
     public void resetEncoder(){
-        pivotMotor.getEncoder().setPosition(0);
+        intakePivotMotorController.getEncoder().setPosition(0);
     }
 
     /**
@@ -136,7 +136,7 @@ public class IntakePivot extends SubsystemBase {
      * @param position The new state for the IntakePivot subsystem.
      */
     public void setPositionState(IntakeShooterPositions position){
-        intakeShooterPosition = position;
+        intakePivotPosition = position;
     }
 
     /**
@@ -144,13 +144,13 @@ public class IntakePivot extends SubsystemBase {
      */
     @Override
     public void periodic(){
-        SmartDashboard.putString ("Intake Shooter State" , intakeShooterPosition.toString()); 
-        SmartDashboard.putNumber("Pivot Position", pivotMotor.getEncoder().getPosition());
+        SmartDashboard.putString ("Intake Shooter State" , intakePivotPosition.toString()); 
+        SmartDashboard.putNumber("Pivot Position", intakePivotMotorController.getEncoder().getPosition());
         SmartDashboard.putBoolean("Limit", this.getPivotLimitReached());
 
-        if (isPivotPIDControl = true){
-            calculatedPivotPIDValue = pivotPIDController.calculate(pivotMotor.getEncoder().getPosition());
-            pivotMotor.set(calculatedPivotPIDValue);
+        if (isIntakePivotPIDControlEnabled = true){
+            calculatedIntakePivotPIDValue = intakePivotPositionPIDController.calculate(intakePivotMotorController.getEncoder().getPosition());
+            intakePivotMotorController.set(calculatedIntakePivotPIDValue);
         }
     }
 }
