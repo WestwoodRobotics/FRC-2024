@@ -1,5 +1,7 @@
 # FRC-2024 Project Overview
 
+Welcome to the FRC-2024 project repository! This project is designed to provide a comprehensive software solution for our competitive robot, incorporating advanced control systems, vision processing, strategic gameplay functionalities, and utilizing the command-based framework for organizing robot operations.
+
 ## Project Structure
 
 The project is structured into several directories, each serving a specific purpose in the robot's software architecture:
@@ -9,51 +11,37 @@ The project is structured into several directories, each serving a specific purp
 - `utils`: Includes utility classes and enums for various functionalities.
 - `vision`: Contains classes related to vision processing and interaction with the Limelight camera.
 
-## Commands Directory
+## Setup Instructions
 
-### `elevatorPosition.java`
-Controls the elevator's position using a PID controller.
+To get started with the FRC-2024 project, follow these steps:
 
-### `elevatorRollerCommand.java`
-Manages the elevator's roller speed based on beam break sensor input.
+1. Clone the repository to your local machine.
+2. Install the required software dependencies, including WPILib and vendor libraries.
+3. Configure your development environment according to the WPILib documentation.
+4. Build the project using Gradle to verify the setup.
 
-### `IntakeCommandFactory.java`
-Factory class for creating intake and shooter commands.
+For comprehensive documentation on WPILib and the command-based framework, refer to [WPILib Documentation](https://docs.wpilib.org/en/stable/index.html).
 
-### `IntakeRollersCommand.java`
-Sets the power for the intake rollers and stow motors.
+## Contribution Guidelines
 
-### `IntakeShooterPosition.java`
-Positions the intake shooter pivot using a PID controller.
+We welcome contributions from all team members! To contribute, please adhere to our coding standards and review process, detailed in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-### `IntakeShooterPositionTimeOut.java`
-Similar to `IntakeShooterPosition` but with a timeout feature.
+## Dependencies
 
-### `DriveAlignAndRangeVisionCommand.java`
-Aligns and ranges the robot using vision data.
+This project relies on several external libraries and tools:
 
-### `driveAlignVisionCommand.java`
-Aligns the robot with a vision target.
+- WPILib Suite
+- PathPlanner for autonomous path planning
+- REVLib for interfacing with REV Hardware
 
-## Subsystems Directory
-
-### `Elevator.java`
-Represents the elevator subsystem, including motors and sensors.
-
-### `IntakePivot.java`
-Controls the pivot mechanism of the intake shooter.
-
-### `IntakeRollers.java`
-Manages the rollers for intaking and shooting balls.
-
-### `SwerveDrive.java`
-Implements the swerve drive functionality for the robot.
-
-### `Vision.java`
-Handles vision processing and interaction with the Limelight camera.
+Refer to the `build.gradle` file for specific version requirements.
 
 ## Tools and Technologies
 
 - **SmartDashboard/Shuffleboard**: Used for real-time data visualization and control interface.
 - **Limelight Camera**: Provides vision processing capabilities for target detection and alignment.
+- **PathPlanner**: Path visualization software for autonomous path planning.
 
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for more information.
