@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
  */
 public class LEDCommand extends CommandBase {
 
-    private LED led;
-    private BeamBreak beamBreakIntakePivot, beamBreakElevatorPivot;
+    private LED ledSubsystem;
+    private BeamBreak intakePivotBeamBreakSensor, elevatorPivotBeamBreakSensor;
 
     /**
      * Constructs an LEDCommand.
@@ -21,10 +21,10 @@ public class LEDCommand extends CommandBase {
      * @param ElevatorBeamBreak The beam break sensor for the elevator.
      */
     public LEDCommand(LED i, BeamBreak IntakeShooterBeamBreak, BeamBreak ElevatorBeamBreak){
-        led = i;
+        ledSubsystem = i;
         addRequirements(i);
-        beamBreakIntakePivot = IntakeShooterBeamBreak;
-        beamBreakElevatorPivot = ElevatorBeamBreak;
+        intakePivotBeamBreakSensor = IntakeShooterBeamBreak;
+        elevatorPivotBeamBreakSensor = ElevatorBeamBreak;
     }
 
     /**
@@ -33,13 +33,13 @@ public class LEDCommand extends CommandBase {
      */
     @Override
     public void execute(){        
-        SmartDashboard.putBoolean("elevator beam break", beamBreakElevatorPivot.getStatus());
-        SmartDashboard.putBoolean("intake shooter beam break", beamBreakIntakePivot.getStatus());
+        SmartDashboard.putBoolean("elevator beam break", elevatorPivotBeamBreakSensor.getStatus());
+        SmartDashboard.putBoolean("intake shooter beam break", intakePivotBeamBreakSensor.getStatus());
 
-        if(!beamBreakIntakePivot.getStatus() || !beamBreakElevatorPivot.getStatus()){
-            led.setLights(0.77);
+        if(!intakePivotBeamBreakSensor.getStatus() || !elevatorPivotBeamBreakSensor.getStatus()){
+            ledSubsystem.setLights(0.77);
         } else {
-            led.setLights(0.61);
+            ledSubsystem.setLights(0.61);
         }
     }
 }

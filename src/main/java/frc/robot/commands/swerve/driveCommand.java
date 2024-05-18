@@ -13,9 +13,9 @@ import frc.robot.subsystems.swerve.SwerveDrive;
  */
 public class driveCommand extends Command {
 
-  private final SwerveDrive m_swerveDrive;
-  private XboxController controller;
-  private boolean slowMode;
+  private final SwerveDrive swerveDriveSubsystem;
+  private XboxController xboxController;
+  private boolean isSlowModeEnabled;
 
   /**
    * Constructs a new driveCommand.
@@ -24,8 +24,8 @@ public class driveCommand extends Command {
    * @param controller  The Xbox controller to use for input.
    */
   public driveCommand(SwerveDrive swerveDrive, XboxController controller) {
-    m_swerveDrive = swerveDrive;
-    this.controller = controller;
+    swerveDriveSubsystem = swerveDrive;
+    this.xboxController = controller;
     addRequirements(swerveDrive);
   }
 
@@ -34,7 +34,7 @@ public class driveCommand extends Command {
    */
   @Override
   public void initialize() {
-    slowMode = false;
+    isSlowModeEnabled = false;
   }
 
   /**
@@ -43,26 +43,26 @@ public class driveCommand extends Command {
    */
   @Override
   public void execute() {
-    double leftX, leftY, rightX;
-    if (controller.getBackButtonPressed()) {
-      slowMode = !slowMode;
+    double leftXAxis, leftYAxis, rightXAxis;
+    if (xboxController.getBackButtonPressed()) {
+      isSlowModeEnabled = !isSlowModeEnabled;
     }
 
-    leftX = -MathUtil.applyDeadband(controller.getLeftX(), ControllerConstants.kDriveDeadband);
-    leftY = -MathUtil.applyDeadband(controller.getLeftY(), ControllerConstants.kDriveDeadband);
-    rightX = -MathUtil.applyDeadband(controller.getRightX(), ControllerConstants.kDriveDeadband);
+    leftXAxis = -MathUtil.applyDeadband(xboxController.getLeftX(), ControllerConstants.kDriveDeadband);
+    leftYAxis = -MathUtil.applyDeadband(xboxController.getLeftY(), ControllerConstants.kDriveDeadband);
+    rightXAxis = -MathUtil.applyDeadband(xboxController.getRightX(), ControllerConstants.kDriveDeadband);
 
     // Apply non-linear input (squaring the input)
-    leftX = Math.copySign(Math.pow(leftX, 2), leftX);
-    leftY = Math.copySign(Math.pow(leftY, 2), leftY);
-    rightX = Math.copySign(Math.pow(rightX, 2), rightX);
+    leftXAxis = Math.copySign(Math.pow(leftXAxis, 2), leftXAxis);
+    leftYAxis = Math.copySign(Math.pow(leftYAxis, 2), leftYAxis);
+    rightXAxis = Math.copySign(Math.pow(rightXAxis, 2), rightXAxis);
 
-    if (slowMode) {
-      leftX *= Constants.DriveConstants.slowModeMultiplier;
-      leftY *= Constants.DriveConstants.slowModeMultiplier;
-      rightX *= Constants.DriveConstants.slowModeMultiplier;
+    if (isSlowModeEnabled) {
+      leftXAxis *= Constants.DriveConstants.slowModeMultiplier;
+      leftYAxis *= Constants.DriveConstants.slowModeMultiplier;
+      rightXAxis *= Constants.DriveConstants.slowModeMultiplier;
     }
-    m_swerveDrive.drive(leftY, leftX, rightX, true, false);
+    swerveDriveSubsystem.drive(leftYAxis, leftXAxis, rightXAxis, true, false);
   }
 
   /**

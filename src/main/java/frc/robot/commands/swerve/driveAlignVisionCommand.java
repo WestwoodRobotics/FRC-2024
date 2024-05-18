@@ -12,12 +12,12 @@ import frc.robot.subsystems.vision.Vision;
  */
 public class driveAlignVisionCommand extends Command {
 
-    private Vision vision;
-    private SwerveDrive m_SwerveDrive;
-    private boolean isAprilTagFound;
-    private double horizontalDifference;
-    private PIDController p;
-    private double scaledRotateValue;
+    private Vision visionSubsystem;
+    private SwerveDrive swerveDriveSubsystem;
+    private boolean isTargetFound;
+    private double targetHorizontalDifference;
+    private PIDController pidController;
+    private double scaledRotationValue;
 
     /**
      * Constructs a new driveAlignVisionCommand.
@@ -26,10 +26,10 @@ public class driveAlignVisionCommand extends Command {
      * @param swerveDrive The swerve drive subsystem used to control the robot's movement.
      */
     public driveAlignVisionCommand(Vision vision, SwerveDrive swerveDrive){
-        this.vision = vision;
-        horizontalDifference = vision.getHorizontalDiff();
-        this.m_SwerveDrive = swerveDrive;
-        this.vision = vision;
+        this.visionSubsystem = vision;
+        targetHorizontalDifference = vision.getHorizontalDiff();
+        this.swerveDriveSubsystem = swerveDrive;
+        this.visionSubsystem = vision;
         addRequirements(vision, swerveDrive);
     }
     
@@ -38,17 +38,17 @@ public class driveAlignVisionCommand extends Command {
      */
     @Override
     public void execute(){
-        isAprilTagFound = vision.found();
-        horizontalDifference = vision.getHorizontalDiff();
-        if (isAprilTagFound){
-            p = new PIDController(0.0325, 0, 0);
-            double pidOutput = p.calculate(horizontalDifference);
-            scaledRotateValue = MathUtil.clamp(pidOutput, -1, 1); // clamp the value between -1 and 1
-            System.out.println(scaledRotateValue);
-            m_SwerveDrive.drive(0,0, scaledRotateValue, false, false);
+        isTargetFound = visionSubsystem.found();
+        targetHorizontalDifference = visionSubsystem.getHorizontalDiff();
+        if (isTargetFound){
+            pidController = new PIDController(0.0325, 0, 0);
+            double pidOutput = pidController.calculate(targetHorizontalDifference);
+            scaledRotationValue = MathUtil.clamp(pidOutput, -1, 1); // clamp the value between -1 and 1
+            System.out.println(scaledRotationValue);
+            swerveDriveSubsystem.drive(0,0, scaledRotationValue, false, false);
         }
         else{
-            m_SwerveDrive.drive(0,0,Math.copySign(0.2, scaledRotateValue),false,false);
+            swerveDriveSubsystem.drive(0,0,Math.copySign(0.2, scaledRotationValue),false,false);
         }
     }
 

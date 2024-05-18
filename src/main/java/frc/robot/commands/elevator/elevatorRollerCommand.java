@@ -5,20 +5,20 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.vision.BeamBreak;
 
 public class elevatorRollerCommand extends Command{
-    Timer t = new Timer();
-    private Elevator elevator;
-    private double rollerPower;
-    private BeamBreak elevatorBeamBreak;
-    private Boolean alreadyBeamBreak;
-    private double timerStart;
+    Timer timer = new Timer();
+    private Elevator elevatorSubsystem;
+    private double elevatorRollerPower;
+    private BeamBreak beamBreakSensor;
+    private Boolean isBeamBrokenPreviously;
+    private double beamBreakTimerStart;
 
 
-    private boolean isFinished;
+    private boolean isCommandFinished;
 
     public elevatorRollerCommand(Elevator elevator, double rollerPower, BeamBreak elevatorBeamBreak){
-        this.elevator = elevator;
-        this.rollerPower = rollerPower;
-        this.elevatorBeamBreak = elevatorBeamBreak;
+        this.elevatorSubsystem = elevator;
+        this.elevatorRollerPower = rollerPower;
+        this.beamBreakSensor = elevatorBeamBreak;
         //addRequirements(intakeShooter);
     }
 
@@ -28,12 +28,12 @@ public class elevatorRollerCommand extends Command{
      */
     @Override
     public void initialize(){
-        t.reset(); 
-        t.start();
-        isFinished = false;
-        alreadyBeamBreak = elevatorBeamBreak.getStatus();
-        // if(alreadyBeamBreak){
-        //     timerStart = t.get();
+        timer.reset(); 
+        timer.start();
+        isCommandFinished = false;
+        isBeamBrokenPreviously = beamBreakSensor.getStatus();
+        // if(isBeamBrokenPreviously){
+        //     beamBreakTimerStart = timer.get();
         //     System.out.println("broken");
         // }
     }
@@ -44,33 +44,33 @@ public class elevatorRollerCommand extends Command{
      */
     @Override
     public void execute(){
-        if(alreadyBeamBreak){
-            timerStart = t.get();
+        if(isBeamBrokenPreviously){
+            beamBreakTimerStart = timer.get();
         }
-        if((t.get() - timerStart) >= 0.1){
-            elevator.setRollerPower(0);
-            isFinished = true;
+        if((timer.get() - beamBreakTimerStart) >= 0.1){
+            elevatorSubsystem.setRollerPower(0);
+            isCommandFinished = true;
         }
         else{
-            elevator.setRollerPower(rollerPower);
+            elevatorSubsystem.setRollerPower(elevatorRollerPower);
         }
 
-        if(elevatorBeamBreak.getStatus() && !alreadyBeamBreak){
-            alreadyBeamBreak = true;
+        if(beamBreakSensor.getStatus() && !isBeamBrokenPreviously){
+            isBeamBrokenPreviously = true;
         }
         else{
-            alreadyBeamBreak = false;
+            isBeamBrokenPreviously = false;
         }
     }
 
     @Override
     public boolean isFinished(){
-        return isFinished;
+        return isCommandFinished;
     }
 
     @Override
     public void end(boolean interrupted){
-        elevator.setRollerPower(0);
+        elevatorSubsystem.setRollerPower(0);
     }
 
 

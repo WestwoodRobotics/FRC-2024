@@ -16,17 +16,17 @@ import frc.robot.sensors.NeoADIS16470;
  */
 public class Gyro extends SubsystemBase {
 
-  public NeoADIS16470 gyroscope; // Renamed from 'gyro' to 'gyroscope' for clarity
+  public NeoADIS16470 gyroSensor; // Renamed from 'gyroscope' to 'gyroSensor' for clarity
 
-  public Rotation2d yawOffset = new Rotation2d(0);
-  public Rotation2d pitchOffset = new Rotation2d(0);
-  public Rotation2d rollOffset = new Rotation2d(0);
+  public Rotation2d gyroYawOffset = new Rotation2d(0); // Renamed from 'yawOffset' to 'gyroYawOffset' for clarity
+  public Rotation2d gyroPitchOffset = new Rotation2d(0); // Renamed from 'pitchOffset' to 'gyroPitchOffset' for clarity
+  public Rotation2d gyroRollOffset = new Rotation2d(0); // Renamed from 'rollOffset' to 'gyroRollOffset' for clarity
 
   /**
    * Constructs a Gyro object, initializing the ADIS16470 IMU sensor and zeroing its angles.
    */
   public Gyro() {
-    gyroscope = new NeoADIS16470();
+    gyroSensor = new NeoADIS16470();
     zeroGyro();
   }
 
@@ -42,7 +42,7 @@ public class Gyro extends SubsystemBase {
    * @param degrees The angle in degrees to set as the yaw offset.
    */
   public void setGyroYawOffset(double degrees) {
-    yawOffset = getRawRot2dYaw().minus(Rotation2d.fromDegrees(degrees));
+    gyroYawOffset = getRawRot2dYaw().minus(Rotation2d.fromDegrees(degrees));
   }
 
   /**
@@ -50,7 +50,7 @@ public class Gyro extends SubsystemBase {
    * @param degrees The angle in degrees to set as the pitch offset.
    */
   public void setGyroPitchOffset(double degrees) {
-    pitchOffset = getRawRot2dPitch().minus(Rotation2d.fromDegrees(degrees));
+    gyroPitchOffset = getRawRot2dPitch().minus(Rotation2d.fromDegrees(degrees));
   }
 
   /**
@@ -58,7 +58,7 @@ public class Gyro extends SubsystemBase {
    * @param degrees The angle in degrees to set as the roll offset.
    */
   public void setGyroRollOffset(double degrees) {
-    rollOffset = getRawRot2dRoll().minus(Rotation2d.fromDegrees(degrees));
+    gyroRollOffset = getRawRot2dRoll().minus(Rotation2d.fromDegrees(degrees));
   }
 
   /**
@@ -66,7 +66,7 @@ public class Gyro extends SubsystemBase {
    * @return The processed yaw angle as a Rotation2d object.
    */
   public Rotation2d getProcessedRot2dYaw() {
-    return getRawRot2dYaw().minus(yawOffset);
+    return getRawRot2dYaw().minus(gyroYawOffset);
   }
 
   /**
@@ -74,7 +74,7 @@ public class Gyro extends SubsystemBase {
    * @return The processed pitch angle as a Rotation2d object.
    */
   public Rotation2d getProcessedRot2dPitch() {
-    return getRawRot2dPitch().minus(pitchOffset);
+    return getRawRot2dPitch().minus(gyroPitchOffset);
   }
 
   /**
@@ -82,7 +82,7 @@ public class Gyro extends SubsystemBase {
    * @return The processed roll angle as a Rotation2d object.
    */
   public Rotation2d getProcessedRot2dRoll() {
-    return getRawRot2dRoll().minus(rollOffset);
+    return getRawRot2dRoll().minus(gyroRollOffset);
   }
 
   /**
@@ -90,7 +90,7 @@ public class Gyro extends SubsystemBase {
    * @return The raw yaw angle as a Rotation2d object.
    */
   public Rotation2d getRawRot2dYaw() {
-    return Rotation2d.fromDegrees(gyroscope.getXAngle());
+    return Rotation2d.fromDegrees(gyroSensor.getXAngle());
   }
 
   /**
@@ -98,7 +98,7 @@ public class Gyro extends SubsystemBase {
    * @return The raw pitch angle as a Rotation2d object.
    */
   public Rotation2d getRawRot2dPitch() {
-    return Rotation2d.fromDegrees(gyroscope.getYAngle());
+    return Rotation2d.fromDegrees(gyroSensor.getYAngle());
   }
 
   /**
@@ -106,14 +106,14 @@ public class Gyro extends SubsystemBase {
    * @return The raw roll angle as a Rotation2d object.
    */
   public Rotation2d getRawRot2dRoll() {
-    return Rotation2d.fromDegrees(gyroscope.getZAngle());
+    return Rotation2d.fromDegrees(gyroSensor.getZAngle());
   }
 
   /**
    * Resets the yaw angle to zero.
    */
   public void resetYaw(){
-    gyroscope.reset();
+    gyroSensor.reset();
   }
 
   /**
@@ -121,7 +121,7 @@ public class Gyro extends SubsystemBase {
    * @return The Z-axis angular rate in degrees per second.
    */
   public double getZRate(){
-    return gyroscope.getZAngularRate();
+    return gyroSensor.getZAngularRate();
   }
 
   /**
@@ -129,7 +129,7 @@ public class Gyro extends SubsystemBase {
    * @return The X-axis angular rate in degrees per second.
    */
   public double getXRate(){
-    return gyroscope.getXAngularRate();
+    return gyroSensor.getXAngularRate();
   }
 
   /**
@@ -137,7 +137,7 @@ public class Gyro extends SubsystemBase {
    * @return The Y-axis angular rate in degrees per second.
    */
   public double getYRate(){
-    return gyroscope.getYAngularRate();
+    return gyroSensor.getYAngularRate();
   }
 
   /**
@@ -145,15 +145,15 @@ public class Gyro extends SubsystemBase {
    * @return The raw NeoADIS16470 gyroscope object.
    */
   public NeoADIS16470 getRawGyroObject() {
-    return gyroscope;
+    return gyroSensor;
   }
   /**
    * Resets all gyro angles and offsets to zero.
    */
   public void reset(){
     this.resetYaw();
-    this.yawOffset = new Rotation2d(0);
-    this.rollOffset = new Rotation2d(0);
-    this.pitchOffset = new Rotation2d(0);
+    this.gyroYawOffset = new Rotation2d(0);
+    this.gyroRollOffset = new Rotation2d(0);
+    this.gyroPitchOffset = new Rotation2d(0);
   }
 }

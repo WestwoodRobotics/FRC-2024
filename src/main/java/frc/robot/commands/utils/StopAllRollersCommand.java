@@ -8,8 +8,8 @@ import frc.robot.subsystems.intakeShooter.IntakeRollers;
  * This command sets the power of all rollers to zero.
  */
 public class StopAllRollersCommand extends Command {
-     private IntakeRollers m_intakeShooterRollers;
-     private Elevator m_elevator;
+     private IntakeRollers intakeRollersSubsystem;
+     private Elevator elevatorSubsystem;
 
     /**
      * Constructs a new StopAllRollersCommand.
@@ -18,8 +18,8 @@ public class StopAllRollersCommand extends Command {
      * @param elevator The elevator subsystem.
      */
     public StopAllRollersCommand(IntakeRollers intakeShooter, Elevator elevator){
-        m_intakeShooterRollers = intakeShooter;
-        m_elevator = elevator;
+        intakeRollersSubsystem = intakeShooter;
+        elevatorSubsystem = elevator;
         addRequirements(intakeShooter, elevator);
     }
     
@@ -28,9 +28,9 @@ public class StopAllRollersCommand extends Command {
      */
     @Override
     public void execute(){
-        m_intakeShooterRollers.setRollerPower(0);
-        m_intakeShooterRollers.setStowPower(0);
-        m_elevator.setRollerPower(0);
+        intakeRollersSubsystem.setRollerPower(0);
+        intakeRollersSubsystem.setStowPower(0);
+        elevatorSubsystem.setRollerPower(0);
     }
 
     /**
@@ -50,8 +50,8 @@ public class StopAllRollersCommand extends Command {
      */
     @Override 
     public void end(boolean interrupted){
-        m_intakeShooterRollers.setRollerPower(0);
-        m_intakeShooterRollers.setStowPower(0);
-        m_elevator.setRollerPower(0);
+        intakeRollersSubsystem.setRollerPower(0);
+        intakeRollersSubsystem.setStowPower(0);
+        elevatorSubsystem.setRollerPower(0);
     }
 }
