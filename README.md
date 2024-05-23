@@ -42,6 +42,18 @@ Refer to the `build.gradle` file for specific version requirements.
 - **Limelight Camera**: Provides vision processing capabilities for target detection and alignment.
 - **PathPlanner**: Path visualization software for autonomous path planning.
 
+## Command Framework in WPILib
+
+The command framework is a powerful feature of WPILib that simplifies robot programming by allowing complex robot operations to be broken down into simpler, reusable, and modular tasks. This framework encourages a clean separation between the robot's subsystems and the commands that operate on them, enhancing code maintainability and team collaboration.
+
+Benefits of using the command framework include:
+
+- **Ease of Use**: Simplifies the programming model, making it more accessible to new team members.
+- **Modularity**: Encourages modular design, allowing teams to develop, test, and debug different parts of the robot software independently.
+- **Reusability**: Commands and subsystems can be reused across different parts of the robot or in future projects, saving development time.
+
+By leveraging the command framework, teams can focus on strategic gameplay and robot functionality, rather than getting bogged down in the complexities of low-level robot control.
+
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for more information.
