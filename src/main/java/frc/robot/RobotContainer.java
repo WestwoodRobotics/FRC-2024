@@ -90,8 +90,8 @@ public class RobotContainer {
   private final JoystickButton DriverLeftBumper = new JoystickButton(m_driverController,
       XboxController.Button.kLeftBumper.value);
       
-  private final Trigger driverLeftTrigger = new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.5);
-  private final Trigger driverRightTrigger = new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.5);
+  private final Trigger driverRightTrigger = new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.5);
+  private final Trigger driverLeftTrigger = new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.5);
 
   private final JoystickButton OperatorAButton = new JoystickButton(m_operatorController,
       XboxController.Button.kA.value);
