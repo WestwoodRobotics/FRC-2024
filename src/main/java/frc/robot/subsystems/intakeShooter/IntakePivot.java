@@ -149,6 +149,7 @@ public class IntakePivot extends SubsystemBase {
         SmartDashboard.putBoolean("Limit", this.getPivotLimitReached());
 
         if (isIntakePivotPIDControlEnabled = true){
+            intakePivotPositionPIDController.setTolerance(0.2);
             calculatedIntakePivotPIDValue = intakePivotPositionPIDController.calculate(intakePivotMotorController.getEncoder().getPosition());
             intakePivotMotorController.set(calculatedIntakePivotPIDValue);
         }

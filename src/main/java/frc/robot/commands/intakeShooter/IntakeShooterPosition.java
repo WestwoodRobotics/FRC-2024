@@ -48,20 +48,7 @@ public class IntakeShooterPosition extends Command{
      */
     @Override
     public void execute(){
-        if(intakeTargetPosition == IntakeShooterPositions.HOME){
-            if(!intakePivotSubsystem.getPivotLimitReached()){
-                intakePivotSubsystem.setPivotPower(-0.75);
-                isCommandFinished = false;
-            }
-            else{
-                intakePivotSubsystem.setPivotPower(0);
-                intakePivotSubsystem.resetEncoder();
-                isCommandFinished = true;
-            }
-        }
-        else{    
-            isCommandFinished = intakePivotSubsystem.setToPosition(intakeTargetPosition);
-        }
+        isCommandFinished = intakePivotSubsystem.setToPosition(intakeTargetPosition);
     }
 
     /**
@@ -71,7 +58,7 @@ public class IntakeShooterPosition extends Command{
      */
     @Override
     public boolean isFinished(){
-       return (timer.get() > 2.0) || (limitSwitchSensor.getStatus() && (intakeTargetPosition == (IntakeShooterPositions.HOME))) || isCommandFinished;
+       return isCommandFinished;
     }
 
     /**
@@ -81,9 +68,7 @@ public class IntakeShooterPosition extends Command{
      */
     @Override
     public void end(boolean interrupted){
-        if(!interrupted){
-            intakePivotSubsystem.setPivotPower(0);
-        }
+        intakePivotSubsystem.setPivotPower(0);
         intakePivotSubsystem.setPositionState(interrupted ? IntakeShooterPositions.MANUAL : intakeTargetPosition);
     }
 }
