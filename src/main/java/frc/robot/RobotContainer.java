@@ -152,6 +152,8 @@ public class RobotContainer {
     m_chooser.addOption("April Tag Vision Tracking", visionTracking());
     m_chooser.addOption("April Tag Vision With Swerve Translation", visionTrackingWithMovement() );
     m_chooser.setDefaultOption("April Tag Vision Tracking", visionTracking());
+    m_chooser.addOption("Mobility", mobilityAuto());
+    m_chooser.addOption("WaitAndMobility", WaitAndMobilityAuto());
 
     //m_chooser.addOption("meterTest" , meterTest());
     
@@ -420,6 +422,18 @@ private void configureButtonBindings() {
         toReturn.setName("April Tag Vision Tracking With Movement");
         return toReturn;
     }
+    private Command mobilityAuto() {
+        // TODO Auto-generated method stub
+        Command toReturn = new PathPlannerAuto("Mobility");
+        toReturn.setName("Mobility");
+        return toReturn;
+    }
+    private Command WaitAndMobilityAuto() {
+        // TODO Auto-generated method stub
+        Command toReturn = new PathPlannerAuto("WaitAndMobility");
+        toReturn.setName("WaitAndMobility");
+        return toReturn;
+    }
 
 
   /**
@@ -458,6 +472,14 @@ private void configureButtonBindings() {
     else if(m_chooser.getSelected().getName().equals("April Tag Vision Tracking With Movement")){
         System.out.println("^^^^^^^");
         return visionTrackingWithMovement();
+    }
+    else if(m_chooser.getSelected().getName().equals("Mobility")){
+        System.out.println("^^^^^^^");
+        return mobilityAuto();
+    }
+    else if(m_chooser.getSelected().getName().equals("WaitAndMobility")){
+        System.out.println("^^^^^^^");
+        return WaitAndMobilityAuto();
     }
     else{
         System.out.println("^^^^^^^");

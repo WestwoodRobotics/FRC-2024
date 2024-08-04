@@ -247,13 +247,13 @@ public final class Constants {
 
     public static double kHomePivotPosition = 10; //TODO: Change this value
     public static double kIntakePivotPosition = 110.0; //106.597160; //TODO: Change this value
-    public static double kAutoIntakePivotPosition = 103.5; //TODO: Change this value
-    public static double kShootNearSpeakerPivotPosition = 15;
+    public static double kAutoIntakePivotPosition = 115.0; //TODO: Change this value
+    public static double kShootNearSpeakerPivotPosition = 14;
     public static double kShootNearSpeakerFacingForwardsPivotPosition = 37.618687;
-    public static double kShootPodiumShot = 50;
+    public static double kShootPodiumShot = 45;
 
     public static double kShootFarSpeakerPivotPosition = 19.92834;
-    public static double kShootNearSpeakerAutonPivotPosition = 2;
+    public static double kShootNearSpeakerAutonPivotPosition = 15;
     public static double kShootPivotAmp = 22.5712098;
   } 
 }

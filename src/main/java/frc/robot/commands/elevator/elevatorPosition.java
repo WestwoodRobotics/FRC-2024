@@ -29,7 +29,6 @@ public class elevatorPosition extends Command{
         System.out.println(elevatorTargetPosition);
         elevatorSubsystem.setElevatorPosition(elevatorTargetPosition);
         elevatorSubsystem.setPivotPosition(elevatorTargetPosition);
-        
     }
 
     /**
@@ -48,6 +47,6 @@ public class elevatorPosition extends Command{
      */
     @Override
     public boolean isFinished(){
-       return elevatorTimer.get()>2;
+       return elevatorTimer.get() > 2;
     }
 }

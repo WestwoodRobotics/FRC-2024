@@ -59,21 +59,35 @@
                 }
               },
               {
-                "type": "path",
+                "type": "parallel",
                 "data": {
-                  "pathName": "IntakeAndDrive"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "IntakeAndDrive"
+                      }
+                    }
+                  ]
                 }
               },
               {
-                "type": "named",
+                "type": "parallel",
                 "data": {
-                  "name": "Shoot"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "GoBackToStart"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Shoot"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "GoBackToStart"
+                      }
+                    }
+                  ]
                 }
               },
               {
