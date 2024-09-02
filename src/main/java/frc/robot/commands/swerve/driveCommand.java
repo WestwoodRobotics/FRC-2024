@@ -6,74 +6,80 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.swerve.SwerveDrive;
-// import frc.robot.subsystems.swerve.DriveSpeed;
 
-// import static frc.robot.Constants.DriveConstants.kMaxAngularSpeed;
-// import static frc.robot.Constants.DriveConstants.kMaxSpeedMetersPerSecond;
-
+/**
+ * Command for driving the robot using a swerve drive system.
+ * This command reads inputs from an XboxController and translates them into swerve drive movements.
+ */
 public class driveCommand extends Command {
 
-  private final SwerveDrive m_swerveDrive;
+  private final SwerveDrive swerveDriveSubsystem;
+  private XboxController xboxController;
+  private boolean isSlowModeEnabled;
 
-  private XboxController controller;
-  private boolean slowMode;
-
-
-
-
+  /**
+   * Constructs a new driveCommand.
+   *
+   * @param swerveDrive The swerve drive subsystem to control.
+   * @param controller  The Xbox controller to use for input.
+   */
   public driveCommand(SwerveDrive swerveDrive, XboxController controller) {
-    m_swerveDrive = swerveDrive;
-    this.controller = controller;
+    swerveDriveSubsystem = swerveDrive;
+    this.xboxController = controller;
     addRequirements(swerveDrive);
   }
 
-
+  /**
+   * Initializes the command.
+   */
   @Override
-  public void initialize() 
-  {
-    slowMode = false;
+  public void initialize() {
+    isSlowModeEnabled = false;
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
+  /**
+   * Executes the command.
+   * Reads the joystick values from the controller and drives the robot.
+   */
   @Override
   public void execute() {
-    double leftX, leftY, rightX;
-    if (controller.getBackButtonPressed())
-    {
-      slowMode = !slowMode;
+    double leftXAxis, leftYAxis, rightXAxis;
+    if (xboxController.getBackButtonPressed()) {
+      isSlowModeEnabled = !isSlowModeEnabled;
     }
 
-    leftX = -MathUtil.applyDeadband(controller.getLeftX(), ControllerConstants.kDriveDeadband);
-    leftY = -MathUtil.applyDeadband(controller.getLeftY(), ControllerConstants.kDriveDeadband);
-    rightX = -MathUtil.applyDeadband(controller.getRightX(), ControllerConstants.kDriveDeadband);
-
+    leftXAxis = -MathUtil.applyDeadband(xboxController.getLeftX(), ControllerConstants.kDriveDeadband);
+    leftYAxis = -MathUtil.applyDeadband(xboxController.getLeftY(), ControllerConstants.kDriveDeadband);
+    rightXAxis = -MathUtil.applyDeadband(xboxController.getRightX(), ControllerConstants.kDriveDeadband);
 
     // Apply non-linear input (squaring the input)
-    // leftX = Math.copySign(Math.pow(leftX, 2), leftX);
-    // leftY = Math.copySign(Math.pow(leftY, 2), leftY);
-    // rightX = Math.copySign(Math.pow(rightX, 2), rightX);
+    leftXAxis = Math.copySign(Math.pow(leftXAxis, 2), leftXAxis);
+    leftYAxis = Math.copySign(Math.pow(leftYAxis, 2), leftYAxis);
+    rightXAxis = Math.copySign(Math.pow(rightXAxis, 2), rightXAxis);
 
-
-    if (slowMode)
-    {
-      leftX *= Constants.DriveConstants.slowModeMultiplier;
-      leftY *= Constants.DriveConstants.slowModeMultiplier;
-      rightX *= Constants.DriveConstants.slowModeMultiplier;
+    if (isSlowModeEnabled) {
+      leftXAxis *= Constants.DriveConstants.slowModeMultiplier;
+      leftYAxis *= Constants.DriveConstants.slowModeMultiplier;
+      rightXAxis *= Constants.DriveConstants.slowModeMultiplier;
     }
-    m_swerveDrive.drive(leftY, leftX, rightX, true, false);
-
+    swerveDriveSubsystem.drive(leftYAxis, leftXAxis, rightXAxis, true, false);
   }
 
-
-  
-  // Called once the command ends or is interrupted.
+  /**
+   * Ends the command.
+   *
+   * @param interrupted Whether the command was interrupted.
+   */
   @Override
   public void end(boolean interrupted) {}
 
-  // Returns true when the command should end.
+  /**
+   * Returns whether the command has finished.
+   *
+   * @return false to keep the command running.
+   */
   @Override
   public boolean isFinished() {
-    // should never end in teleop
-    return false;
+    return false; // should never end in teleop
   }
 }

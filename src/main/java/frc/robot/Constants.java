@@ -29,7 +29,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.8;
+    public static final double kMaxSpeedMetersPerSecond = 6.77;
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     public static final double kDirectionSlewRate = Math.PI/3; // radians per second
@@ -37,9 +37,9 @@ public final class Constants {
     public static final double kRotationalSlewRate = 2; // percent per second (1 = 100%)
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(18.5);
+    public static final double kTrackWidth = Units.inchesToMeters(21.5);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(20.5);
+    public static final double kWheelBase = Units.inchesToMeters(21.5);
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -50,10 +50,10 @@ public final class Constants {
     // Angular offsets of the modules relative to the chassis in radians
     // These values are the angle offset of the wheels when the robot is facing forwards (Absolute Encoders)
     //DO NOT CHANGE THESE VALUES UNLESS YOU KNOW WHAT YOU'RE DOING!!
-    public static final double kFrontLeftChassisAngularOffset = Math.PI + (Math.PI/2);
-    public static final double kFrontRightChassisAngularOffset = 0;
+    public static final double kFrontLeftChassisAngularOffset = 3*Math.PI/2;
+    public static final double kFrontRightChassisAngularOffset = 0; 
     public static final double kRearLeftChassisAngularOffset = Math.PI;
-    public static final double kRearRightChassisAngularOffset = (3*Math.PI/2);
+    public static final double kRearRightChassisAngularOffset = Math.PI/2;
 
 
 
@@ -93,7 +93,7 @@ public final class Constants {
     // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
     // This changes the drive speed of the module (a pinion gear with more teeth will result in a
     // robot that drives faster).
-    public static final int kDrivingMotorPinionTeeth = 14;
+    public static final int kDrivingMotorPinionTeeth = 15;
 
     // Invert the turning encoder, since the output shaft rotates in the opposite direction of
     // the steering motor in the MAXSwerve Module.
@@ -104,7 +104,7 @@ public final class Constants {
     public static final double kWheelDiameterMeters = 0.0762;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
-    public static final double kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 15);
+    public static final double kDrivingMotorReduction = (45.0 * 20) / (kDrivingMotorPinionTeeth * 15);
     public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters)
         / kDrivingMotorReduction;
 
@@ -121,7 +121,7 @@ public final class Constants {
 
 
     // These PID Gains have been tested
-    public static final double kDrivingP = 0.1;
+    public static final double kDrivingP = 0.2;
     public static final double kDrivingI = 0; 
     public static final double kDrivingD = 0.002; 
     public static final double kDrivingFF = 1 / kDriveWheelFreeSpeedRps; 
@@ -145,17 +145,17 @@ public final class Constants {
   }
 
   public static final class ControllerConstants {
-    public static final double kDriveDeadband = 0.2;
+    public static final double kDriveDeadband = 0.02;
   }
 
   public static final class AutoConstants {
     //These constants need to tuned when setting up Auton Paths
-    public static final double kMaxModuleSpeedMetersPerSecond = 4.5;
+    public static final double kMaxModuleSpeedMetersPerSecond = 6.5;
      //Distance from the center of the robot to the farthest SwerveModule
     public static final double kDriveBaseRadius = 0.4; //meters
 
 
-    public static final double kMaxAccelerationMetersPerSecondSquared = 2;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 3.5;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
@@ -184,6 +184,7 @@ public final class Constants {
   public static final class VortexMotorConstants {
     public static final double kFreeSpeedRpm = 6784;
   }
+
   public static final class ElevatorConstants {
     public static final int kElevatorMotor1Port = 30;
     public static final int kElevatorMotor2Port = 31;
@@ -191,7 +192,7 @@ public final class Constants {
     public static final int kElevatorPivotMotorPort = 33;
 
     public static double kElevatorP = 0.1; //TODO: Change this value
-    public static double kElevatorI = 0.1; //TODO: Change this value
+    public static double kElevatorI = 0.02; //TODO: Change this value
     public static double kElevatorD = 0; //TODO: Change this value
     public static double kElevatorFF = 0; //TODO: Change this value
 
@@ -201,16 +202,20 @@ public final class Constants {
     public static double kElevatorPivotFF = 0; //TODO: Change this value
 
     public static double kElevatorPodiumPosition = 0; //TODO: Change this value
-    public static double kElevatorSourcePosition = 0;
-    public static double kElevatorAmpPosition = 12.595; //TODO: Change this value
-    public static double kElevatorStowPosition = 0; //TODO: Change this value
+    public static double kElevatorSourcePosition = 14.73221125;//12.595;
+    public static double kElevatorAmpPosition = 15; //TODO: Change this value
+    public static double kElevatorAutoShootPosition = 0;
+    public static double kElevatorHomePosition = 0; //TODO: Change this value
     public static double kElevatorHandoffPosition = 0; //TODO: Change this value
 
+
     public static double kElevatorPodiumPivotPosition = 0; //TODO: Change this value
-    public static double kElevatorSourcePivotPosition = 27.5; //TODO: Change this value
-    public static double kElevatorAmpPivotPosition = 19; //TODO: Change this value
-    public static double kElevatorStowPivotPosition = 0; //TODO: Change this value
-    public static double kElevatorHandoffPivotPosition = 0; //TODO: Change this value
+    //public static double kElevatorSourcePivotPosition = 27.5; //TODO: Change this value
+    public static double kElevatorSourcePivotPosition = -17.857100; //TODO: Change this value
+    public static double kElevatorAutoShootPivotPosition = -40;
+    public static double kElevatorAmpPivotPosition = -28; //TODO: Change this value
+    public static double kElevatorHomePivotPosition = 0; //TODO: Change this value
+    public static double kElevatorHandoffPivotPosition = -7; //TODO: Change this value
 
 
 
@@ -219,35 +224,36 @@ public final class Constants {
   public static final class IntakeShooterConstants {
     public static final int kUpperMotorPort = 21;
     public static final int kLowerMotorPort = 22;
-    public static final int kStowMotorPort =20;
+    public static final int kStowMotorPort = 20;
     public static final int kPivotMotorPort = 23;
 
 
-    public static double kUpperRollerP = 0; //TODO: Change this value
+    public static double kUpperRollerP = 2; //TODO: Change this value
     public static double kUpperRollerI = 0; //TODO: Change this value
     public static double kUpperRollerD = 0; //TODO: Change this value
-    public static double kUpperRollerFF = 0; //TODO: Change this value
+    public static double kUpperRollerFF = 100; //TODO: Change this value
 
-    public static double kLowerRollerP = 0; //TODO: Change this value
+    public static double kLowerRollerP = 0.00045; //TODO: Change this value
     public static double kLowerRollerI = 0; //TODO: Change this value
     public static double kLowerRollerD = 0; //TODO: Change this value
-    public static double kLowerRollerFF = 0; //TODO: Change this value
+    public static double kLowerRollerFF = 200; //TODO: Change this value
 
     public static double kPivotP = 0.2; //TODO: Change this value
-    public static double kPivotI = 0; //TODO: Change this value 
+    public static double kPivotI = 0; //TODO: Change this value
     public static double kPivotD = 0; //TODO: Change this value
-    public static double kPivotFF = 0; //TODO: Change this value
+    public static double kPivotFF = 10; //TODO: Change this value
 
 
 
-    public static double kStowPivotPosition = 0; //TODO: Change this value
-    public static double kIntakePivotPosition = 72; //TODO: Change this value
-    public static double kShootNearSpeakerPivotPosition = 35.76;
-    public static double kShootFarSpeakerPivotPosition = 3.428;
-    public static double kHandoffPivotPosition = -3.69;
+    public static double kHomePivotPosition = 10; //TODO: Change this value
+    public static double kIntakePivotPosition = 110.0; //106.597160; //TODO: Change this value
+    public static double kAutoIntakePivotPosition = 115.0; //TODO: Change this value
+    public static double kShootNearSpeakerPivotPosition = 14;
+    public static double kShootNearSpeakerFacingForwardsPivotPosition = 37.618687;
+    public static double kShootPodiumShot = 45;
 
-
-
-
-  }
+    public static double kShootFarSpeakerPivotPosition = 19.92834;
+    public static double kShootNearSpeakerAutonPivotPosition = 15;
+    public static double kShootPivotAmp = 22.5712098;
+  } 
 }

@@ -12,150 +12,161 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.utils.MotorControlGroup;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
+import frc.robot.subsystems.vision.BeamBreak;
 
+/**
+ * The Elevator subsystem controls the elevator mechanism used for lifting the robot or game pieces.
+ * It includes methods to control the elevator's motors, set its position, and read its sensors.
+ */
 public class Elevator extends SubsystemBase{
 
-    private CANSparkMax elevatorMotor1;
-    private CANSparkMax elevatorMotor2;
+    private CANSparkMax primaryElevatorMotorController;
+    private CANSparkMax secondaryElevatorMotorController;
 
-    private PIDController elevatorPIDController;
-    private PIDController elevatorPivotPIDController;
+    private PIDController elevatorPositionPIDController;
+    private PIDController elevatorPivotPositionPIDController;
 
-    private MotorControlGroup elevatorMotors;
-    private CANSparkMax pivotMotor;
-    private CANSparkMax rollerMotor;
+    private MotorControlGroup elevatorMotorGroup;
+    private CANSparkMax elevatorPivotMotorController;
+    private CANSparkMax elevatorRollerMotorController;
 
     private ElevatorPositions elevatorPosition;
     private ElevatorPositions elevatorPivotPosition;
 
-    private Map<ElevatorPositions, Double> ElevatorPositionValues;
-    private Map<ElevatorPositions, Double> pivotPositionValues;
+    private Map<ElevatorPositions, Double> elevatorPositionTargetValues;
+    private Map<ElevatorPositions, Double> elevatorPivotPositionTargetValues;
+
+    private boolean isElevatorPositionPIDControlEnabled = false;
+    private boolean isPivotPIDControl = false;
 
     public Elevator(){
 
-        ElevatorPositionValues = new HashMap<>();
-        ElevatorPositionValues.put(ElevatorPositions.PODIUM, ElevatorConstants.kElevatorPodiumPosition);
-        ElevatorPositionValues.put(ElevatorPositions.AMP, ElevatorConstants.kElevatorAmpPosition);
-        ElevatorPositionValues.put(ElevatorPositions.STOW, ElevatorConstants.kElevatorStowPosition);
-        ElevatorPositionValues.put(ElevatorPositions.HANDOFF, ElevatorConstants.kElevatorHandoffPosition);
-        ElevatorPositionValues.put(ElevatorPositions.SOURCE, ElevatorConstants.kElevatorSourcePosition);
+        elevatorPositionTargetValues = new HashMap<>();
+        elevatorPositionTargetValues.put(ElevatorPositions.PODIUM, ElevatorConstants.kElevatorPodiumPosition);
+        elevatorPositionTargetValues.put(ElevatorPositions.AMP, ElevatorConstants.kElevatorAmpPosition);
+        elevatorPositionTargetValues.put(ElevatorPositions.HOME, ElevatorConstants.kElevatorHomePosition);
+        elevatorPositionTargetValues.put(ElevatorPositions.SOURCE, ElevatorConstants.kElevatorSourcePosition);
+        elevatorPositionTargetValues.put(ElevatorPositions.AUTO_SHOOT, ElevatorConstants.kElevatorAutoShootPosition);
+        elevatorPositionTargetValues.put(ElevatorPositions.HANDOFF, ElevatorConstants.kElevatorHandoffPosition);
 
-        pivotPositionValues = new HashMap<>();
-        pivotPositionValues.put(ElevatorPositions.PODIUM, ElevatorConstants.kElevatorPodiumPivotPosition);
-        pivotPositionValues.put(ElevatorPositions.AMP, ElevatorConstants.kElevatorAmpPivotPosition);
-        pivotPositionValues.put(ElevatorPositions.STOW, ElevatorConstants.kElevatorStowPivotPosition);
-        pivotPositionValues.put(ElevatorPositions.HANDOFF, ElevatorConstants.kElevatorHandoffPivotPosition);
-        pivotPositionValues.put(ElevatorPositions.SOURCE, ElevatorConstants.kElevatorSourcePivotPosition);
-        
+        elevatorPivotPositionTargetValues = new HashMap<>();
+        elevatorPivotPositionTargetValues.put(ElevatorPositions.PODIUM, ElevatorConstants.kElevatorPodiumPivotPosition);
+        elevatorPivotPositionTargetValues.put(ElevatorPositions.AMP, ElevatorConstants.kElevatorAmpPivotPosition);
+        elevatorPivotPositionTargetValues.put(ElevatorPositions.HOME, ElevatorConstants.kElevatorHomePivotPosition);
+        elevatorPivotPositionTargetValues.put(ElevatorPositions.SOURCE, ElevatorConstants.kElevatorSourcePivotPosition);
+        elevatorPivotPositionTargetValues.put(ElevatorPositions.AUTO_SHOOT, ElevatorConstants.kElevatorAutoShootPivotPosition);
+        elevatorPivotPositionTargetValues.put(ElevatorPositions.HANDOFF, ElevatorConstants.kElevatorHandoffPivotPosition);
 
-        this.elevatorMotor1 = new CANSparkMax(ElevatorConstants.kElevatorMotor1Port, CANSparkMax.MotorType.kBrushless);
-        this.elevatorMotor2 = new CANSparkMax(ElevatorConstants.kElevatorMotor2Port, CANSparkMax.MotorType.kBrushless);
-        this.elevatorMotor1.setInverted(true);
+        this.primaryElevatorMotorController = new CANSparkMax(ElevatorConstants.kElevatorMotor1Port, CANSparkMax.MotorType.kBrushless);
+        this.secondaryElevatorMotorController = new CANSparkMax(ElevatorConstants.kElevatorMotor2Port, CANSparkMax.MotorType.kBrushless);
+        this.primaryElevatorMotorController.setInverted(true);
+        this.secondaryElevatorMotorController.setInverted(false );
 
-        this.pivotMotor = new CANSparkMax(ElevatorConstants.kElevatorPivotMotorPort, CANSparkMax.MotorType.kBrushless);
-        this.rollerMotor = new CANSparkMax(ElevatorConstants.kRollerMotorPort, CANSparkMax.MotorType.kBrushless);
 
-        elevatorPIDController = new PIDController(ElevatorConstants.kElevatorP, ElevatorConstants.kElevatorI, ElevatorConstants.kElevatorD);
-        elevatorPivotPIDController = new PIDController(ElevatorConstants.kElevatorPivotP, ElevatorConstants.kElevatorPivotI, ElevatorConstants.kElevatorPivotD);
+        this.elevatorPivotMotorController = new CANSparkMax(ElevatorConstants.kElevatorPivotMotorPort, CANSparkMax.MotorType.kBrushless);
+        this.elevatorRollerMotorController = new CANSparkMax(ElevatorConstants.kRollerMotorPort, CANSparkMax.MotorType.kBrushless);
+
+        this.elevatorRollerMotorController.setInverted(false); //TODO: Check
+        this.elevatorPivotMotorController.setInverted(false); //TODO: Check 
+        this.elevatorPivotMotorController.getEncoder().setPosition(0);
+
+
+        elevatorPositionPIDController = new PIDController(ElevatorConstants.kElevatorP, ElevatorConstants.kElevatorI, ElevatorConstants.kElevatorD);
+        elevatorPivotPositionPIDController = new PIDController(ElevatorConstants.kElevatorPivotP, ElevatorConstants.kElevatorPivotI, ElevatorConstants.kElevatorPivotD);
         
         this.setElevatorBrakeMode(true);
         this.setPivotBrakeMode(true);
         this.setRollerBrakeMode(true);
 
+
+
     }
 
+    /**
+     * Sets the power for the elevator motors.
+     * @param power The power level to set for the elevator motors.
+     */
     public void setElevatorPower(double power){
-        elevatorMotor1.set(power);
-        elevatorMotor2.set(power);
+        isElevatorPositionPIDControlEnabled = false;
+
+        primaryElevatorMotorController.set(power);
+        secondaryElevatorMotorController.set(power);
         elevatorPosition = ElevatorPositions.MANUAL;
     }
 
-    public boolean setElevatorPosition(ElevatorPositions position){
-        double positionValue = ElevatorPositionValues.get(position);
-        double currentPosition = elevatorMotor1.getEncoder().getPosition();
-        
-        if (positionValue < currentPosition){
-            elevatorPIDController.setSetpoint(positionValue);
-            elevatorMotor1.set(elevatorPIDController.calculate(elevatorMotor1.getEncoder().getPosition()));
-            elevatorMotor2.set(elevatorPIDController.calculate(elevatorMotor2.getAbsoluteEncoder(Type.kDutyCycle).getPosition()));
-            System.out.println("Pivot Going 1");
-            return false;
-        } 
-        if(positionValue > currentPosition){
-            elevatorPIDController.setSetpoint(positionValue);
-            elevatorMotor1.set(elevatorPIDController.calculate(elevatorMotor1.getEncoder().getPosition()));
-            elevatorMotor2.set(elevatorPIDController.calculate(elevatorMotor2.getEncoder().getPosition()));
-            System.out.println("Pivot Going 1");
-            return false;
-        }
-        if (positionValue == currentPosition){
-            elevatorMotor1.set(0);
-            elevatorMotor2.set(0);
-            //elevatorPivotPosition = positions;
-            System.out.println("Pivot Reached");
-            return true;
-        }
-        return false;
+    /**
+     * Sets the elevator to a specified position.
+     * @param position The target position for the elevator.
+     */
+    public void setElevatorPosition(ElevatorPositions position){
+        double positionValue = elevatorPositionTargetValues.get(position);
+        elevatorPositionPIDController.setSetpoint(positionValue);
+        System.out.println(positionValue);
+        isElevatorPositionPIDControlEnabled = true;
     }
 
+    /**
+     * Gets the encoder value for a target elevator position.
+     * @param position The elevator position to get the encoder value for.
+     * @return The encoder value for the specified elevator position.
+     */
+    public double getTargetElevatorPositionEncoderValue(ElevatorPositions position)
+    {
+        return elevatorPositionTargetValues.get(position);
+    }
+
+    /**
+     * Sets the power for the pivot motor.
+     * @param power The power level to set for the pivot motor.
+     */
     public void setPivotPower(double power){
-        pivotMotor.set(power);
+        isPivotPIDControl = false;
+        elevatorPivotMotorController.set(power);
         elevatorPivotPosition = ElevatorPositions.MANUAL;
     }
 
-    public void setPivotPosition(ElevatorPositions position){
-        double positionValue = pivotPositionValues.get(position);
-        elevatorPivotPIDController.setSetpoint(positionValue);
-        pivotMotor.set(elevatorPivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
-        elevatorPivotPosition = position;
+    /**
+     * Sets the pivot to a specified position.
+     * @param positions The target position for the pivot.
+     */
+    public void setPivotPosition (ElevatorPositions positions){
+        double positionValue = elevatorPivotPositionTargetValues.get(positions);
+        elevatorPivotPositionPIDController.setSetpoint(positionValue);
+        System.out.println(positionValue);
+        isPivotPIDControl = true;
     }
 
-    public boolean setPivotPositionNOPID (ElevatorPositions positions){
-        double positionValue = pivotPositionValues.get(positions);
-        double currentPosition = pivotMotor.getEncoder().getPosition();
-        
-        if (positionValue < currentPosition){
-            elevatorPivotPIDController.setSetpoint(positionValue);
-            pivotMotor.set(elevatorPivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
-            System.out.println("Pivot Going 1");
-            return false;
-        } 
-
-        if(positionValue > currentPosition){
-            elevatorPivotPIDController.setSetpoint(positionValue);
-            pivotMotor.set(elevatorPivotPIDController.calculate(pivotMotor.getEncoder().getPosition()));
-            System.out.println("Pivot Going 2");
-
-        }
-
-        if ((positionValue == currentPosition + 3) || (positionValue == currentPosition - 3) ){
-            pivotMotor.set(0);
-            //elevatorPivotPosition = positions;
-            System.out.println("Pivot Reached");
-            return true;
-        }
-        return false;
+    /**
+     * Resets the encoder for the pivot motor.
+     */
+    public void resetEncoder(){
+        elevatorPivotMotorController.getEncoder().setPosition(0);
     }
 
+    /**
+     * Sets the elevator to a specified position without using PID control.
+     * @param positions The target position for the elevator.
+     * @return True if the elevator has reached the target position, false otherwise.
+     */
     public boolean setElevatorPositionNOPID (ElevatorPositions positions){
-        double positionValue = ElevatorPositionValues.get(positions);
-        double currentPosition = elevatorMotor1.getEncoder().getPosition();
+        double positionValue = elevatorPositionTargetValues.get(positions);
+        double currentPosition = primaryElevatorMotorController.getEncoder().getPosition();
         if (positionValue < currentPosition){
-            elevatorMotor1.set(-0.5);
-            elevatorMotor2.set(-0.5);
+            primaryElevatorMotorController.set(-0.5);
+            secondaryElevatorMotorController.set(-0.5);
             System.out.println("Elevator Going");
             return false;
         } 
         else if (positionValue > currentPosition){
-            elevatorMotor1.set(+0.5);
-            elevatorMotor2.set(+0.5);
+            primaryElevatorMotorController.set(+0.5);
+            secondaryElevatorMotorController.set(+0.5);
             elevatorPosition = positions;
             System.out.println("Elevator Going");
             return false;
         }
         else if (positionValue == currentPosition){
-            elevatorMotor1.set(0);
-            elevatorMotor2.set(0);
+            primaryElevatorMotorController.set(0);
+            secondaryElevatorMotorController.set(0);
             elevatorPosition = positions;
             System.out.println("Elevator Reached");
             return true;
@@ -164,70 +175,94 @@ public class Elevator extends SubsystemBase{
     }
 
 
+    /**
+     * Sets the power for the roller motor.
+     * @param power The power level to set for the roller motor.
+     */
     public void setRollerPower(double power){
-        rollerMotor.set(power);
+            elevatorRollerMotorController.set(power);
     }
 
+    /**
+     * Sets the brake mode for the elevator motors.
+     * @param brakeMode True to enable brake mode, false for coast mode.
+     */
     public void setElevatorBrakeMode(boolean brakeMode){
         //elevatorMotor.setDefaultBrakeMode(brakeMode);
     }
 
+    /**
+     * Sets the brake mode for the pivot motor.
+     * @param brakeMode True to enable brake mode, false for coast mode.
+     */
     public void setPivotBrakeMode(boolean brakeMode){
-        pivotMotor.setIdleMode(brakeMode ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast);
+        elevatorPivotMotorController.setIdleMode(brakeMode ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast);
     }
 
+    /**
+     * Sets the brake mode for the roller motor.
+     * @param brakeMode True to enable brake mode, false for coast mode.
+     */
     public void setRollerBrakeMode(boolean brakeMode){
-        rollerMotor.setIdleMode(brakeMode ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast);
+        elevatorRollerMotorController.setIdleMode(brakeMode ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast);
     }
 
-
-
+    /**
+     * Sets the position of the elevator.
+     * @param position The target position for the elevator.
+     */
     public void setPosition(ElevatorPositions position){
-        switch (position){
-            case PODIUM:
-
-                this.setPivotPositionNOPID(position);
-                elevatorPosition = position;
-                break;
-            case AMP:
-                this.setPivotPositionNOPID(position);
-                elevatorPosition = position;
-                break;
-            case STOW:
-                this.setPivotPositionNOPID(position);
-                elevatorPosition = position;
-                break;
-            case HANDOFF:
-                this.setPivotPositionNOPID(position);
-                elevatorPosition = position;
-                break;
-            case SOURCE:
-                this.setPivotPositionNOPID(position);
-                elevatorPosition = position;
-                break;
-            default:
-                break;                
-        }
+        this.setPivotPosition(position);
+        elevatorPosition = position;
     }
 
+    /**
+     * Gets the current position of the elevator.
+     * @return The current position of the elevator.
+     */
     public ElevatorPositions getElevatorPosition(){
         return elevatorPosition;
     }
 
+    /**
+     * Gets the current encoder position of the elevator.
+     * @return The current encoder position of the elevator.
+     */
+    public double getElevatorEncoderPosition(){
+        return primaryElevatorMotorController.getEncoder().getPosition();
+        }
+
+    /**
+     * Gets the current position of the pivot.
+     * @return The current position of the pivot.
+     */
     public ElevatorPositions getPivotPosition(){
         return elevatorPivotPosition;
     }
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Elevator Position", elevatorMotor1.getAbsoluteEncoder(Type.kDutyCycle).getPosition());
-        SmartDashboard.putNumber("Elevating Pivot Position", pivotMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition());
-
-        boolean motor1Follower = elevatorMotor1.isFollower();
-        boolean motor2Follower = elevatorMotor2.isFollower();
-
-        SmartDashboard.putBoolean("Elevator Motor 1 Is Follower", motor1Follower);
-        SmartDashboard.putBoolean("Elevator Motor 2 Is Follower", motor2Follower);
         
+        SmartDashboard.putNumber("Elevator Position", primaryElevatorMotorController.getEncoder().getPosition());
+        SmartDashboard.putNumber("Elevating Pivot Position", elevatorPivotMotorController.getEncoder().getPosition());
+        
+        if (isElevatorPositionPIDControlEnabled){
+            primaryElevatorMotorController.set(elevatorPositionPIDController.calculate(primaryElevatorMotorController.getEncoder().getPosition()));
+            secondaryElevatorMotorController.set(elevatorPositionPIDController.calculate(secondaryElevatorMotorController.getEncoder().getPosition()));
+        }
+
+        if (isPivotPIDControl){
+            double power = elevatorPivotPositionPIDController.calculate(elevatorPivotMotorController.getEncoder().getPosition());
+            if(power > 0.5) {
+                power = 0.5;
+            }
+            else if (power < -0.5) {
+                power = -0.5;
+            }
+            elevatorPivotMotorController.set(power);
+            System.out.println("power: " + power);
+            System.out.println("setpoint " + elevatorPivotPositionPIDController.getSetpoint());
+            System.out.println("encoder pose " + elevatorPivotMotorController.getEncoder().getPosition());
+        }
         
     }
 
