@@ -1,4 +1,5 @@
 package frc.robot;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -130,7 +131,7 @@ public class RobotContainer {
     private final POVButton programmerDPadLeft = new POVButton(m_programmerController, 270);
 
 
-  private SendableChooser<Command> m_chooser = new SendableChooser<>();
+    private final SendableChooser<Command> autoChooser;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -149,29 +150,11 @@ public class RobotContainer {
     //led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
     led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
 
-    
-
-    m_chooser.addOption("just shoot", justShootAuto());
-    m_chooser.addOption("shoot pickup from middle shoot", shootPickupShoot());
-    //m_chooser.addOption("shoot pickup from middle", shootAndPickup());
-    m_chooser.addOption("Three Notes (Preload, Amp & Middle)", centerNoteTopAuto());
-    m_chooser.addOption("Three Notes (Preload, Source & Middle)", centerNoteBottomAuto());
-
-    //m_chooser.addOption("Shoot and leave", new PathPlannerAuto("GetOutOfTheWay1Auton"));
-    //m_chooser.addOption("Test One Meter", new PathPlannerAuto("MeterTestPathAuton"));
-    m_chooser.addOption("get middle notes out" , messUpNotesAuto());
-    //m_chooser.addOption("Parallel Commands", new PathPlannerAuto("ParallelAuton"));
-    m_chooser.addOption("two note", twoNoteAuto());
-
-    m_chooser.addOption("April Tag Vision Tracking", visionTracking());
-    m_chooser.addOption("April Tag Vision With Swerve Translation", visionTrackingWithMovement() );
-    m_chooser.setDefaultOption("April Tag Vision Tracking", visionTracking());
-    m_chooser.addOption("Mobility", mobilityAuto());
-    m_chooser.addOption("WaitAndMobility", WaitAndMobilityAuto());
 
     //m_chooser.addOption("meterTest" , meterTest());
     
-    SmartDashboard.putData(m_chooser);
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
     //test.setDefaultCommand(new testCommand(test, m_driverController));
     NamedCommands.registerCommand("Shoot", intakeCommandFactory.goToShootPositionAndShoot(m_IntakeShooterPivot, m_IntakeShooterRollers));
@@ -366,12 +349,6 @@ private void configureButtonBindings() {
     //     );
     // }
 
-    public Command justShootAuto(){
-       Command toReturn = new PathPlannerAuto("JustShootAuton");
-       toReturn.setName("just shoot");
-       return toReturn;
-    }
-
     // public Command meterTest(){
     //    return new PathPlannerAuto("MeterTestPathAuton");
     // }
@@ -440,31 +417,6 @@ private void configureButtonBindings() {
         return toReturn;
     }
 
-    public Command visionTracking(){
-        Command toReturn = new driveAlignVisionCommand(vision, m_robotDrive);
-        toReturn.setName("April Tag Vision Tracking");
-        return toReturn;
-    }
-
-    private Command visionTrackingWithMovement() {
-        // TODO Auto-generated method stub
-        Command toReturn = new DriveAlignAndRangeVisionCommand(vision, m_robotDrive);
-        toReturn.setName("April Tag Vision Tracking With Movement");
-        return toReturn;
-    }
-    private Command mobilityAuto() {
-        // TODO Auto-generated method stub
-        Command toReturn = new PathPlannerAuto("Mobility");
-        toReturn.setName("Mobility");
-        return toReturn;
-    }
-    private Command WaitAndMobilityAuto() {
-        // TODO Auto-generated method stub
-        Command toReturn = new PathPlannerAuto("WaitAndMobility");
-        toReturn.setName("WaitAndMobility");
-        return toReturn;
-    }
-
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -473,48 +425,6 @@ private void configureButtonBindings() {
    */
 
   public Command getAutonomousCommand() {
-    SmartDashboard.putString("selected auto", m_chooser.getSelected().getName());
-    System.out.println(m_chooser.getSelected().getName());
-    if(m_chooser.getSelected().getName().equals("two note")){
-        System.out.println("^");
-        return twoNoteAuto();
-    }
-    else if(m_chooser.getSelected().getName().equals("get middle notes out")){
-        System.out.println("^^");
-        return messUpNotesAuto();
-    }
-    else if(m_chooser.getSelected().getName().equals("Three Notes (Preload, Amp & Middle)")){
-        System.out.println("^^^");
-        return centerNoteTopAuto();
-    }
-    else if(m_chooser.getSelected().getName().equals("shoot pickup from middle shoot")){
-        System.out.println("^^^^");
-        return shootPickupShoot();
-    }
-    else if((m_chooser.getSelected().getName().equals("Three Notes (Preload, Source & Middle)"))){
-        System.out.println("^^^^^");
-        return centerNoteBottomAuto();
-    }
-    else if (m_chooser.getSelected().getName().equals("April Tag Vision Tracking")){
-        System.out.println("^^^^^^^");
-        return visionTracking();
-    }
-    else if(m_chooser.getSelected().getName().equals("April Tag Vision Tracking With Movement")){
-        System.out.println("^^^^^^^");
-        return visionTrackingWithMovement();
-    }
-    else if(m_chooser.getSelected().getName().equals("Mobility")){
-        System.out.println("^^^^^^^");
-        return mobilityAuto();
-    }
-    else if(m_chooser.getSelected().getName().equals("WaitAndMobility")){
-        System.out.println("^^^^^^^");
-        return WaitAndMobilityAuto();
-    }
-    else{
-        System.out.println("^^^^^^^");
-        return justShootAuto();
-    }
-    //return m_chooser.getSelected();
+    return autoChooser.getSelected();
   }
 }
