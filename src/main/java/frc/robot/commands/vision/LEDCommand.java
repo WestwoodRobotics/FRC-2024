@@ -2,7 +2,7 @@ package frc.robot.commands.vision;
 
 import frc.robot.subsystems.vision.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 
 /**
  * Command to control the LED subsystem based on the status of beam breaks.
