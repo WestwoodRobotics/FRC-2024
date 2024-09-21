@@ -19,6 +19,7 @@ import frc.robot.commands.elevator.elevatorRollerCommand;
 import frc.robot.commands.intakeShooter.IntakeRollersCommand;
 import frc.robot.commands.intakeShooter.IntakeCommandFactory;
 import frc.robot.commands.intakeShooter.IntakeShooterPosition;
+import frc.robot.commands.intakeShooter.JuggernautFreeze;
 import frc.robot.commands.swerve.DriveAlignAndRangeVisionCommand;
 import frc.robot.commands.swerve.driveAlignVisionCommand;
 import frc.robot.commands.swerve.driveCommand;
@@ -101,6 +102,7 @@ public class RobotContainer {
   private final POVButton OperatorDPadLeft = new POVButton(m_operatorController, 270);
 
   private Trigger operatorRightYTrigger = new Trigger(() -> Math.abs(m_operatorController.getRightY()) > 0.10);
+  private Trigger operatorLeftYTrigger = new Trigger(() -> Math.abs(m_operatorController.getLeftY()) > 0.10);
 
   private final Trigger operatorLeftTrigger = new Trigger(() -> m_operatorController.getLeftTriggerAxis() > 0.5);
   private final Trigger operatorRightTrigger = new Trigger(() -> m_operatorController.getRightTriggerAxis() > 0.5);
@@ -124,7 +126,8 @@ public class RobotContainer {
     // m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
     
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
-    m_IntakeShooterPivot.setDefaultCommand(new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooterPivot));
+    //m_IntakeShooterPivot.setDefaultCommand(new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooterPivot));
+    m_IntakeShooterPivot.setDefaultCommand(new JuggernautFreeze(m_IntakeShooterPivot));
     //led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
     led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
 
@@ -292,6 +295,8 @@ private void configureButtonBindings() {
     
     OperatorLeftBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(0.85), m_elevator))
     .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0), m_elevator));
+
+    operatorLeftYTrigger.onTrue(new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooterPivot));
   }
 
 //------------------------------------------- autonomous modes -------------------------------------------

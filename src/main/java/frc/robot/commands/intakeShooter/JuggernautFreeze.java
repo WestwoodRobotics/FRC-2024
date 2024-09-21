@@ -11,11 +11,13 @@ import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
  * Command for setting the position of the intake shooter pivot.
  * This command uses a timer and a limit switch to determine when the pivot has reached the desired position.
  */
-public class IntakeShooterPosition extends Command{
+public class JuggernautFreeze extends Command{
     Timer timer = new Timer();
     private IntakePivot intakePivotSubsystem;
+
     private CANSparkMax intakePivotMotorController;
-    private IntakeShooterPositions intakeTargetPosition;
+    private double currentIntakePivotPosition;
+
     private boolean isCommandFinished;
 
     /**
@@ -24,9 +26,14 @@ public class IntakeShooterPosition extends Command{
      * @param intakePivot The intake pivot subsystem.
      * @param position The target position for the intake shooter.
      */
-    public IntakeShooterPosition(IntakePivot intakePivot, IntakeShooterPositions position){
+    public JuggernautFreeze(IntakePivot intakePivot){
         this.intakePivotSubsystem = intakePivot;
-        this.intakeTargetPosition = position;
+
+        intakePivotMotorController = this.intakePivotSubsystem.getIntakePivotMotorController();
+
+        currentIntakePivotPosition = intakePivotMotorController.getEncoder().getPosition();
+
+
         this.isCommandFinished = false;
         addRequirements(intakePivotSubsystem);
     }
@@ -38,8 +45,7 @@ public class IntakeShooterPosition extends Command{
     public void initialize(){
         timer.reset();
         timer.start();
-        intakePivotSubsystem.setToPosition(intakeTargetPosition);
-
+        intakePivotSubsystem.setToPosition(currentIntakePivotPosition);
     }
 
     /**
@@ -48,7 +54,6 @@ public class IntakeShooterPosition extends Command{
     @Override
     public void execute(){
         intakePivotSubsystem.setPivotPower(intakePivotSubsystem.getCalculatedIntakePivotPIDValue());
-
     }
 
     /**
@@ -58,7 +63,7 @@ public class IntakeShooterPosition extends Command{
      */
     @Override
     public boolean isFinished(){
-       return intakePivotSubsystem.isPivotAtTargetPIDPosition();
+       return false;
     }
 
     /**
