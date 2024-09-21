@@ -1,14 +1,16 @@
 {
     "name": "WPILib",
-    "build": {
-        "dockerfile": "./Dockerfile",
-        "context": "."
-    },
-
     "remoteUser": "vscode",
     "postCreateCommand": "bash -i /workspaces/FRCTemplate/.devcontainer/post_create.sh",
     "overrideCommand": false,
     "privileged": true,
+    "mounts": [
+        {
+            "source": "vscode-desv",
+            "target": "/vscode-dev",
+            "type": "volume"
+        }
+    ],
     "customizations": {
         "vscode": {
             "settings": {
@@ -27,26 +29,12 @@
         }
     },
     "features": {
-        "ghcr.io/devcontainers/features/common-utils:2": {
-            "version": "latest",
-            "installZsh": "true",
-            "username": "vscode",
-            "upgradePackages": "true"
-        },
         "ghcr.io/devcontainers/features/git:1": {
             "version": "latest",
             "ppa": "false"
-        },
-        "ghcr.io/devcontainers/features/desktop-lite:1": {}
+        }
     },
     "hostRequirements": {
         "memory": "9gb"
-    },
-	"runArgs": [
-		"--cap-add=SYS_PTRACE",
-		"--security-opt",
-		"seccomp=unconfined",
-		"--privileged",
-		"--init"
-	]
+    }
 }
