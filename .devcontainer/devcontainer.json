@@ -43,5 +43,6 @@
     },
     "hostRequirements": {
         "memory": "9gb"
-    }
+    },
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04"
 }
