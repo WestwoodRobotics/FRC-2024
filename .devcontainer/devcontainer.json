@@ -1,7 +1,7 @@
 {
     "name": "WPILib",
     "remoteUser": "codespace",
-    "postCreateCommand": "bash -i /workspaces/FRCTemplate/.devcontainer/post_create.sh",
+    "postCreateCommand": "bash -i /workspaces/FRC-2024/.devcontainer/post_create.sh",
     "overrideCommand": false,
     "privileged": true,
     "mounts": [
