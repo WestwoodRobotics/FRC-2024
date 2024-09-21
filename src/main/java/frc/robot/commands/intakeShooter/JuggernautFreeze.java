@@ -12,13 +12,13 @@ import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
  * This command uses a timer and a limit switch to determine when the pivot has reached the desired position.
  */
 public class JuggernautFreeze extends Command{
-    Timer timer = new Timer();
     private IntakePivot intakePivotSubsystem;
 
     private CANSparkMax intakePivotMotorController;
+
     private double currentIntakePivotPosition;
 
-    private boolean isCommandFinished;
+
 
     /**
      * Constructs an IntakeShooterPosition command.
@@ -33,8 +33,6 @@ public class JuggernautFreeze extends Command{
 
         currentIntakePivotPosition = intakePivotMotorController.getEncoder().getPosition();
 
-
-        this.isCommandFinished = false;
         addRequirements(intakePivotSubsystem);
     }
 
@@ -43,8 +41,6 @@ public class JuggernautFreeze extends Command{
      */
     @Override
     public void initialize(){
-        timer.reset();
-        timer.start();
         intakePivotSubsystem.setToPosition(currentIntakePivotPosition);
     }
 
