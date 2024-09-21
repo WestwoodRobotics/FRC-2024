@@ -29,10 +29,11 @@ public class IntakePivot extends SubsystemBase {
     public IntakePivot(){
         intakePivotMotorController = new CANSparkMax(IntakeShooterConstants.kPivotMotorPort, MotorType.kBrushless);
         intakePivotMotorController.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        intakePivotPositionPIDController.setTolerance(0.2);
+
 
         intakePivotPositionPIDController = new PIDController(IntakeShooterConstants.kPivotP, 
         IntakeShooterConstants.kPivotI, IntakeShooterConstants.kPivotD);
+        intakePivotPositionPIDController.setTolerance(0.2);
         
         
         intakePivotPositionTargetValues.put(IntakeShooterPositions.INTAKE, IntakeShooterConstants.kIntakePivotPosition);
