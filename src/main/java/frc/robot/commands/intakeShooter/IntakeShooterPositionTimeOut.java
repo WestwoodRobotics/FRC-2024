@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intakeShooter.IntakePivot;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
-import frc.robot.subsystems.vision.LimitSwitch;
 
 /**
  * Command for setting the position of the intake shooter pivot with a timeout.
@@ -15,22 +14,19 @@ public class IntakeShooterPositionTimeOut extends Command{
     private IntakePivot intakePivotSubsystem;
     private IntakeShooterPositions intakeTargetPosition;
     private double commandTimeOutPeriod;
-    private LimitSwitch limitSwitchSensor;
 
     /**
      * Constructor for the IntakeShooterPositionTimeOut command.
      * 
      * @param intakePivot The intake pivot subsystem.
      * @param position The target position for the intake shooter.
-     * @param limitSwitch The limit switch used to detect the home position.
      * @param timeOutPeriod The maximum duration for the command.
      */
-    public IntakeShooterPositionTimeOut(IntakePivot intakePivot, IntakeShooterPositions position, LimitSwitch limitSwitch, double timeOutPeriod){
+    public IntakeShooterPositionTimeOut(IntakePivot intakePivot, IntakeShooterPositions position, double timeOutPeriod){
         this.intakePivotSubsystem = intakePivot;
         this.intakeTargetPosition = position;
         this.commandTimeOutPeriod = timeOutPeriod;
         addRequirements(intakePivotSubsystem);
-        this.limitSwitchSensor = limitSwitch;
     }
 
     /**
@@ -43,18 +39,12 @@ public class IntakeShooterPositionTimeOut extends Command{
     }
 
     /**
-     * Executes the command by setting the pivot power based on the target position and current limit switch status.
+     * Executes the command by setting the pivot power based on the target position.
      */
     @Override
     public void execute(){
         if(intakeTargetPosition == IntakeShooterPositions.HOME){
-            if(!intakePivotSubsystem.getPivotLimitReached()){
-                intakePivotSubsystem.setPivotPower(-0.75);
-            }
-            else{
-                intakePivotSubsystem.setPivotPower(0);
-                intakePivotSubsystem.resetEncoder();
-            }
+            intakePivotSubsystem.setPivotPower(-0.75);
         }
         else{    
             intakePivotSubsystem.setToPosition(intakeTargetPosition);
@@ -62,13 +52,13 @@ public class IntakeShooterPositionTimeOut extends Command{
     }
 
     /**
-     * Determines if the command is finished based on the timer or limit switch status.
+     * Determines if the command is finished based on the timer.
      * 
      * @return true if the command has finished, false otherwise.
      */
     @Override
     public boolean isFinished(){
-       return (timer.get() > commandTimeOutPeriod) || (limitSwitchSensor.getStatus() && (intakeTargetPosition == (IntakeShooterPositions.HOME)));
+       return (timer.get() > commandTimeOutPeriod);
     }
 
     /**

@@ -7,12 +7,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
-import frc.robot.subsystems.vision.LimitSwitch;
 
 /**
  * The IntakePivot subsystem controls the pivot mechanism of the intake shooter.
  * It uses a CANSparkMax motor for movement and a PIDController for precise positioning.
- * A LimitSwitch is used to detect the home position.
  */
 public class IntakePivot extends SubsystemBase {
     public CANSparkMax intakePivotMotorController;
@@ -25,15 +23,10 @@ public class IntakePivot extends SubsystemBase {
     
     private double calculatedIntakePivotPIDValue;
 
-    private LimitSwitch intakePivotLimitSwitch;
-
     /**
      * Constructor for the IntakePivot subsystem.
-     * 
-     * @param limitSwitch The limit switch used to determine if the pivot is at the home position.
      */
-    public IntakePivot(LimitSwitch limitSwitch){
-        this.intakePivotLimitSwitch = limitSwitch;
+    public IntakePivot(){
         intakePivotMotorController = new CANSparkMax(IntakeShooterConstants.kPivotMotorPort, MotorType.kBrushless);
         intakePivotMotorController.setIdleMode(CANSparkMax.IdleMode.kBrake);
         
@@ -56,30 +49,14 @@ public class IntakePivot extends SubsystemBase {
     }
 
     /**
-     * Checks if the pivot has reached the limit switch.
-     * 
-     * @return True if the limit switch is activated, indicating the pivot is at the home position.
-     */
-    public boolean getPivotLimitReached()
-    {
-        return intakePivotLimitSwitch.getStatus();
-    }
-
-    /**
      * Sets the power for the pivot motor.
      * 
      * @param power The power level to set for the pivot motor.
      */
     public void setPivotPower(double power){
         isIntakePivotPIDControlEnabled = false;
-        if (this.getPivotLimitReached() && power < 0){
-            intakePivotMotorController.set(0);
-            this.resetEncoder();
-        }
-        else{
-            intakePivotMotorController.set(power);
-            intakePivotPosition = IntakeShooterPositions.MANUAL;
-        }
+        intakePivotMotorController.set(power);
+        intakePivotPosition = IntakeShooterPositions.MANUAL;
     }
 
     /**
@@ -90,9 +67,6 @@ public class IntakePivot extends SubsystemBase {
      */
     public boolean setToPosition(IntakeShooterPositions position) {
         isIntakePivotPIDControlEnabled = true;
-        if (intakePivotLimitSwitch.getStatus() && ((position == IntakeShooterPositions.HOME))){
-            return true;
-        }
         double setPoint = intakePivotPositionTargetValues.get(position);     
         intakePivotPositionPIDController.setSetpoint(setPoint);
 
@@ -146,7 +120,6 @@ public class IntakePivot extends SubsystemBase {
     public void periodic(){
         SmartDashboard.putString ("Intake Shooter State" , intakePivotPosition.toString()); 
         SmartDashboard.putNumber("Pivot Position", intakePivotMotorController.getEncoder().getPosition());
-        SmartDashboard.putBoolean("Limit", this.getPivotLimitReached());
 
         if (isIntakePivotPIDControlEnabled = true){
             intakePivotPositionPIDController.setTolerance(0.2);

@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intakeShooter.IntakePivot;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
-import frc.robot.subsystems.vision.LimitSwitch;
 
 /**
  * Command for setting the position of the intake shooter pivot.
@@ -15,8 +14,6 @@ public class IntakeShooterPosition extends Command{
     private IntakePivot intakePivotSubsystem;
     private IntakeShooterPositions intakeTargetPosition;
     
-    private LimitSwitch limitSwitchSensor;
-
     private boolean isCommandFinished;
 
     /**
@@ -24,14 +21,11 @@ public class IntakeShooterPosition extends Command{
      * 
      * @param intakePivot The intake pivot subsystem.
      * @param position The target position for the intake shooter.
-     * @param limitSwitch The limit switch used to detect the home position.
      */
-    public IntakeShooterPosition(IntakePivot intakePivot, IntakeShooterPositions position, LimitSwitch limitSwitch
-    ){
+    public IntakeShooterPosition(IntakePivot intakePivot, IntakeShooterPositions position){
         this.intakePivotSubsystem = intakePivot;
         this.intakeTargetPosition = position;
         addRequirements(intakePivotSubsystem);
-        this.limitSwitchSensor = limitSwitch;
     }
 
     /**
