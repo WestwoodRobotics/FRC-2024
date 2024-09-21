@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
  * Command to control the LED subsystem based on the status of beam breaks.
  * This command sets the LED lights to different patterns based on whether the beam breaks are triggered.
  */
-public class LEDCommand extends CommandBase {
+public class LEDCommand extends Command {
 
     private LED ledSubsystem;
     private BeamBreak intakePivotBeamBreakSensor, elevatorPivotBeamBreakSensor;
