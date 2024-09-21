@@ -30,9 +30,6 @@ code --install-extension vscode-wpilib-2024.3.2.vsix
 # Remove the downloaded vsix file after installation
 sudo rm vscode-wpilib-2024.3.2.vsix
 
-# Set ownership of /home/vscode directory to vscode user
-sudo chown -R vscode:vscode /home/vscode
-
 export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 export PATH=$JAVA_HOME/bin:$PATH
 source ~/.bashrc
