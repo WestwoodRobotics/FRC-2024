@@ -65,6 +65,7 @@ public class RobotContainer {
   // The driver's controller
   XboxController m_driverController = new XboxController(PortConstants.kDriverControllerPort);
   XboxController m_operatorController = new XboxController(PortConstants.kOperatorControllerPort);
+  XboxController m_programmerController = new XboxController(PortConstants.kProgrammerControllerPort);
 
   private final JoystickButton DriverAButton = new JoystickButton(m_driverController, XboxController.Button.kA.value);
   private final JoystickButton DriverBButton = new JoystickButton(m_driverController, XboxController.Button.kB.value);
@@ -111,6 +112,23 @@ public class RobotContainer {
       XboxController.Button.kRightBumper.value);
   private final JoystickButton OperatorLeftBumper = new JoystickButton(m_operatorController,
       XboxController.Button.kLeftBumper.value);
+
+
+  private final JoystickButton programmerAButton = new JoystickButton(m_programmerController, XboxController.Button.kA.value);
+    private final JoystickButton programmerBButton = new JoystickButton(m_programmerController, XboxController.Button.kB.value);
+    private final JoystickButton programmerXButton = new JoystickButton(m_programmerController, XboxController.Button.kX.value);
+    private final JoystickButton programmerYButton = new JoystickButton(m_programmerController, XboxController.Button.kY.value);
+    private final JoystickButton programmerRightBumper = new JoystickButton(m_programmerController,
+        XboxController.Button.kRightBumper.value);
+    private final JoystickButton programmerLeftBumper = new JoystickButton(m_programmerController,
+        XboxController.Button.kLeftBumper.value);
+    private final Trigger programmerRightTrigger = new Trigger(() -> m_programmerController.getRightTriggerAxis() > 0.5);
+    private final Trigger programmerLeftTrigger = new Trigger(() -> m_programmerController.getLeftTriggerAxis() > 0.5);
+    private final POVButton programmerDPadUp = new POVButton(m_programmerController, 0);
+    private final POVButton programmerDPadRight = new POVButton(m_programmerController, 90);
+    private final POVButton programmerDPadDown = new POVButton(m_programmerController, 180);
+    private final POVButton programmerDPadLeft = new POVButton(m_programmerController, 270);
+
 
   private SendableChooser<Command> m_chooser = new SendableChooser<>();
 
@@ -297,6 +315,20 @@ private void configureButtonBindings() {
     .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0), m_elevator));
 
     operatorLeftYTrigger.onTrue(new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooterPivot));
+
+
+
+    programmerLeftBumper.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.INTAKE));
+    programmerRightBumper.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME));
+
+    programmerDPadLeft.onTrue(new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower(0.25), m_IntakeShooterPivot))
+        .onFalse(new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower(0), m_IntakeShooterPivot));
+    
+    programmerDPadRight.onTrue(new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower(-0.25), m_IntakeShooterPivot)).onFalse(new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower(0), m_IntakeShooterPivot));
+
+
+
+    
   }
 
 //------------------------------------------- autonomous modes -------------------------------------------

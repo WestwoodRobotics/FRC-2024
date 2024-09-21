@@ -83,6 +83,7 @@ public final class Constants {
 
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
+    public static final int kProgrammerControllerPort = 2;
   }
 
   public static final class TransportConstants{
