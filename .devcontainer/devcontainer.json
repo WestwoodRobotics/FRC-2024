@@ -1,6 +1,6 @@
 {
     "name": "WPILib",
-    "remoteUser": "vscode",
+    "remoteUser": "codespace",
     "postCreateCommand": "bash -i /workspaces/FRCTemplate/.devcontainer/post_create.sh",
     "overrideCommand": false,
     "privileged": true,

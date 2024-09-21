@@ -30,4 +30,7 @@ sudo code --install-extension vscode-wpilib-2024.3.2.vsix
 # Remove the downloaded vsix file after installation
 sudo rm vscode-wpilib-2024.3.2.vsix
 
+# Set ownership of /home/vscode directory to vscode user
+sudo chown -R vscode:vscode /home/vscode
+
 echo "Post-create script finished."
