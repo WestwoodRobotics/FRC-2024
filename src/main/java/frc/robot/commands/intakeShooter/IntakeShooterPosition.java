@@ -26,6 +26,7 @@ public class IntakeShooterPosition extends Command{
      */
     public IntakeShooterPosition(IntakePivot intakePivot, IntakeShooterPositions position){
         this.intakePivotSubsystem = intakePivot;
+        intakePivotSubsystem.setHoldPoseState(false);
         this.intakeTargetPosition = position;
         this.isCommandFinished = false;
         addRequirements(intakePivotSubsystem);
@@ -36,8 +37,7 @@ public class IntakeShooterPosition extends Command{
      */
     @Override
     public void initialize(){
-        timer.reset();
-        timer.start();
+
         intakePivotSubsystem.setToPosition(intakeTargetPosition);
 
     }
@@ -48,7 +48,6 @@ public class IntakeShooterPosition extends Command{
     @Override
     public void execute(){
         intakePivotSubsystem.setPivotPower(intakePivotSubsystem.getCalculatedIntakePivotPIDValue());
-
     }
 
     /**
@@ -58,6 +57,9 @@ public class IntakeShooterPosition extends Command{
      */
     @Override
     public boolean isFinished(){
+       if (intakePivotSubsystem.isPivotAtTargetPIDPosition()){
+        System.out.println("Reached Pivot MOve Juggernaut lol");
+       }
        return intakePivotSubsystem.isPivotAtTargetPIDPosition();
     }
 

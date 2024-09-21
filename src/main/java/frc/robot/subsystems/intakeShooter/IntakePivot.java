@@ -15,6 +15,7 @@ import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 public class IntakePivot extends SubsystemBase {
     private CANSparkMax intakePivotMotorController;
     private PIDController intakePivotPositionPIDController;
+    private boolean holdPose;
 
 
     private HashMap<IntakeShooterPositions, Double> intakePivotPositionTargetValues = new HashMap<>();
@@ -29,7 +30,7 @@ public class IntakePivot extends SubsystemBase {
     public IntakePivot(){
         intakePivotMotorController = new CANSparkMax(IntakeShooterConstants.kPivotMotorPort, MotorType.kBrushless);
         intakePivotMotorController.setIdleMode(CANSparkMax.IdleMode.kBrake);
-
+        holdPose = false;
 
         intakePivotPositionPIDController = new PIDController(IntakeShooterConstants.kPivotP, 
         IntakeShooterConstants.kPivotI, IntakeShooterConstants.kPivotD);
@@ -117,6 +118,9 @@ public class IntakePivot extends SubsystemBase {
         return intakePivotPositionPIDController.calculate(intakePivotMotorController.getEncoder().getPosition());
     }
 
+    public void setHoldPoseState(boolean holdPose){
+        this.holdPose = holdPose;
+    }
 
 
     /**
@@ -125,5 +129,6 @@ public class IntakePivot extends SubsystemBase {
     @Override
     public void periodic(){
         SmartDashboard.putNumber("Pivot Position", intakePivotMotorController.getEncoder().getPosition());
+        //System.out.println("Pivot Pose:" + intakePivotMotorController.getEncoder().getPosition());
     }
 }

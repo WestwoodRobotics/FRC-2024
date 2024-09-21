@@ -28,10 +28,8 @@ public class JuggernautFreeze extends Command{
      */
     public JuggernautFreeze(IntakePivot intakePivot){
         this.intakePivotSubsystem = intakePivot;
-
         intakePivotMotorController = this.intakePivotSubsystem.getIntakePivotMotorController();
 
-        currentIntakePivotPosition = intakePivotMotorController.getEncoder().getPosition();
 
         addRequirements(intakePivotSubsystem);
     }
@@ -41,6 +39,7 @@ public class JuggernautFreeze extends Command{
      */
     @Override
     public void initialize(){
+        currentIntakePivotPosition = intakePivotMotorController.getEncoder().getPosition();
         intakePivotSubsystem.setToPosition(currentIntakePivotPosition);
     }
 
@@ -69,6 +68,6 @@ public class JuggernautFreeze extends Command{
      */
     @Override
     public void end(boolean interrupted){
-        intakePivotSubsystem.stopAllMotors();
+        
     }
 }
