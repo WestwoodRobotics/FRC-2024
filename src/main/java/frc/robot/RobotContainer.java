@@ -1,8 +1,3 @@
-
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -37,7 +32,6 @@ import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.utils.Position_Enums.ElevatorPositions;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 import frc.robot.subsystems.vision.LED;
-import frc.robot.subsystems.vision.LimitSwitch;
 import frc.robot.subsystems.vision.Vision;
 
 
@@ -56,10 +50,9 @@ public class RobotContainer {
   private BeamBreak intakeShooterBeamBreak = new BeamBreak(8);
   private BeamBreak elevatorPivotBeamBreak = new BeamBreak(9);
   public final Elevator m_elevator = new Elevator();
-  private LimitSwitch limitSwitch = new LimitSwitch(6);
   private Vision vision = new Vision();
 
-  private final IntakePivot m_IntakeShooterPivot = new IntakePivot(limitSwitch);
+  private final IntakePivot m_IntakeShooterPivot = new IntakePivot();
   private final IntakeRollers m_IntakeShooterRollers = new IntakeRollers();
 
   private final IntakeCommandFactory intakeCommandFactory = new IntakeCommandFactory();
@@ -160,25 +153,25 @@ public class RobotContainer {
     SmartDashboard.putData(m_chooser);
 
     //test.setDefaultCommand(new testCommand(test, m_driverController));
-    NamedCommands.registerCommand("Shoot", intakeCommandFactory.goToShootPositionAndShoot(m_IntakeShooterPivot, m_IntakeShooterRollers, limitSwitch));
+    NamedCommands.registerCommand("Shoot", intakeCommandFactory.goToShootPositionAndShoot(m_IntakeShooterPivot, m_IntakeShooterRollers));
 
-    NamedCommands.registerCommand("IntakeShooterGoHome", new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME, limitSwitch));
+    NamedCommands.registerCommand("IntakeShooterGoHome", new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME));
 
     NamedCommands.registerCommand("GetElevatorOutOfWay", new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT));
 
     NamedCommands.registerCommand("ReleasePreRoller", new IntakeRollersCommand(m_IntakeShooterRollers, -1, 1));
 
-    NamedCommands.registerCommand("IntakePose", new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.AUTON_INTAKE, limitSwitch));
+    NamedCommands.registerCommand("IntakePose", new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.AUTON_INTAKE));
 
     NamedCommands.registerCommand("StopAllShooters", new StopAllRollersCommand(m_IntakeShooterRollers, m_elevator));
 
     NamedCommands.registerCommand("StopIntakePivot", new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower(0)));
 
-    NamedCommands.registerCommand("IntakeAndPosition", intakeCommandFactory.goToIntakePositionAndIntake(m_IntakeShooterPivot, m_IntakeShooterRollers, limitSwitch));
+    NamedCommands.registerCommand("IntakeAndPosition", intakeCommandFactory.goToIntakePositionAndIntake(m_IntakeShooterPivot, m_IntakeShooterRollers));
 
     NamedCommands.registerCommand("Intake", new IntakeRollersCommand(m_IntakeShooterRollers, 1, -1));
 
-    NamedCommands.registerCommand("GoToHomePosition", new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME, limitSwitch));
+    NamedCommands.registerCommand("GoToHomePosition", new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME));
   }
 
   /*
@@ -222,18 +215,18 @@ private void configureButtonBindings() {
     // TODO: Probably need to change greater/less than signs in the implementation
     // of the method the command calls
     DriverXButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.SOURCE))
-    .onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.AUTON_SHOOT, limitSwitch));
+    .onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.AUTON_SHOOT));
 
     //DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch)).onTrue(new ShootAtRPM(m_IntakeShooter, 55000, -55000, 1));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
-    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 0))).onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT));
+    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 0))).onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT));
 
     //DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch).alongWith(new InstantCommand(() -> m_IntakeShooterRollers.setRollerPower(1), m_IntakeShooterRollers).andThen(new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(-1),m_IntakeShooterRollers))));
-    DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.PODIUM_SHOT, limitSwitch).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 0)));
-    DriverRightBumper.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME, limitSwitch))
+    DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.PODIUM_SHOT).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 0)));
+    DriverRightBumper.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME))
       .onTrue(new elevatorPosition(m_elevator, ElevatorPositions.HOME));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(0), m_IntakeShooter));
 
 
-    DriverLeftBumper.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.INTAKE, limitSwitch));
+    DriverLeftBumper.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.INTAKE));
 
     // driverLeftTrigger.whileTrue(new InstantCommand(() -> {
     //   m_elevator.setRollerPower(-1);
@@ -241,12 +234,12 @@ private void configureButtonBindings() {
     //   m_IntakeShooterRollers.setRollerPower(-1);
     //   //m_IntakeShooter.setRollerRPM(55000, -55000);
     // }, m_elevator, m_IntakeShooterRollers))
-    //     .onFalse(new StopAllRollersCommand(m_IntakeShooterRollers, m_elevator)).onFalse(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME, limitSwitch)).onFalse(new elevatorPosition(m_elevator, ElevatorPositions.HOME));
+    //     .onFalse(new StopAllRollersCommand(m_IntakeShooterRollers, m_elevator)).onFalse(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME)).onFalse(new elevatorPosition(m_elevator, ElevatorPositions.HOME));
 
 
 
     driverLeftTrigger.whileTrue(new InstantCommand(()-> m_elevator.setRollerPower(-1), m_elevator).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 1)))
-        .onFalse(new StopAllRollersCommand(m_IntakeShooterRollers, m_elevator)).onFalse(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME, limitSwitch)).onFalse(new elevatorPosition(m_elevator, ElevatorPositions.HOME));
+        .onFalse(new StopAllRollersCommand(m_IntakeShooterRollers, m_elevator)).onFalse(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME)).onFalse(new elevatorPosition(m_elevator, ElevatorPositions.HOME));
     //driverLeftTrigger.onTrue(new ShootAtRPM(m_IntakeShooter, 3500, -3500, 1));
         //.onFalse(new StopAllRollersCommand(m_IntakeShooter, m_elevator));
 // 
@@ -289,7 +282,7 @@ private void configureButtonBindings() {
     OperatorXButton.onTrue(new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(-1), m_IntakeShooterPivot))
         .onFalse(new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(0), m_IntakeShooterPivot));
 
-    OperatorYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, 1, 0)));
+    OperatorYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, 1, 0)));
 
     OperatorAButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.HANDOFF));
     OperatorStartButton.onTrue(new InstantCommand(() -> m_elevator.resetEncoder()));
