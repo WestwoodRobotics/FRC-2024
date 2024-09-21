@@ -1,13 +1,14 @@
 {
     "name": "WPILib",
     "build": {
-		"dockerfile": "Dockerfile"
-	},
-    "remoteUser": "codespace",
+        "dockerfile": "./Dockerfile",
+        "context": "."
+    },
+
+    "remoteUser": "vscode",
     "postCreateCommand": "bash -i /workspaces/FRCTemplate/.devcontainer/post_create.sh",
     "overrideCommand": false,
     "privileged": true,
-    "mounts": ["source=codespaces-linux-var-lib-docker,target=/var/lib/docker,type=volume"],
     "customizations": {
         "vscode": {
             "settings": {
@@ -41,12 +42,11 @@
     "hostRequirements": {
         "memory": "9gb"
     },
-
 	"runArgs": [
 		"--cap-add=SYS_PTRACE",
 		"--security-opt",
 		"seccomp=unconfined",
 		"--privileged",
 		"--init"
-	],
+	]
 }
