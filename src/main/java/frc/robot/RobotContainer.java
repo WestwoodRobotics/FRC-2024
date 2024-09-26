@@ -223,7 +223,7 @@ private void configureButtonBindings() {
     .onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.AUTON_SHOOT).andThen(new JuggernautFreeze(m_IntakeShooterPivot)));
 
     //DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch)).onTrue(new ShootAtRPM(m_IntakeShooter, 55000, -55000, 1));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
-    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER).andThen(new JuggernautFreeze(m_IntakeShooterPivot)).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 0))).onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT));
+    DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS).andThen(new JuggernautFreeze(m_IntakeShooterPivot)).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 0))).onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT));
 
     //DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch).alongWith(new InstantCommand(() -> m_IntakeShooterRollers.setRollerPower(1), m_IntakeShooterRollers).andThen(new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(-1),m_IntakeShooterRollers))));
     DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.PODIUM_SHOT).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 0))).onFalse(new JuggernautFreeze(m_IntakeShooterPivot));

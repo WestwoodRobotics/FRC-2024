@@ -50,10 +50,10 @@ public final class Constants {
     // Angular offsets of the modules relative to the chassis in radians
     // These values are the angle offset of the wheels when the robot is facing forwards (Absolute Encoders)
     //DO NOT CHANGE THESE VALUES UNLESS YOU KNOW WHAT YOU'RE DOING!!
-    public static final double kFrontLeftChassisAngularOffset = 3*Math.PI/2;
+    public static final double kFrontLeftChassisAngularOffset = 2*Math.PI/2;
     public static final double kFrontRightChassisAngularOffset = 0; 
     public static final double kRearLeftChassisAngularOffset = Math.PI;
-    public static final double kRearRightChassisAngularOffset = Math.PI/2;
+    public static final double kRearRightChassisAngularOffset = 0;
 
 
 
@@ -246,11 +246,11 @@ public final class Constants {
 
 
 
-    public static double kHomePivotPosition = 1; //TODO: Change this value
+    public static double kHomePivotPosition = 4 ; //TODO: Change this value
     public static double kIntakePivotPosition = 30.0; //106.597160; //TODO: Change this value
     public static double kAutoIntakePivotPosition = 30.0; //TODO: Change this value
     public static double kShootNearSpeakerPivotPosition = 3.81;
-    public static double kShootNearSpeakerFacingForwardsPivotPosition = 12.357189178466797;
+    public static double kShootNearSpeakerFacingForwardsPivotPosition = 13.357189178466797;
     public static double kShootPodiumShot = 13.642882347106934;
 
     public static double kShootFarSpeakerPivotPosition = 5.435001818181818;
