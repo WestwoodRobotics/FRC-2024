@@ -179,6 +179,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake", new IntakeRollersCommand(m_IntakeShooterRollers, 1, -1));
 
     NamedCommands.registerCommand("GoToHomePosition", new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME));
+
+    NamedCommands.registerCommand("AutonShoot", intakeCommandFactory.goToAutonShootPositionAndShoot(m_IntakeShooterPivot, m_IntakeShooterRollers));
   }
 
   /*

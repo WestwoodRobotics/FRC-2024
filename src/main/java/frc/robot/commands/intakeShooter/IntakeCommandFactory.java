@@ -36,4 +36,17 @@ public class IntakeCommandFactory {
             new IntakeRollersCommand(intakeRollers, 1, -1)
         );
     }
+
+    /**
+     * Creates a command to move the intake pivot to the auton_shoot position and activate the rollers for shooting.
+     * @param intakePivot The intake pivot subsystem.
+     * @param intakeRollers The intake rollers subsystem.
+     * @return A command that moves the intake pivot to the auton_shoot position and activates the rollers for shooting.
+     */
+    public Command goToAutonShootPositionAndShoot(IntakePivot intakePivot, IntakeRollers intakeRollers){
+        return new ParallelCommandGroup(
+            new IntakeShooterPosition(intakePivot, IntakeShooterPositions.AUTON_SHOOT),
+            new IntakeRollersCommand(intakeRollers, -1, 0)
+        );
+    }
 }
