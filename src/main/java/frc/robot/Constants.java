@@ -239,7 +239,7 @@ public final class Constants {
     public static double kLowerRollerD = 0; //TODO: Change this value
     public static double kLowerRollerFF = 200; //TODO: Change this value
 
-    public static double kPivotP = 0.065; //TODO: Change this value
+    public static double kPivotP = 0.07; //TODO: Change this value
     public static double kPivotI = 0; //TODO: Change this value
     public static double kPivotD = 0; //TODO: Change this value
     public static double kPivotFF = 8; //TODO: Change this value

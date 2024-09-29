@@ -1,4 +1,6 @@
 package frc.robot;
+
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -145,20 +147,20 @@ public class RobotContainer {
     // m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
     
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
-    //m_IntakeShooterPivot.setDefaultCommand(new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooterPivot));
+    //m_IntakeShooterPivot.setDefaultCommand(new InstatCommand(() -> m_IntakeShooterPivot.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooterPivot));
     //
     //m_IntakeShooterPivot.setDefaultCommand(new JuggernautFreeze(m_IntakeShooterPivot));
     //led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
     led.setDefaultCommand(new LEDCommand(led, intakeShooterBeamBreak, elevatorPivotBeamBreak));
-
+    
 
     //m_chooser.addOption("meterTest" , meterTest());
-    
-    autoChooser = AutoBuilder.buildAutoChooser();
+    autoChooser = AutoBuilder.buildAutoChooser("JustShootAuton");
+
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
     //test.setDefaultCommand(new testCommand(test, m_driverController));
-    NamedCommands.registerCommand("Shoot", intakeCommandFactory.goToShootPositionAndShoot(m_IntakeShooterPivot, m_IntakeShooterRollers));
+    NamedCommands.registerCommand("Shoot", new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.AUTON_INTAKE).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, 1, 0)).andThen(new JuggernautFreeze(m_IntakeShooterPivot)));
 
     NamedCommands.registerCommand("IntakeShooterGoHome", new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME));
 
@@ -225,11 +227,10 @@ private void configureButtonBindings() {
     //DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooter, IntakeShooterPositions.SHOOT_NEAR_SPEAKER, limitSwitch)).onTrue(new ShootAtRPM(m_IntakeShooter, 55000, -55000, 1));//.onTrue(new InstantCommand(() -> m_IntakeShooter.setRollerPower(-1), m_IntakeShooter));
     DriverAButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS).andThen(new JuggernautFreeze(m_IntakeShooterPivot)).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 0))).onTrue(new elevatorPosition(m_elevator, ElevatorPositions.AUTO_SHOOT));
 
-    //DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch).alongWith(new InstantCommand(() -> m_IntakeShooterRollers.setRollerPower(1), m_IntakeShooterRollers).andThen(new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(-1),m_IntakeShooterRollers))));
+    //DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPievot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS, limitSwitch).alongWith(new InstantCommand(() -> m_IntakeShooterRollers.setRollerPower(1), m_IntakeShooterRollers).andThen(new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(-1),m_IntakeShooterRollers))));
     DriverYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.PODIUM_SHOT).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, -1, 0))).onFalse(new JuggernautFreeze(m_IntakeShooterPivot));
     DriverRightBumper.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.HOME))
       .onTrue(new elevatorPosition(m_elevator, ElevatorPositions.HOME));
-
 
     DriverLeftBumper.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.INTAKE));
 
@@ -287,15 +288,17 @@ private void configureButtonBindings() {
     OperatorXButton.onTrue(new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(-1), m_IntakeShooterPivot))
         .onFalse(new InstantCommand(() -> m_IntakeShooterRollers.setStowPower(0), m_IntakeShooterPivot));
 
-    OperatorYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, 1, 0)).andThen(new JuggernautFreeze(m_IntakeShooterPivot)));
+    OperatorYButton.onTrue(new IntakeShooterPosition(m_IntakeShooterPivot, IntakeShooterPositions.SHOOT_NEAR_SPEAKER_FACING_FORWARDS).alongWith(new IntakeRollersCommand(m_IntakeShooterRollers, 1, 0)).andThen(new elevatorPosition(m_elevator, ElevatorPositions.SOURCE)).andThen(new JuggernautFreeze(m_IntakeShooterPivot)));
+
 
     OperatorAButton.onTrue(new elevatorPosition(m_elevator, ElevatorPositions.HANDOFF));
+
     OperatorStartButton.onTrue(new InstantCommand(() -> m_elevator.resetEncoder()));
 
     OperatorRightBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(-0.85), m_elevator))
     .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0), m_elevator));
     
-    OperatorLeftBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(0.85), m_elevator))
+    OperatorLeftBumper.onTrue(new InstantCommand(() -> m_elevator.setRollerPower(0.75*0.85), m_elevator))
     .onFalse(new InstantCommand(() -> m_elevator.setRollerPower(0), m_elevator));
 
     operatorLeftYTrigger.whileTrue(new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower((Math.abs(m_operatorController.getLeftY())) > 0.1 ? -1*m_operatorController.getLeftY() : 0.00), m_IntakeShooterPivot)).onFalse(new JuggernautFreeze(m_IntakeShooterPivot));
@@ -309,6 +312,8 @@ private void configureButtonBindings() {
         new JuggernautFreeze(m_IntakeShooterPivot));
     
     programmerDPadRight.whileTrue(new InstantCommand(() -> m_IntakeShooterPivot.setPivotPower(-0.5), m_IntakeShooterPivot)).onFalse(new JuggernautFreeze(m_IntakeShooterPivot));
+
+    programmerAButton.onTrue(NamedCommands.getCommand("Shoot"));
 
 
 

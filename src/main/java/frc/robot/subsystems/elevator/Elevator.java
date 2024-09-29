@@ -29,7 +29,7 @@ public class Elevator extends SubsystemBase{
     private MotorControlGroup elevatorMotorGroup;
     private CANSparkMax elevatorPivotMotorController;
     private CANSparkMax elevatorRollerMotorController;
-
+    
     private ElevatorPositions elevatorPosition;
     private ElevatorPositions elevatorPivotPosition;
 
